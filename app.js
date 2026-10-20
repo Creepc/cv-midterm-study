@@ -13,13 +13,14 @@ let store=initial();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)store=window.CV_PROGRESS.refreshAnswers(window.CV_PROGRESS.validate(s,D),D,window.CV_GRADE.check);}catch{}
 let route='home',param='',pool=[],qIndex=0,picked='',feedback=null,hintShown=false,exam=null,examTimer=null,labMode='roi';
 let filters={track:'all',type:'all',tag:'all',topic:'all',source:'all'};
-const titles={home:'한눈에 보기',concepts:'주별 핵심 개념',concept:'개념 상세',materials:'강의자료 전체 정리',practice:'문제 풀기',exercises:'4장 연습문제',lab:'코드 실험실',review:'오답 노트',exam:'모의고사',sources:'원본 자료 · 검토 내역'};
+const titles={home:'한눈에 보기',concepts:'주별 핵심 개념',concept:'개념 상세',materials:'강의자료 전체 정리',practice:'문제 풀기',exercises:'4장 연습문제',cram:'빈칸·출력 찍기 신공',lab:'코드 실험실',review:'오답 노트',exam:'모의고사',sources:'원본 자료 · 검토 내역'};
 const typeNames={choice:'객관식',blank:'코드 빈칸',output:'결과 예측',short:'서술형'};
 const trackName=t=>t==='theory'?'이론':'실습';
 const qs=id=>D.questions.find(q=>q.id===id);
 const cs=id=>D.concepts.find(c=>c.id===id);
 const Study=window.CV_STUDY.create({data:D,progress:()=>store,esc,rich,list,code,source,heading,empty});
 const ExercisePage=window.CV_EXERCISE_PAGE.create({data:D,progress:()=>store,esc,rich,source,code,codeWithNotes});
+const Cram=window.CV_CRAM.create({data:D,progress:()=>store,esc,rich,source,code,codeWithNotes,grade:window.CV_GRADE.check,record});
 const dateKey=()=>new Date().toLocaleDateString('sv-SE');
 function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch{toast('저장 공간이 부족합니다. 기록을 내보내 백업해 주세요.');}updateBadge();}
 function toast(s){$('#toast').textContent=s;$('#toast').classList.add('show');clearTimeout(toast.timeout);toast.timeout=setTimeout(()=>$('#toast').classList.remove('show'),2600);}
@@ -44,7 +45,7 @@ function render(){
 const [r,p]=decodeURIComponent(location.hash.slice(1)||'home').split('/');route=titles[r]?r:'home';param=p||'';
 if(exam&&route!=='exam'){/* Timer continues while reading other notes. */}
 $('#page-name').textContent=titles[route];$$('[data-nav]').forEach(a=>a.classList.toggle('active',a.dataset.nav===(route==='concept'?'materials':route)));$('.nav-more').open=['review','exam','lab'].includes(route);$('#sidebar').classList.remove('open');$('#menu-toggle').setAttribute('aria-expanded','false');
-const views={home:homeView,concepts:conceptsView,concept:conceptView,materials:materialsView,practice:practiceView,exercises:exercisesView,lab:labView,review:reviewView,exam:examView,sources:sourcesView};
+const views={home:homeView,concepts:conceptsView,concept:conceptView,materials:materialsView,practice:practiceView,exercises:exercisesView,cram:cramView,lab:labView,review:reviewView,exam:examView,sources:sourcesView};
 views[route]();updateBadge();window.scrollTo(0,0);
 }
 function homeView(){ $('#main').innerHTML=Study.home(); }
@@ -83,6 +84,7 @@ if(!e){$('#main').innerHTML=ExercisePage.overview();return;}
 $('#main').innerHTML=ExercisePage.detail(e);
 window.CV_EXERCISE_VISUALS.bind($('#main'),e);
 }
+function cramView(){Cram.mount($('#main'),param);}
 function reviewView(){const saved=param==='saved',ids=saved?store.qBookmarks.filter(qs):wrongIds(),questions=ids.map(qs).sort((a,b)=>(store.records[b.id]?.date||0)-(store.records[a.id]?.date||0));
 $('#main').innerHTML=`${heading('REVISIT & REMEMBER','오답 노트','틀린 문제는 다시 맞힐 때까지 모아 둡니다. 서술형은 자기평가 결과를 사용합니다.')}<div class="filters"><div class="filter-group"><a class="filter-chip ${!saved?'active':''}" href="#review">복습할 오답 ${wrongIds().length}</a><a class="filter-chip ${saved?'active':''}" href="#review/saved">북마크 ${store.qBookmarks.filter(qs).length}</a></div>${questions.length?'<button class="btn small" data-review-start>모아서 다시 풀기 →</button>':''}</div>${questions.length?questions.map((q,i)=>`<div class="review-row"><span class="index">${String(i+1).padStart(2,'0')}</span><div class="body"><h3>${esc(q.title)}</h3><p>${trackName(q.track)} · ${esc(q.topic)} · ${typeNames[q.type]}${store.records[q.id]?` · 누적 오답 ${store.records[q.id].wrongAttempts||0}회`:''}</p></div><a class="btn ghost small" href="#practice/${q.id}">다시 풀기 →</a></div>`).join(''):empty(saved?'북마크한 문제가 아직 없어요.':'복습할 오답이 없어요.',saved?'문제의 ☆ 버튼을 누르면 여기에 모아 둡니다.':'문제를 풀면 오답이 이곳에 자동으로 저장됩니다.','문제 풀기','#practice')}`;
 }

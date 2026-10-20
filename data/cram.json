@@ -1,0 +1,815 @@
+{
+  "updatedAt": "2026-10-21",
+  "selectionBasis": "사용자가 지정한 8문제의 직접 요구와 수업 원본 코드의 함수·인수·배열·실행 순서를 기준으로 선정한 예상 포인트",
+  "priorityLegend": [
+    {
+      "priority": 1,
+      "label": "지정 8문제부터",
+      "basis": "사용자가 지정한 4장 연습문제 1·2·5·6·9·10·13·16번의 직접 요구와 같은 값·인수·개념을 먼저 고른다."
+    },
+    {
+      "priority": 2,
+      "label": "수업 원본의 연결 포인트",
+      "basis": "지정 문제와 이어지는 강의 원본의 실행 순서, 입력·출력 API, 계산과 분기 경계를 확인한다."
+    },
+    {
+      "priority": 3,
+      "label": "후반 예제까지 마무리",
+      "basis": "지정 문제의 핵심을 본 뒤 Matplotlib 등 강의 후반 원본의 명확한 빈칸·결과를 확인한다."
+    }
+  ],
+  "strategies": [
+    {
+      "id": "cram-shape",
+      "title": "배열 크기는 세로부터 읽기",
+      "cue": "np.zeros, np.full, image.shape, roi.shape가 보일 때",
+      "rule": "shape는 (행, 열), 즉 (높이, 너비)다. 컬러 영상은 마지막에 채널 수 3이 붙는다.",
+      "example": "(400, 600, 3)은 세로 400·가로 600인 BGR 영상이다. ROI의 (200, 100, 3)은 세로 200·가로 100이다.",
+      "trap": "그리기 좌표 (x, y)와 배열 크기 (행, 열)를 같은 순서로 외우면 가로·세로를 뒤집게 된다.",
+      "questionIds": [
+        "p-q01",
+        "p-q04",
+        "p-q06",
+        "p-q51"
+      ]
+    },
+    {
+      "id": "cram-fill",
+      "title": "밝기는 전체 대입값 그대로",
+      "cue": "image[:] = 숫자 또는 image.fill(숫자)가 보일 때",
+      "rule": "그 뒤에 값을 바꾸는 줄이 없다면 모든 화소의 밝기는 그 숫자다. uint8에서 0은 검정, 255는 흰색이다.",
+      "example": "강의 예제 01의 image[:] = 200은 밝기 200이다. 연습문제 5·6번의 image[:] = 100은 밝기 100이다.",
+      "trap": "비슷하게 생긴 코드라도 100과 200을 섞지 마라. 제시된 코드의 실제 숫자를 먼저 확인하라.",
+      "questionIds": [
+        "p-q02",
+        "p-q06"
+      ]
+    },
+    {
+      "id": "cram-window",
+      "title": "창 크기와 영상 크기를 나누기",
+      "cue": "namedWindow와 resizeWindow가 이어질 때",
+      "rule": "WINDOW_NORMAL은 창 크기를 조절할 수 있다. WINDOW_AUTOSIZE는 영상 크기에 맞추며 flags의 기본값이다. resizeWindow는 원본 배열의 shape를 바꾸지 않는다.",
+      "example": "300행 400열 배열을 너비 600·높이 500인 창에 표시해도 image.shape는 (300, 400)이다.",
+      "trap": "resizeWindow(title, 600, 500)의 숫자는 너비, 높이 순서다. cv2.resize의 반환 배열과도 구별하라.",
+      "questionIds": [
+        "p-q05",
+        "p-q06",
+        "p-q07"
+      ]
+    },
+    {
+      "id": "cram-key",
+      "title": "키 대기와 종료 조건을 따로 읽기",
+      "cue": "waitKey(...) 뒤에 if 조건이 있을 때",
+      "rule": "waitKey(0)은 키 입력까지 기다린다. 양수 대기 시간 동안 입력이 없으면 -1이 반환된다. 종료 여부는 그다음 비교식으로 판단한다.",
+      "example": "예제 18의 >= 0은 [-1, 0, 32, 27]에서 [False, True, True, True]다.",
+      "trap": ">= 0을 ESC만 종료하는 조건으로 읽지 마라. 이 조건은 어떤 키든 값이 0 이상이면 참이다.",
+      "questionIds": [
+        "p-q09",
+        "p-q10",
+        "p-q73"
+      ]
+    },
+    {
+      "id": "cram-callback",
+      "title": "콜백 등록에는 함수 이름",
+      "cue": "setMouseCallback(창 이름, ____)가 보일 때",
+      "rule": "개발자가 함수를 정의하고 등록하면 사건 발생 시 시스템이 호출한다. 등록할 때는 함수 이름을 전달한다.",
+      "example": "cv2.setMouseCallback(title1, onMouse)에서 빈칸은 onMouse다.",
+      "trap": "onMouse()를 넣으면 등록 전에 함수를 호출하려고 한다. 함수 객체와 호출식을 구별하라.",
+      "questionIds": [
+        "p-q14",
+        "p-q16"
+      ]
+    },
+    {
+      "id": "cram-mouse",
+      "title": "버튼 방향과 누름·떼기를 나누기",
+      "cue": "EVENT_로 시작하는 마우스 상수와 if/elif가 보일 때",
+      "rule": "LBUTTON은 왼쪽, RBUTTON은 오른쪽이다. DOWN은 누름, UP은 뗌이다. 사건과 일치하는 분기의 본문만 추적한다.",
+      "example": "연습문제 10번의 오른쪽 누름은 cv2.EVENT_RBUTTONDOWN이며 클릭점을 중심으로 반지름 20인 원을 그린다.",
+      "trap": "예제 04의 오른쪽 누름 출력과 오른쪽 버튼 떼기 출력을 혼동하지 마라.",
+      "questionIds": [
+        "p-q15",
+        "p-q16"
+      ]
+    },
+    {
+      "id": "cram-bgr",
+      "title": "색 순서와 덮어쓴 순서 보기",
+      "cue": "컬러 튜플 또는 특정 화소의 BGR 값을 물을 때",
+      "rule": "일반적인 OpenCV 컬러 영상은 B, G, R 순서다. 같은 화소를 나중에 다시 그리면 그 위치의 색이 바뀔 수 있다.",
+      "example": "(0, 0, 255)는 빨강이다. 예제 07의 image[50, 50]은 뒤에서 그린 파란 사각형의 색 [255, 0, 0]이다.",
+      "trap": "처음 그린 직선 색만 보고 답하지 마라. 문제의 좌표가 나중 도형에도 포함되는지 끝까지 확인하라.",
+      "questionIds": [
+        "p-q22",
+        "p-q25",
+        "p-q26"
+      ]
+    },
+    {
+      "id": "cram-rectangle",
+      "title": "사각형의 두 가지 인수 형식",
+      "cue": "rectangle의 좌표 인수가 두 점인지 4원소 튜플인지 볼 때",
+      "rule": "두 점은 (x1, y1), (x2, y2)다. Rect 튜플은 (x, y, 폭, 높이)다. 두께 -1 또는 FILLED는 내부 채움이다.",
+      "example": "roi=(50, 200, 200, 100)의 기하학적 영역은 마지막 포함 화소가 (249, 299)다. (400, 200, 100, 100)의 마지막 두 수는 끝 좌표가 아니다.",
+      "trap": "Rect가 지정한 영역과 두꺼운 윤곽선의 실제 색칠 범위를 섞지 마라. 두 점 형식은 끝점을 포함한다.",
+      "questionIds": [
+        "p-q21",
+        "p-q24",
+        "p-q64",
+        "p-q67"
+      ]
+    },
+    {
+      "id": "cram-circle",
+      "title": "중심·반지름·다음 클릭 상태 추적",
+      "cue": "circle, ellipse, pt, radius가 보일 때",
+      "rule": "circle의 숫자는 반지름이며 지름은 두 배다. 영상 한가운데를 원의 중심으로 삼을 때는 (열//2, 행//2)를 쓴다. 두 번 클릭하는 코드는 그린 뒤 pt 초기화까지 확인한다.",
+      "example": "500열·300행 영상의 중심은 (250, 150)이다. 두 클릭점의 차이가 30, 40이면 반지름은 sqrt(30²+40²)=50이다.",
+      "trap": "ellipse의 size도 반지름 값이다. 원을 그린 뒤 pt=(-1, -1)로 초기화되면 다음 클릭은 새 시작점이다.",
+      "questionIds": [
+        "p-q30",
+        "p-q31",
+        "p-q32",
+        "p-q34",
+        "p-q68"
+      ]
+    },
+    {
+      "id": "cram-read",
+      "title": "읽기 플래그로 차원 먼저 판단",
+      "cue": "imread(파일, 옵션) 또는 ndim을 물을 때",
+      "rule": "IMREAD_GRAYSCALE은 보통 2차원 1채널, IMREAD_COLOR는 3차원 BGR 3채널이다. IMREAD_UNCHANGED는 파일의 깊이와 채널을 유지한다.",
+      "example": "컬러 파일을 GRAYSCALE과 COLOR로 각각 읽으면 color2gray.ndim, color2color.ndim은 2, 3이다.",
+      "trap": "원래 파일이 컬러라는 이유만으로 읽은 배열도 무조건 3차원이라고 답하지 마라. 옵션을 먼저 보라.",
+      "questionIds": [
+        "p-q35",
+        "p-q37",
+        "p-q38"
+      ]
+    },
+    {
+      "id": "cram-save",
+      "title": "JPEG 품질과 PNG 압축은 다른 숫자",
+      "cue": "imwrite의 옵션 이름과 값이 빈칸일 때",
+      "rule": "JPEG_QUALITY는 0~100이고 최고 설정은 100이다. PNG_COMPRESSION은 0~9이며 화질 점수가 아닌 압축 수준이다.",
+      "example": "연습문제 13번은 JPEG 품질 100, PNG 압축 수준 0으로 저장한다. PNG 0과 9는 모두 화소를 무손실로 복원한다.",
+      "trap": "PNG의 0을 최저 화질로 읽거나 JPEG 품질 100을 완전 무손실로 읽지 마라.",
+      "questionIds": [
+        "p-q39"
+      ]
+    },
+    {
+      "id": "cram-depth",
+      "title": "곱셈을 먼저 하고 자료형 변환",
+      "cue": "np.uint16(...), np.float32(...), astype(\"uint8\")가 보일 때",
+      "rule": "괄호 안 산술식을 먼저 계산한 다음 지정 자료형으로 바꾼다. 양수 실수의 uint8 변환은 소수 부분을 버린다.",
+      "example": "예제 16의 189×(65535/255)는 189×257=48573이다. 예제 14의 0.7456989×255는 uint8로 190이 된다.",
+      "trap": "uint8로 바꾼다는 말을 반올림이라고 외우지 마라. 이 예제는 값의 범위와 변환 순서도 함께 봐야 한다.",
+      "questionIds": [
+        "p-q41",
+        "p-q70"
+      ]
+    },
+    {
+      "id": "cram-capture",
+      "title": "읽기는 read, 저장은 write",
+      "cue": "VideoCapture, VideoWriter, cap.____(), writer.____(frame)이 보일 때",
+      "rule": "정수 0은 첫 카메라를 뜻한다. read()는 성공 여부 ret와 frame을 받고, write(frame)은 한 프레임을 파일에 기록한다.",
+      "example": "cap.read()는 ret, frame을 돌려준다. writer.write(frame)은 받은 프레임을 저장한다.",
+      "trap": "빈칸 뒤에 이미 ()가 있으면 read만 쓴다. read()를 다시 넣으면 cap.read()()가 되어 틀린 코드다.",
+      "questionIds": [
+        "p-q42",
+        "p-q43",
+        "p-q47",
+        "p-q48",
+        "p-q71"
+      ]
+    },
+    {
+      "id": "cram-roi",
+      "title": "관심 영역은 y 범위를 먼저",
+      "cue": "frame[y:y+h, x:x+w] 또는 roi.shape가 보일 때",
+      "rule": "좌표는 (x, y)이지만 슬라이스는 [행, 열]=[y, x]다. 끝은 포함하지 않으므로 길이는 끝-시작이다.",
+      "example": "x=200, y=100, w=100, h=200이면 [100:300, 200:300]이며 roi.shape는 (200, 100, 3)이다.",
+      "trap": "두 범위를 뒤집으면 세로와 가로도 바뀐다. 슬라이스 끝 300과 사각형의 포함 끝점 300도 구별하라.",
+      "questionIds": [
+        "p-q50",
+        "p-q51"
+      ]
+    },
+    {
+      "id": "cram-saturation",
+      "title": "G만 더하고 255에서 멈추기",
+      "cue": "roi[:, :, 채널] = cv2.add(...) 또는 split/merge가 보일 때",
+      "rule": "BGR의 채널 번호는 B=0, G=1, R=2다. cv2.add의 uint8 덧셈은 255에서 포화한다. 합칠 때는 원래 BGR 순서를 유지한다.",
+      "example": "연습문제 16번에서 G=230에 50을 더하면 255다. 예제 20의 합치기 목록은 [blue, green, red]다.",
+      "trap": "일반 NumPy uint8 덧셈의 순환 결과와 섞지 마라. 빨간 테두리를 그린 뒤 그 테두리 화소를 읽는 상황도 별개다.",
+      "questionIds": [
+        "p-q52",
+        "p-q53",
+        "p-q54",
+        "p-q57"
+      ]
+    },
+    {
+      "id": "cram-boundary",
+      "title": "분기 경계는 부등호 그대로",
+      "cue": "100 <= frame_cnt < 200 같은 범위가 이어질 때",
+      "rule": "왼쪽 <= 값은 포함하고 오른쪽 < 값은 제외한다. frame_cnt += 1의 앞인지 뒤인지 먼저 확인한 뒤 한 분기만 고른다.",
+      "example": "증가 후 99, 100, 200, 300이면 none, blue, green, red다. 400은 어느 증가 구간에도 속하지 않는다.",
+      "trap": "200을 blue 구간에 넣거나 400까지 red로 처리하지 마라. 각 질문의 프레임 번호가 증가 후 값인지 읽어라.",
+      "questionIds": [
+        "p-q55",
+        "p-q56",
+        "p-q58"
+      ]
+    },
+    {
+      "id": "cram-fps",
+      "title": "FPS는 1초를 프레임 수로 나누기",
+      "cue": "fps, delay, waitKey(delay)가 함께 보일 때",
+      "rule": "프레임 간 대기 시간의 기본 계산은 1000/fps 밀리초다. 코드가 round를 쓰는지 int를 쓰는지 확인한다.",
+      "example": "예제 19는 fps=29.97, delay=round(1000/fps)이므로 delay는 33이다.",
+      "trap": "1000을 빠뜨리고 초 단위로 답하지 마라. delay 변수의 계산값과 실제 처리 속도를 같은 것으로 보지도 마라.",
+      "questionIds": [
+        "p-q46"
+      ]
+    },
+    {
+      "id": "cram-matplotlib",
+      "title": "Matplotlib의 색과 격자 크기",
+      "cue": "plt.imshow, cvtColor, cmap, subplots가 보일 때",
+      "rule": "OpenCV의 BGR은 RGB로 바꿔 Matplotlib에 전달한다. 명암도는 cmap=\"gray\"를 쓴다. subplots의 nrows·ncols와 난수 배열 크기는 서로 따로 읽는다.",
+      "example": "예제 22의 axs.shape는 (2, 3), grid.shape는 (5, 5)다. 난수의 실제 값은 실행마다 달라질 수 있다.",
+      "trap": "cmap의 따옴표가 이미 코드에 있으면 빈칸에 gray만 넣는다. 난수값이 달라져도 배열의 shape가 바뀌지는 않는다.",
+      "questionIds": [
+        "p-q59",
+        "p-q61",
+        "p-q74",
+        "p-q75",
+        "p-q76",
+        "p-q77"
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "questionId": "p-cram-01",
+      "priority": 1,
+      "likelyBlankOrOutput": "결과 예측",
+      "recognize": "rectangle의 마지막이 -1, cv2.LINE_4, 1로 끝나면 마지막 1에 주목하세요.",
+      "reason": "shift가 있으면 눈에 적힌 점을 그대로 답하면 안 됩니다. 두 점의 x와 y를 모두 같은 수로 나눕니다.",
+      "trap": "pt2=(200,300)을 그대로 답하거나, 앞의 line 좌표까지 함께 나누지 마세요."
+    },
+    {
+      "questionId": "p-cram-02",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "rectangle(image,...,-1,cv2.LINE_4,____)에서 빈칸은 shift입니다.",
+      "reason": "두께 -1 다음에는 선 종류, 그다음에는 좌표를 읽는 shift가 옵니다. 인수의 자리부터 구분하면 풀 수 있습니다.",
+      "trap": "사각형을 채우는 -1이나 선 종류 LINE_4를 마지막 빈칸에 넣지 마세요."
+    },
+    {
+      "questionId": "p-cram-03",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "test.png와 IMWRITE_PNG_COMPRESSION이 보이면 JPEG 품질 값과 구분하세요.",
+      "reason": "JPEG는 품질, PNG는 압축 수준을 조절합니다. 이 문제는 PNG 압축을 최소로 하는 값을 묻습니다.",
+      "trap": "JPEG 최대 품질 100을 PNG 압축 칸에 넣거나, PNG 9가 더 선명하다고 생각하지 마세요."
+    },
+    {
+      "questionId": "p-cram-04",
+      "priority": 1,
+      "likelyBlankOrOutput": "결과 예측",
+      "recognize": "EVENT_LBUTTONDOWN 아래에 (x,y),(x+30,y+30)이 있으면 두 좌표에 각각 30을 더합니다.",
+      "reason": "왼쪽 클릭은 사각형 분기를 실행합니다. 좌표식을 직접 대입하면 클릭 위치가 바뀌어도 풀 수 있습니다.",
+      "trap": "클릭점을 사각형 중심으로 보고 15를 빼지 마세요. 오른쪽 클릭의 원 분기와도 구분하세요."
+    },
+    {
+      "questionId": "p-cram-05",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "circle(image,(x,y),____,(0,255,0),2)에서 중심 다음 빈칸은 반지름입니다.",
+      "reason": "중심·반지름·색·두께의 자리를 구분하면 숫자를 바꾼 문제도 풀 수 있습니다.",
+      "trap": "지름 40을 그대로 넣거나 마지막 두께 2와 혼동하지 마세요."
+    },
+    {
+      "questionId": "p-cram-06",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "rectangle의 두 점 다음에는 색 튜플이 옵니다. BGR 순서의 빨강을 고르세요.",
+      "reason": "BGR의 세 번째가 빨강이라는 원리로 풀면 파랑·초록 변형도 구분할 수 있습니다.",
+      "trap": "(255,0,0)은 BGR에서 파랑입니다. 튜플 괄호를 빼면 인수 구조도 바뀝니다."
+    },
+    {
+      "questionId": "p-cram-07",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "uint8 채널에 밝기를 더하고 최대 255를 유지해야 하면 포화 덧셈을 떠올리세요.",
+      "reason": "ROI를 선택하는 코드와 더하는 코드는 역할이 다릅니다. 이 빈칸은 G 채널 값을 계산하는 함수 자리입니다.",
+      "trap": "np.add나 일반 +는 같은 포화 규칙이 아닙니다. 빈칸에 add만 쓰면 cv2 모듈의 함수를 가리키지 못합니다."
+    },
+    {
+      "questionId": "p-cram-08",
+      "priority": 1,
+      "likelyBlankOrOutput": "코드 빈칸",
+      "recognize": "image[:] = ____는 영상 전체를 한 밝기로 채우는 대입입니다.",
+      "reason": "배열 모양·창 크기·화소 밝기는 서로 다른 값입니다. 현재 줄이 어느 것을 설정하는지 먼저 보면 됩니다.",
+      "trap": "창 크기의 600이나 500을 넣지 마세요. 255를 넣으면 회색 100이 아니라 흰 영상이 됩니다."
+    },
+    {
+      "questionId": "p-q05",
+      "priority": 1,
+      "likelyBlankOrOutput": "namedWindow의 flags 빈칸: 크기 조절 가능한 창",
+      "recognize": "AUTOSIZE와 NORMAL 창을 각각 만든 뒤 같은 resizeWindow 호출을 비교하는 예제다.",
+      "reason": "지정 연습문제 2번은 두 창 옵션의 차이, 6번은 창 크기 변경을 직접 요구한다.",
+      "trap": "기본값은 NORMAL이 아니라 AUTOSIZE다. 상수 앞의 cv2.도 포함해 답하라.",
+      "strategyIds": [
+        "cram-window"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex02",
+      "exerciseNumbers": [
+        2,
+        6
+      ]
+    },
+    {
+      "questionId": "p-q06",
+      "priority": 1,
+      "likelyBlankOrOutput": "창을 바꾼 뒤 image.shape 결과",
+      "recognize": "배열은 (300, 400)으로 만들고 창은 600, 500으로 요청한다.",
+      "reason": "지정 연습문제 6번의 핵심은 배열과 표시 창의 크기를 구별하는 것이다.",
+      "trap": "창이 커져도 배열을 resize한 것이 아니므로 원본 shape는 그대로다.",
+      "strategyIds": [
+        "cram-shape",
+        "cram-window"
+      ],
+      "questionType": "output",
+      "originalCodeId": "pdf-ex06",
+      "exerciseNumbers": [
+        6
+      ]
+    },
+    {
+      "questionId": "p-q07",
+      "priority": 1,
+      "likelyBlankOrOutput": "resizeWindow의 너비·높이 인수 빈칸",
+      "recognize": "요구는 500행 600열 창이고 함수는 창 이름 다음에 두 숫자를 받는다.",
+      "reason": "지정 연습문제 6번의 원본 호출을 그대로 확인할 수 있다.",
+      "trap": "배열의 행·열 순서와 달리 이 함수는 600, 500 순서다.",
+      "strategyIds": [
+        "cram-window"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex06",
+      "exerciseNumbers": [
+        6
+      ]
+    },
+    {
+      "questionId": "p-q04",
+      "priority": 1,
+      "likelyBlankOrOutput": "컬러 배열의 shape 튜플 빈칸",
+      "recognize": "np.zeros의 크기 뒤에 np.uint8이 있고, 아래에 세 성분 색과 도형이 나온다.",
+      "reason": "지정 연습문제 5번의 컬러 영상 크기와 같고 9번의 컬러 도형 생성에도 쓰인다.",
+      "trap": "400×600을 가로×세로로 읽지 마라. 마지막 3은 BGR 채널 수다.",
+      "strategyIds": [
+        "cram-shape"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex07",
+      "exerciseNumbers": [
+        5,
+        9
+      ]
+    },
+    {
+      "questionId": "p-q09",
+      "priority": 1,
+      "likelyBlankOrOutput": "키 입력까지 기다리는 waitKey 인수 빈칸",
+      "recognize": "두 imshow 뒤에 한 번의 waitKey와 창 정리가 나온다.",
+      "reason": "지정 연습문제 5·6·9·10번의 정지 영상 표시 코드에서 반복해서 쓰이는 흐름이다.",
+      "trap": "0은 즉시 종료가 아니라 키 입력까지 기다리라는 뜻이다.",
+      "strategyIds": [
+        "cram-key"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex01",
+      "exerciseNumbers": [
+        5
+      ]
+    },
+    {
+      "questionId": "p-q14",
+      "priority": 1,
+      "likelyBlankOrOutput": "마우스 콜백으로 등록할 함수 이름 빈칸",
+      "recognize": "위에는 onMouse 정의, 아래에는 setMouseCallback(title1, ____)가 나온다.",
+      "reason": "지정 연습문제 1번의 콜백 개념과 10번의 마우스 프로그램을 직접 연결한다.",
+      "trap": "함수 이름 onMouse를 전달한다. 괄호를 붙인 onMouse()는 등록할 함수 객체가 아니다.",
+      "strategyIds": [
+        "cram-callback"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex04",
+      "exerciseNumbers": [
+        1,
+        10
+      ]
+    },
+    {
+      "questionId": "p-q15",
+      "priority": 1,
+      "likelyBlankOrOutput": "오른쪽 버튼 누름 이벤트 상수 빈칸",
+      "recognize": "원 그리기 분기와 사각형 그리기 분기가 if/elif로 나뉜다.",
+      "reason": "지정 연습문제 10번의 첫 요구가 오른쪽 클릭으로 원을 그리는 것이다.",
+      "trap": "RBUTTON은 오른쪽이며 DOWN은 누름이다. UP이나 LBUTTON으로 바꾸지 마라.",
+      "strategyIds": [
+        "cram-mouse"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex10",
+      "exerciseNumbers": [
+        10
+      ]
+    },
+    {
+      "questionId": "p-q21",
+      "priority": 1,
+      "likelyBlankOrOutput": "사각형 내부 채움의 두께값 빈칸",
+      "recognize": "두 점과 빨강 (0, 0, 255) 뒤의 마지막 인수를 묻는다.",
+      "reason": "지정 연습문제 9번의 빨간 채움 사각형 원본 호출이다.",
+      "trap": "양수 1은 윤곽선 두께다. 내부를 채우는 -1과 구별하라.",
+      "strategyIds": [
+        "cram-rectangle"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex09",
+      "exerciseNumbers": [
+        9
+      ]
+    },
+    {
+      "questionId": "p-q25",
+      "priority": 1,
+      "likelyBlankOrOutput": "사각형 안쪽·바깥쪽 화소의 BGR 결과",
+      "recognize": "검정 배열에 빨간 사각형을 채운 뒤 두 위치를 읽는다.",
+      "reason": "지정 연습문제 9번의 실행 결과를 화소값으로 확인하는 문제다.",
+      "trap": "image[행, 열] 순서로 위치를 확인하고, 바깥 배경은 원래 0이라는 점을 기억하라.",
+      "strategyIds": [
+        "cram-bgr",
+        "cram-rectangle"
+      ],
+      "questionType": "output",
+      "originalCodeId": "pdf-ex09",
+      "exerciseNumbers": [
+        9
+      ]
+    },
+    {
+      "questionId": "p-q39",
+      "priority": 1,
+      "likelyBlankOrOutput": "JPEG 최고 품질값 빈칸",
+      "recognize": "test.jpg와 test.png를 연속 저장하며 첫 옵션은 IMWRITE_JPEG_QUALITY다.",
+      "reason": "지정 연습문제 13번이 두 파일을 좋은 화질로 저장하라고 요구한다.",
+      "trap": "JPEG 품질 100과 바로 다음 PNG 압축 0을 서로 바꾸지 마라.",
+      "strategyIds": [
+        "cram-save"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex13",
+      "exerciseNumbers": [
+        13
+      ]
+    },
+    {
+      "questionId": "p-q42",
+      "priority": 1,
+      "likelyBlankOrOutput": "VideoCapture의 카메라 장치 인수 빈칸",
+      "recognize": "문자열 경로가 아니라 기본 카메라를 연 뒤 속성을 지정한다.",
+      "reason": "지정 연습문제 16번의 입력은 PC 카메라이므로 장치 인수부터 확인한다.",
+      "trap": "정수 0과 문자열 \"0\"은 같은 입력이 아니다. 파일 경로를 외워 넣지도 마라.",
+      "strategyIds": [
+        "cram-capture"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex18",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q50",
+      "priority": 1,
+      "likelyBlankOrOutput": "관심 영역 슬라이스 빈칸",
+      "recognize": "x, y, w, h = 200, 100, 100, 200을 먼저 지정한다.",
+      "reason": "지정 연습문제 16번의 관심 영역 위치와 크기를 그대로 묻는다.",
+      "trap": "y:y+h를 먼저, x:x+w를 나중에 쓴다. x와 y 범위를 뒤집지 마라.",
+      "strategyIds": [
+        "cram-roi"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex16",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q51",
+      "priority": 1,
+      "likelyBlankOrOutput": "잘라 낸 roi.shape 결과",
+      "recognize": "ROI는 세로 200·가로 100이며 원래 프레임은 BGR 3채널이다.",
+      "reason": "지정 연습문제 16번의 영역 지정이 맞는지 확인하는 가장 직접적인 결과다.",
+      "trap": "슬라이스 끝을 포함하지 않는다. (100, 200, 3)처럼 폭과 높이를 바꾸지 마라.",
+      "strategyIds": [
+        "cram-roi",
+        "cram-shape"
+      ],
+      "questionType": "output",
+      "originalCodeId": "pdf-ex16",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q52",
+      "priority": 1,
+      "likelyBlankOrOutput": "G 채널에 대입할 인덱스 빈칸",
+      "recognize": "roi[:, :, ____]에 cv2.add로 계산한 초록 성분을 다시 대입한다.",
+      "reason": "지정 연습문제 16번은 녹색 성분에만 50을 더하라고 명시한다.",
+      "trap": "BGR의 G는 1이다. 세 번째 축의 채널 번호를 열 번호와 혼동하지 마라.",
+      "strategyIds": [
+        "cram-saturation"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "pdf-ex16",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q53",
+      "priority": 1,
+      "likelyBlankOrOutput": "초록 230에 50을 더한 결과",
+      "recognize": "원본은 uint8 ROI에 cv2.add를 적용하며 질문은 테두리가 덮기 전을 묻는다.",
+      "reason": "지정 연습문제 16번의 밝기 증가가 어떤 수치 결과를 만드는지 확인한다.",
+      "trap": "280을 그대로 쓰거나 NumPy 순환값을 쓰지 마라. cv2.add는 255에서 포화한다.",
+      "strategyIds": [
+        "cram-saturation"
+      ],
+      "questionType": "output",
+      "originalCodeId": "pdf-ex16",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q02",
+      "priority": 2,
+      "likelyBlankOrOutput": "전체 대입한 화소 밝기 결과",
+      "recognize": "강의 예제 01은 (200, 400) 배열에 image[:] = 200을 대입한다.",
+      "reason": "지정 연습문제 5번과 같은 생성·대입·표시 흐름이지만 원본 강의의 숫자가 다르다.",
+      "trap": "연습문제의 회색값 100을 여기에도 자동으로 쓰지 마라. 이 코드는 200이다.",
+      "strategyIds": [
+        "cram-fill"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex01",
+      "exerciseNumbers": [
+        5
+      ]
+    },
+    {
+      "questionId": "p-q30",
+      "priority": 2,
+      "likelyBlankOrOutput": "영상 가운데 좌표를 만드는 식 빈칸",
+      "recognize": "300행 500열 영상에서 center를 만든 다음 원을 그린다.",
+      "reason": "지정 연습문제 10번과 같은 원 그리기의 중심 좌표 인수를 복습할 수 있다.",
+      "trap": "좌표는 x, y이므로 shape[1]의 절반이 먼저다. 나눗셈은 정수 //다.",
+      "strategyIds": [
+        "cram-circle",
+        "cram-shape"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex09",
+      "exerciseNumbers": [
+        10
+      ]
+    },
+    {
+      "questionId": "p-q16",
+      "priority": 2,
+      "likelyBlankOrOutput": "오른쪽 누름 사건 한 번의 콘솔 출력",
+      "recognize": "Mouse Event1 창에만 콜백이 등록되어 있고 사건별 print가 나뉜다.",
+      "reason": "지정 연습문제 1번의 호출 흐름을 원본 이벤트 코드의 출력으로 확인한다.",
+      "trap": "오른쪽 누름에 해당하는 문장만 쓴다. 버튼 떼기나 더블클릭까지 함께 실행하지 마라.",
+      "strategyIds": [
+        "cram-callback",
+        "cram-mouse"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex04",
+      "exerciseNumbers": [
+        1,
+        10
+      ]
+    },
+    {
+      "questionId": "p-q22",
+      "priority": 2,
+      "likelyBlankOrOutput": "초록 채움 영역 내부 화소의 BGR 결과",
+      "recognize": "마지막 rectangle은 Rect 튜플 (400, 200, 100, 100)과 FILLED를 쓴다.",
+      "reason": "지정 연습문제 5·9번의 도형 결과와 연결되는 강의 원본이다.",
+      "trap": "image[250, 450]은 x=450, y=250이다. Rect의 폭·높이 안쪽인지 확인하라.",
+      "strategyIds": [
+        "cram-bgr",
+        "cram-rectangle"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex07",
+      "exerciseNumbers": [
+        5,
+        9
+      ]
+    },
+    {
+      "questionId": "p-q24",
+      "priority": 2,
+      "likelyBlankOrOutput": "Rect 영역의 마지막 포함 좌표 결과",
+      "recognize": "roi는 (50, 200, 200, 100)이며 네 수가 x, y, 폭, 높이다.",
+      "reason": "사각형 두 점 형식만 외웠을 때 생기는 실수를 점검하는 강의 원본이다.",
+      "trap": "x+폭, y+높이가 아니라 마지막 포함 화소는 각각 1을 뺀다. 선 두께로 늘어난 범위를 묻는 문제도 아니다.",
+      "strategyIds": [
+        "cram-rectangle"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex07",
+      "exerciseNumbers": [
+        5,
+        9
+      ]
+    },
+    {
+      "questionId": "p-q26",
+      "priority": 2,
+      "likelyBlankOrOutput": "나중에 그린 도형이 덮은 화소 결과",
+      "recognize": "빨간 직선을 그린 뒤 같은 시작점을 쓰는 파란 사각형을 그린다.",
+      "reason": "지정 연습문제 5번처럼 여러 도형을 그리는 코드에서는 실행 순서가 결과를 바꾼다.",
+      "trap": "첫 번째 도형 색에서 멈추지 말고 그 위치를 마지막으로 그린 호출을 찾으라.",
+      "strategyIds": [
+        "cram-bgr"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex07",
+      "exerciseNumbers": [
+        5,
+        9
+      ]
+    },
+    {
+      "questionId": "p-q35",
+      "priority": 2,
+      "likelyBlankOrOutput": "컬러 파일을 명암도로 읽는 플래그 빈칸",
+      "recognize": "같은 read_color.jpg를 서로 다른 옵션으로 두 번 읽는다.",
+      "reason": "지정 연습문제 13번의 영상 적재를 읽기 옵션 비교까지 넓힌 강의 원본이다.",
+      "trap": "원본 파일이 컬러여도 GRAYSCALE로 읽은 배열은 1채널이다.",
+      "strategyIds": [
+        "cram-read"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex13",
+      "exerciseNumbers": [
+        13
+      ]
+    },
+    {
+      "questionId": "p-q37",
+      "priority": 2,
+      "likelyBlankOrOutput": "두 읽기 옵션이 만든 ndim 결과",
+      "recognize": "color2gray와 color2color는 같은 파일에서 만들지만 읽기 옵션이 다르다.",
+      "reason": "읽기 플래그를 이름만 외우는 데서 나아가 실제 배열의 차원까지 확인한다.",
+      "trap": "ndim은 채널 수를 직접 말하는 속성이 아니다. 이 두 배열에서는 2차원과 3차원이다.",
+      "strategyIds": [
+        "cram-read"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex13",
+      "exerciseNumbers": [
+        13
+      ]
+    },
+    {
+      "questionId": "p-q43",
+      "priority": 2,
+      "likelyBlankOrOutput": "성공 여부와 다음 프레임을 받는 메서드 빈칸",
+      "recognize": "ret, frame = capture.____() 형태가 반복문 안에 나온다.",
+      "reason": "지정 연습문제 16번의 카메라 읽기와 강의 동영상 읽기가 공유하는 핵심 호출이다.",
+      "trap": "빈칸은 메서드 이름 read다. 뒤에 괄호가 이미 있으므로 read()를 넣지 마라.",
+      "strategyIds": [
+        "cram-capture"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex20",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q48",
+      "priority": 2,
+      "likelyBlankOrOutput": "동영상 파일에 한 프레임 기록하는 메서드 빈칸",
+      "recognize": "VideoWriter를 열고 반복문 안에서 writer.____(frame)을 호출한다.",
+      "reason": "카메라 입력을 처리하는 강의 원본의 후속 흐름으로, read와 write를 짝으로 볼 수 있다.",
+      "trap": "read는 입력, write는 출력이다. 이 빈칸에도 괄호나 writer.를 덧붙이지 마라.",
+      "strategyIds": [
+        "cram-capture"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex19",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q46",
+      "priority": 2,
+      "likelyBlankOrOutput": "fps=29.97일 때 delay 계산 결과",
+      "recognize": "카메라 저장 예제는 delay = round(1000/fps)를 그대로 쓴다.",
+      "reason": "강의 원본에서 숫자 대입과 계산만으로 결정할 수 있는 결과 포인트다.",
+      "trap": "밀리초이므로 1000을 나눈다. 변수의 값은 33이며 실제 장치 FPS를 다시 추측할 필요가 없다.",
+      "strategyIds": [
+        "cram-fps"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex19",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q55",
+      "priority": 2,
+      "likelyBlankOrOutput": "프레임 99·100·200·300의 선택 채널 결과",
+      "recognize": "frame_cnt를 1 증가시킨 다음 100 단위 구간을 if/elif로 나눈다.",
+      "reason": "강의 예제 20에서 경계값과 분기 결과를 함께 확인할 수 있다.",
+      "trap": "각 상황은 독립이며 모두 증가 후 번호다. 200은 blue가 아니라 green의 시작이다.",
+      "strategyIds": [
+        "cram-boundary",
+        "cram-saturation"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex20",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q57",
+      "priority": 2,
+      "likelyBlankOrOutput": "분리한 세 채널을 합치는 목록 빈칸",
+      "recognize": "split에서 blue, green, red를 받은 뒤 merge에 목록을 넘긴다.",
+      "reason": "지정 연습문제 16번의 BGR 채널 이해를 강의 원본의 분리·합치기로 확인한다.",
+      "trap": "OpenCV 영상은 [blue, green, red]다. Matplotlib의 RGB 순서로 바꾸지 마라.",
+      "strategyIds": [
+        "cram-saturation"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex20",
+      "exerciseNumbers": [
+        16
+      ]
+    },
+    {
+      "questionId": "p-q59",
+      "priority": 3,
+      "likelyBlankOrOutput": "BGR을 RGB로 바꾸는 변환 상수 빈칸",
+      "recognize": "OpenCV로 읽은 image를 Matplotlib에 표시할 rgb_img로 만든다.",
+      "reason": "지정 8문제의 직접 요구를 본 뒤 살펴볼 강의 후반 원본 포인트다.",
+      "trap": "BGR2GRAY와 목적이 다르다. 원본 코드의 함수 인수 자리에 맞는 상수를 쓴다.",
+      "strategyIds": [
+        "cram-matplotlib"
+      ],
+      "questionType": "blank",
+      "originalCodeId": "ch4-ex21",
+      "exerciseNumbers": []
+    },
+    {
+      "questionId": "p-q75",
+      "priority": 3,
+      "likelyBlankOrOutput": "Axes 배열과 난수 배열의 shape 결과",
+      "recognize": "subplots는 2행 3열, np.random.rand는 5행 5열이다.",
+      "reason": "지정 범위의 핵심 코드 뒤에 강의 후반 예제의 결정적인 결과만 확인할 수 있다.",
+      "trap": "그림은 여섯 개여도 axs.shape는 (6,)이 아니다. 실제 난수값을 맞힐 필요도 없다.",
+      "strategyIds": [
+        "cram-matplotlib",
+        "cram-shape"
+      ],
+      "questionType": "output",
+      "originalCodeId": "ch4-ex22",
+      "exerciseNumbers": []
+    }
+  ]
+}

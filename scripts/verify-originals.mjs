@@ -27,7 +27,7 @@ for(const q of practice.questions){
   assert.ok(q.codeExplanation?.length,'Missing code explanation: '+q.id);
   assert.equal(q.source.file,s.source.file);assert.deepEqual(q.source.page,s.source.page);
 }
-assert.equal(blanks,30);assert.equal(outputs,33);
+assert.equal(blanks,36);assert.equal(outputs,35);
 for(const c of practice.concepts){
   assert.ok(c.modelAnswer?.trim()&&c.resultDescription?.trim(),c.id+': direct answer and result');
   assert.ok(c.originalCode?.trim()&&c.codeExplanation?.length,c.id+': code and explanation');
