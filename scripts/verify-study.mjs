@@ -18,6 +18,7 @@ test('four weeks preserve all eighteen original diagnostic items',()=>{
     for(const item of w.items){
       for(const k of ['id','title','definition','example'])text(item[k]);
       assert.ok(item.keyPoints.length>=3);item.keyPoints.forEach(text);assert.ok(item.pitfalls.length);item.pitfalls.forEach(text);
+      (item.details||[]).forEach(d=>{text(d.title);text(d.body);});
       assert.ok(item.questionIds.length&&item.conceptIds.length);
       item.questionIds.forEach(id=>assert.ok(questionMap.has(id),'unknown question '+id));
       item.conceptIds.forEach(id=>assert.ok(conceptMap.has(id),'unknown concept '+id));
@@ -59,6 +60,18 @@ test('weekly overview renders all items without mixing original and variant labe
 });
 test('weekly practice contains only the identified original questions',()=>{
   for(const w of data.weeks){const selected=view.weeklyQuestions(w.id);assert.equal(selected.length,w.items.length);assert.deepEqual(Array.from(selected,q=>q.id),w.items.map(i=>i.primaryQuestionId));assert.ok(selected.every(q=>q.tags.includes('원문')));}
+});
+test('three-bit guide handles every boundary and the original sample sequence',()=>{
+  for(const [input,index,bits] of [[0,0,'000'],[.249999,0,'000'],[.25,1,'001'],[1.1,4,'100'],[1.25,5,'101'],[1.6,6,'110'],[2,7,'111']]){
+    const r=view.threeBit(input);assert.equal(r.index,index);assert.equal(r.bits,bits);
+  }
+  for(const invalid of ['', '  ', -1, 2.1, NaN, 'hello'])assert.equal(view.threeBit(invalid),null);
+  assert.equal([1.1,1.6,2,1.6,1.1,.3,0,.3].map(n=>view.threeBit(n).bits).join(''),'100110111110100001000001');
+  const guide=view.renderGuide('three-bit');
+  assert.equal((guide.match(/data-range-index=/g)||[]).length,8);
+  assert.equal((guide.match(/<small>\d번째<\/small>/g)||[]).length,8);
+  assert.ok(guide.includes('4의 자리')&&guide.includes('2의 자리')&&guide.includes('1의 자리'));
+  assert.equal(view.renderGuide(undefined),'');
 });
 test('home, separate lecture folders and audit render',()=>{
   assert.equal((view.home().match(/class="week-overview"/g)||[]).length,4);
