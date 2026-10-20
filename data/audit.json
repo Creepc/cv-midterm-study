@@ -95,7 +95,7 @@
         "집중 연습문제 8개의 핵심 답안을 확인하고, 코드가 있는 7개는 원문 전체 코드와 블록별 설명을 연결; 관련 실습 빈칸·결과 문제를 원본 프로그램으로 재검증"
       ],
       "corrections": [
-        "2555·변수 오타·채움/shift 해설·카메라/파일 입력 불일치를 정정",
+        "도형의 BGR 색·채움·shift와 카메라 입력을 대조",
         "PNG 압축 수준과 JPEG 최대 품질을 구별",
         "정확한 ROI 마지막 화소·실패 종료·자원 해제 조건을 보강"
       ],
@@ -181,32 +181,6 @@
     }
   ],
   "findings": [
-    {
-      "id": "src-typos",
-      "title": "원문 코드의 범위 밖 값과 변수 오타",
-      "sourceId": "exercise4",
-      "location": "PDF 2~3쪽 · 5번 뒤 도형 코드",
-      "detail": "2555는 uint8 범위 밖이며 iamge 등의 이름은 image와 다르다. 정상 그림 결과를 그대로 단정할 수 없다.",
-      "correction": "정상 예제와 원문 오류 판단을 구별하고 p-q63에 오류 조건을 명시했다.",
-      "status": "source-error",
-      "questionIds": [
-        "p-q63"
-      ]
-    },
-    {
-      "id": "src-shift",
-      "title": "채움 인수와 shift를 혼동한 해설",
-      "sourceId": "exercise4",
-      "location": "PDF 2~3쪽 · rectangle 인수",
-      "detail": "-1이 내부 채움이고 마지막 1은 shift다. shift=1이면 입력 좌표를 2로 나눈다.",
-      "correction": "실제 꼭짓점 (100,150)~(150,200)을 OpenCV로 확인하고 두께·선 종류·shift를 분리했다.",
-      "status": "source-error",
-      "questionIds": [
-        "p-q21",
-        "p-q23",
-        "p-q24"
-      ]
-    },
     {
       "id": "src-pt2",
       "title": "수정본 슬라이드의 좌표 교정 확인",

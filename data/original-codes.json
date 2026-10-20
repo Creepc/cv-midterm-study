@@ -311,13 +311,13 @@
     {
       "id": "pdf-ex05",
       "title": "4장 연습문제 5번 답안 코드",
-      "code": "import numpy as np, cv2\nimage = np.zeros((300, 400), np.uint8)\nimage[:] = 100\ntitle = 'Window'\ncv2.namedWindow(title, cv2.WINDOW_NORMAL)\ncv2.moveWindow(title, 100, 200)\ncv2.imshow(title, image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n\nimport numpy as np, cv2\nimage= np.zeros((400, 600, 3), np.uint8)\nimage[:] = (255, 255, 2555)\npt1, pt2 = (50, 100), (200, 300)\ncv2.line(iamge,pt1,pt2,(0,255,0), 5)\ncv2.rectangle(iㅡㅁge,pt2, (300,400), (0,0,255), -1, cv2.LINE_4, 1)\ncv2.imshow(\"Line & Rectangle\", iamge)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "code": "import numpy as np, cv2\nimage = np.zeros((300, 400), np.uint8)\nimage[:] = 100\ntitle = 'Window'\ncv2.namedWindow(title, cv2.WINDOW_NORMAL)\ncv2.moveWindow(title, 100, 200)\ncv2.imshow(title, image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n\nimport numpy as np, cv2\nimage= np.zeros((400, 600, 3), np.uint8)\nimage[:] = (255, 255, 255)\npt1, pt2 = (50, 100), (200, 300)\ncv2.line(image,pt1,pt2,(0,255,0), 5)\ncv2.rectangle(image,pt2, (300,400), (0,0,255), -1, cv2.LINE_4, 1)\ncv2.imshow(\"Line & Rectangle\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
       "source": {
         "file": "학습진단문제/4장 연습문제.pdf",
         "page": 1,
         "label": "PDF 1~3쪽"
       },
-      "sha256": "8eb9b58001095e30e04a6ed7678b2cc72b3e35971cb06fa4b499199fe05997dc"
+      "sha256": "549b043e0a38c106b2d72d2a54319bfb2c8f798708314f5844839c2f6dd2afe5"
     },
     {
       "id": "pdf-ex06",
