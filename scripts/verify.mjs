@@ -46,6 +46,7 @@ for(const q of data.questions)test(`question ${q.id}`,()=>{
   assert.ok(['theory','practice'].includes(q.track));assert.ok(['choice','blank','output','short'].includes(q.type));assert.ok(Number.isSafeInteger(q.difficulty)&&q.difficulty>=1&&q.difficulty<=3);
   assert.ok(Array.isArray(q.tags)&&q.tags.length>0);q.tags.forEach(x=>text(x,'question tag'));
   if(q.accepted!==undefined){assert.ok(Array.isArray(q.accepted));q.accepted.forEach(x=>text(x,'accepted answer'));}
+  if(q.answerFormat!==undefined){assert.ok(['bits','literal'].includes(q.answerFormat));assert.equal(q.type,'output');}
   if(q.steps!==undefined){assert.ok(Array.isArray(q.steps));q.steps.forEach(x=>text(x,'solution step'));}
   if(q.type==='choice'){assert.ok(Array.isArray(q.choices)&&q.choices.length>=2);q.choices.forEach(x=>text(x,'choice'));assert.equal(new Set(q.choices).size,q.choices.length);assert.ok(q.choices.includes(q.answer),'choice answer must be a displayed choice');}
   checkSource(q.source,q.id);
@@ -83,10 +84,34 @@ test('long integer and binary answers preserve exact digits',()=>{
   assert.equal(grade.check(q,'100110111110100001000000'),false);
 });
 test('code formatting and declared alternatives work',()=>{
-  assert.equal(grade.check({type:'blank',answer:'cv2.EVENT_RBUTTONDOWN'},'EVENT_RBUTTONDOWN'),true);
+  assert.equal(grade.check({type:'blank',answer:'cv2.EVENT_RBUTTONDOWN'},'EVENT_RBUTTONDOWN'),false);
   assert.equal(grade.check({type:'blank',answer:'frame[y:y+h, x:x+w]'},'frame[ y : y + h , x : x + w ]'),true);
   assert.equal(grade.check({type:'blank',answer:'cv2.COLOR_BGR2RGB'},'cv2.COLOR_RGB2BGR'),false);
   assert.equal(grade.check({type:'blank',answer:'cv2.FILLED',accepted:['-1']},'-1'),true);
+});
+test('numeric output rejects malformed numeric tokens',()=>{
+  assert.equal(grade.check({type:'output',answer:'1'},'1e'),false);
+  assert.equal(grade.check({type:'output',answer:'[1,2]'},'[1,,2]'),false);
+  assert.equal(grade.check({type:'output',answer:'[1,-2]'},'1-2'),false);
+});
+test('literal printed outputs preserve case',()=>{
+  assert.equal(grade.check({type:'output',answerFormat:'literal',answer:'upper\nlower'},'UPPER\nLOWER'),false);
+  assert.equal(grade.check({type:'output',answerFormat:'literal',answer:'[False, True]'},'[false, true]'),false);
+  assert.equal(grade.check({type:'output',answerFormat:'literal',answer:'CV_8UC1, CV_8UC3'},'CV_8UC1, CV_8UC3'),true);
+});
+test('code blanks retain Python syntax and identifier case',()=>{
+  assert.equal(grade.check({type:'blank',answer:'T[r]'},'t[r]'),false);
+  assert.equal(grade.check({type:'blank',answer:'11,12'},'11 12'),false);
+  assert.equal(grade.check({type:'blank',answer:'(400,600,3)'},'400,600,3'),false);
+  assert.equal(grade.check({type:'blank',answer:'gray'},'"gray"'),false);
+  assert.equal(grade.check({type:'blank',answer:'cv2.WINDOW_NORMAL'},'cv2.window_normal'),false);
+  assert.equal(grade.check({type:'blank',answer:'"Mouse Event"'},'"MouseEvent"'),false);
+  assert.equal(grade.check({type:'blank',answer:'read'},'read()'),false);
+  assert.equal(grade.check({type:'blank',answer:'onMouse'},'on Mouse'),false);
+  assert.equal(grade.check({type:'blank',answer:'100'},'1 0 0'),false);
+  assert.equal(grade.check({type:'blank',answer:'VideoWriter_fourcc'},'Video Writer_fourcc'),false);
+  assert.equal(grade.check({type:'blank',answer:'x**2'},'x * * 2'),false);
+  assert.equal(grade.check({type:'blank',answer:'255 - pixel'},'255-pixel'),true);
 });
 for(const q of data.questions)test(`grading declared answers for ${q.id}`,()=>{
   const actual=q.type==='choice'?String(q.choices.indexOf(q.answer)):q.answer;
@@ -99,6 +124,11 @@ const qid=data.questions[0]?.id,cid=data.concepts[0]?.id;
 assert.ok(qid&&cid,'Study data must contain questions and concepts');
 const empty=()=>({records:{},read:[],bookmarks:[],qBookmarks:[],exerciseRead:[],exams:[],days:[]});
 const validRecord=()=>({correct:false,answer:'my answer',attempts:2,wrongAttempts:1,date:123456,assisted:false});
+test('saved answers use revised grading while self-assessments are preserved',()=>{
+  const p=empty();p.records.code={correct:true,answer:'read()',attempts:1,wrongAttempts:0,date:1};p.records.choice={correct:true,answer:'right',attempts:1,wrongAttempts:0,date:1};p.records.short={correct:true,answer:'my explanation',attempts:1,wrongAttempts:0,date:1};
+  const result=context.CV_PROGRESS.refreshAnswers(p,{questions:[{id:'code',type:'blank',answer:'read'},{id:'choice',type:'choice',choices:['wrong','right'],answer:'right'},{id:'short',type:'short',answer:'example'}]},grade.check);
+  assert.equal(result.records.code.correct,false);assert.equal(result.records.code.wrongAttempts,1);assert.equal(result.records.code.attempts,1);assert.equal(result.records.choice.correct,true);assert.equal(result.records.short.correct,true);assert.equal(p.records.code.correct,true);
+});
 test('progress roundtrip retains learning and removes unknown fields',()=>{
   const p=empty();p.records[qid]=validRecord();p.read=[cid,cid,'removed-concept'];p.bookmarks=[cid];p.qBookmarks=[qid,qid,'removed-question'];p.exerciseRead=[1,1,3,16];p.days=['2026-10-20','2026-10-20'];p.exams=[{date:123,total:10,autoTotal:8,correct:5,untrusted:'ignored'}];p.extra='<script>ignored</script>';
   const before=JSON.stringify(p),out=validate(p,data);

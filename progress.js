@@ -22,5 +22,16 @@ function validate(p,data){
   if(!p.days.every(x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)))throw Error('Invalid dates');
   out.days=[...new Set(p.days)];return out;
 }
-globalThis.CV_PROGRESS={validate};
+function refreshAnswers(progress,data,check){
+  const records={...progress.records};
+  for(const [id,record] of Object.entries(records)){
+    const question=data.questions.find(q=>q.id===id);
+    if(!question||question.type==='short')continue;
+    const value=question.type==='choice'?String(question.choices.indexOf(record.answer)):record.answer;
+    const correct=check(question,value);
+    if(correct!==record.correct)records[id]={...record,correct,wrongAttempts:correct?record.wrongAttempts:Math.max(1,record.wrongAttempts)};
+  }
+  return {...progress,records};
+}
+globalThis.CV_PROGRESS={validate,refreshAnswers};
 })();

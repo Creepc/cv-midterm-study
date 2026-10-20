@@ -28,7 +28,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-1) - 디지털 이미지 (수정본, 2026).pptx",
         "page": 2,
         "label": "Digital Signal vs. Analog Signal"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w2-2",
+        "th-q-sampling",
+        "th-q-levels"
+      ]
     },
     {
       "id": "th-c-adc",
@@ -59,7 +64,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-1) - 디지털 이미지 (수정본, 2026).pptx",
         "page": 3,
         "label": "ADC 및 카메라 예시"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w2-3",
+        "th-q-w2-4",
+        "th-q-sampling"
+      ]
     },
     {
       "id": "th-c-camera",
@@ -90,7 +100,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 2,
         "label": "Digital Image Formation / p.3 Camera Modules"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w2-4",
+        "th-q-w2-5",
+        "th-q-w2-6"
+      ]
     },
     {
       "id": "th-c-bayer",
@@ -120,7 +135,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 4,
         "label": "Camera Filter and Bayer Filter Array / p.6"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w2-6",
+        "th-q-bayer",
+        "th-q-demosaic"
+      ]
     },
     {
       "id": "th-c-demosaic",
@@ -150,7 +170,11 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 7,
         "label": "Camera Modules: Demosaiking"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-demosaic",
+        "th-q-bayer"
+      ]
     },
     {
       "id": "th-c-sampling",
@@ -180,7 +204,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 9,
         "label": "Sampling p.9~11 / Image Sampling p.17~18"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-sampling",
+        "th-q-resolution",
+        "th-q-shape"
+      ]
     },
     {
       "id": "th-c-quantization",
@@ -200,6 +229,10 @@
         {
           "title": "오차",
           "body": "같은 구간의 다른 실수도 같은 레벨로 표현된다. 표본값과 대표값의 차이가 양자화 오차다. 같은 입력 범위에서 비트 수가 커지면 단계가 더 세밀해진다."
+        },
+        {
+          "title": "원문 구간표를 빠르게 재구성하기",
+          "body": "3비트·입력[0,2] 조건의 레벨0~7 구간은 [0,0.25), [0.25,0.50), [0.50,0.75), [0.75,1.00), [1.00,1.25), [1.25,1.50), [1.50,1.75), [1.75,2.00]이다. 일반 내부 값의 레벨은 floor(x/0.25)지만 끝점2.00은7로 제한한다. 코드 번호k와 중앙 대표값(k+0.5)×0.25는 서로 다르다."
         }
       ],
       "keyPoints": [
@@ -215,7 +248,15 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 12,
         "label": "Quantization & Encoding p.12~16"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-levels",
+        "th-q-step",
+        "th-q-boundary",
+        "th-q-representative",
+        "th-q-quant-error",
+        "th-q-w3-1"
+      ]
     },
     {
       "id": "th-c-encoding",
@@ -231,6 +272,10 @@
         {
           "title": "서로 다른 값",
           "body": "1.1은 원래 표본,4는 레벨 번호,1.125는 중앙 대표값,100은3비트 코드다. 전체 부호열은 100 110 111 110 100 001 000 001이다."
+        },
+        {
+          "title": "최댓값과 전체 비트 수 검산",
+          "body": "최댓값2.0을2/0.25=8이라는 이유로1000으로 쓰면 틀린다. 원문은3비트만 사용하므로 가장 큰 코드111에 배정한다. 표본8개를 각각3비트로 표현하므로 전체 길이는24비트다. 001과000의 앞자리0을 유지해야 각 표본의 경계도 보존된다."
         }
       ],
       "keyPoints": [
@@ -247,7 +292,13 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 16,
         "label": "3비트 양자화 예제 / 3주차1번"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w3-1",
+        "th-q-2bit",
+        "th-q-boundary",
+        "th-q-quant-error"
+      ]
     },
     {
       "id": "th-c-matrix",
@@ -277,7 +328,14 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 19,
         "label": "Digital Image p.19~23"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-shape",
+        "th-q-pixel",
+        "th-q-index",
+        "th-q-w3-2",
+        "th-q-w2-7"
+      ]
     },
     {
       "id": "th-c-gray-color",
@@ -293,6 +351,10 @@
         {
           "title": "읽기 옵션",
           "body": "IMREAD_GRAYSCALE은1채널 회색조, IMREAD_COLOR는 기본3채널 BGR로 읽는다. 회색조 파일을 COLOR로 읽으면 같은 밝기가 세 채널에 반복될 수 있다. 실패하면None이므로 접근 전에 확인한다."
+        },
+        {
+          "title": "자료형·축 수·채널 수를 따로 읽기",
+          "body": "dtype은 채널 한 값의 자료형이다. uint8은0~255인8비트 unsigned 값이다. ndim은 배열 축의 수이며 회색조는2, 기본 컬러는3이다. shape은 각 축의 길이다. 예를 들어 shape(240,320,3)은240행·320열·3채널이지3비트 영상이라는 뜻이 아니다. 원문 함수의3 if ndim==3 else1은 기본 회색조/3채널 예제에 한정한 편의식이며 알파4채널까지 판별하는 일반 함수는 아니다."
         }
       ],
       "keyPoints": [
@@ -308,7 +370,14 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-1) - 디지털 이미지 (수정본, 2026).pptx",
         "page": 5,
         "label": "Grayscale vs. Color / p.7 및 3주차2~3번"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w3-2",
+        "th-q-w3-3",
+        "th-q-read-shape",
+        "th-q-read-depth",
+        "th-q-mat-info-types"
+      ]
     },
     {
       "id": "th-c-rgb",
@@ -338,7 +407,14 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 25,
         "label": "Representing Digital Color Image p.25~29"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-rgb-red",
+        "th-q-bgr-red",
+        "th-q-gray",
+        "th-q-combinations",
+        "th-q-display-rgb"
+      ]
     },
     {
       "id": "th-c-depth",
@@ -368,7 +444,13 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 26,
         "label": "각 채널256단계 및 p.25 3채널 행렬"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-levels",
+        "th-q-bytes",
+        "th-q-combinations",
+        "th-q-mat-info-types"
+      ]
     },
     {
       "id": "th-c-header",
@@ -398,7 +480,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 30,
         "label": "Image File / 4주차2·3·5번"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w4-2",
+        "th-q-w4-3",
+        "th-q-w4-5"
+      ]
     },
     {
       "id": "th-c-compression",
@@ -428,7 +515,13 @@
         "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
         "page": 1,
         "label": "4주차1번 저장 실습"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w4-1",
+        "th-q-w4-4",
+        "th-q-png"
+      ],
+      "lectureSourceId": "ch04"
     },
     {
       "id": "th-c-display",
@@ -458,7 +551,12 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
         "page": 31,
         "label": "Reproduce Original Scene / Displays p.31~35"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-display-rgb",
+        "th-q-rgb-red",
+        "th-q-gray"
+      ]
     },
     {
       "id": "th-c-processing",
@@ -487,7 +585,11 @@
         "file": "이론_2장. 디지털 이미지 생성 (2-1) - 디지털 이미지 (수정본, 2026).pptx",
         "page": 8,
         "label": "Digital Image Processing? / 2주차1번"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w2-1",
+        "th-q-enhancement"
+      ]
     },
     {
       "id": "th-c-point",
@@ -517,7 +619,13 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 2,
         "label": "Basic Gray Level Processing"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-negative",
+        "th-q-gamma-value",
+        "th-q-threshold",
+        "th-q-piecewise-value"
+      ]
     },
     {
       "id": "th-c-negative",
@@ -547,7 +655,12 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 3,
         "label": "Image Negative p.3~5"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-negative",
+        "th-q-negative-twice",
+        "th-q-negative-code"
+      ]
     },
     {
       "id": "th-c-log",
@@ -577,7 +690,10 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 6,
         "label": "Log Transformation p.6~7"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-log"
+      ]
     },
     {
       "id": "th-c-gamma",
@@ -613,7 +729,14 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 8,
         "label": "Gamma Correction p.8~11"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-gamma-direction",
+        "th-q-gamma-value",
+        "th-q-gamma-code",
+        "th-q-uint8",
+        "th-q-enhancement"
+      ]
     },
     {
       "id": "th-c-piecewise",
@@ -629,6 +752,10 @@
         {
           "title": "특수 경우",
           "body": "클리핑은 바깥 구간 기울기를0으로 두어 밝기 범위를 잘라내는 형태다. 이진화는 임계값 기준으로 두 출력만 만든다. 경계에서>인지≥인지 반드시 조건을 따른다."
+        },
+        {
+          "title": "연속성 조건과 실제 숫자 계산",
+          "body": "세 직선이 경계에서 이어지려면 va=αa, vb=va+β(b-a)로 맞춘다. 강의 p.13의 가운데 대비 확대 예처럼 a=80,b=160,α=0.5,β=1.5이면 va=40,vb=160이다. r=120은 가운데 구간이므로 s=1.5×(120-80)+40=100이다. 이 식의γ는 마지막 구간의 기울기이며 감마 보정의 거듭제곱 지수γ와 역할이 다르다."
         }
       ],
       "keyPoints": [
@@ -644,7 +771,12 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 12,
         "label": "Piecewise Linear Transformation p.12~14"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-threshold",
+        "th-q-slope",
+        "th-q-piecewise-value"
+      ]
     },
     {
       "id": "th-c-histogram",
@@ -675,7 +807,14 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 15,
         "label": "Histogram Processing p.15~16"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w7-1",
+        "th-q-hist-slide",
+        "th-q-normalized",
+        "th-q-hist-zero",
+        "th-q-hist-code"
+      ]
     },
     {
       "id": "th-c-contrast",
@@ -705,7 +844,12 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 17,
         "label": "Histogram contrast / p.31"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-dark",
+        "th-q-hist-space",
+        "th-q-compare"
+      ]
     },
     {
       "id": "th-c-stretch",
@@ -725,6 +869,10 @@
         {
           "title": "평활화와 비교",
           "body": "스트레칭은 하나의 선형식으로 범위를 펼친다. 각 밝기의 빈도를 균등하게 만들지는 않는다. 평활화는 누적분포로 결정하는 매핑이다."
+        },
+        {
+          "title": "강의 코드의 정수 저장까지 추적",
+          "body": "min50,max150,r100이면 수식 결과는127.5지만 강의의np.uint8(value) 저장값은127이다. 반올림한128과 구별한다. 7주차1번 행렬을 별도로8비트 스트레칭하면 r=1은42.5→42, r=5는212.5→212로 저장된다. 이는 원문1번의 입력 히스토그램을 세는 작업과 구별하는 추가 연습이다."
         }
       ],
       "keyPoints": [
@@ -739,7 +887,15 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 18,
         "label": "Histogram Stretching p.18~19 / 7주차2번"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w7-2",
+        "th-q-stretch-value",
+        "th-q-stretch-constant",
+        "th-q-stretch-code",
+        "th-q-stretch-stored",
+        "th-q-compare"
+      ]
     },
     {
       "id": "th-c-pmf-pdf",
@@ -769,7 +925,13 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 22,
         "label": "PMF p.22 / PDF p.23"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-pmf",
+        "th-q-pdf",
+        "th-q-normalized",
+        "th-q-prob-range"
+      ]
     },
     {
       "id": "th-c-cdf",
@@ -789,6 +951,10 @@
         {
           "title": "이산에서의 한계",
           "body": "단일값 함수이며 밝기 순서를 뒤집지 않는 단조 증가 함수가 기본이다. 유한한 픽셀·출력 레벨과 반올림 때문에 이산 평활화가 완벽히 균일한 히스토그램을 보장하지는 않는다."
+        },
+        {
+          "title": "연속 변환에서 확률이 보존되는 이유",
+          "body": "단조이고 미분 가능한 변환의 작은 구간에서 p_r(r)·Δr=p_s(s)·Δs다. 같은 확률을 더 넓은 출력 구간에 펴면 높이인 밀도는 낮아져야 한다. Δr/Δs의 극한이|dr/ds|이므로 p_s(s)=p_r(r)|dr/ds|가 된다. CDF 변환은 이 배율을 원래 밀도의 역수로 만들어 이상적인 연속 출력 밀도를1로 맞춘다."
         }
       ],
       "keyPoints": [
@@ -804,7 +970,14 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 20,
         "label": "Histogram Equalization p.20~27"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-cdf-values",
+        "th-q-cdf-monotone",
+        "th-q-cdf-continuous",
+        "th-q-prob-range",
+        "th-q-pdf-scale"
+      ]
     },
     {
       "id": "th-c-equalize",
@@ -824,6 +997,10 @@
         {
           "title": "구현 차이",
           "body": "반올림/버림, L, 첫 비영CDF 제거 여부에 따라 답이 달라진다. 강의의 직접CDF 식과OpenCV equalizeHist의cdf_min 보정 방식은 동일하지 않다. 제시된 규칙대로 계산한다."
+        },
+        {
+          "title": "수업 표의 반올림을 적용하는 정확한 시점",
+          "body": "7주차 예제에서는 확률을 소수 둘째 자리로 줄이지 말고1/16,6/16,12/16,15/16을 그대로 유지한다. 마지막에7을 곱한0.4375,2.625,5.25,6.5625를 각각 반올림한다. 이 값들은 정확히x.5인 동률 사례가 아니므로 Python round의 동률 처리와 무관하게 강의 표의0,3,5,7을 얻는다."
         }
       ],
       "keyPoints": [
@@ -839,7 +1016,15 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 27,
         "label": "Discrete Version / p.28~29"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w7-3",
+        "th-q-equalize-one",
+        "th-q-equalize-lut",
+        "th-q-not-uniform",
+        "th-q-l-vs-max",
+        "th-q-equalize-code-result"
+      ]
     },
     {
       "id": "th-c-equalize-example",
@@ -859,6 +1044,10 @@
         {
           "title": "결과",
           "body": "결과[[0,5,5,3],[3,5,7,5],[3,5,7,5],[3,7,3,7]]이다. 원본3과7이 출력7로 합쳐져 출력히스토그램은 [1,0,0,5,0,6,0,4]가 된다. 완전 균일하지 않음을 확인한다."
+        },
+        {
+          "title": "직접CDF 식과 OpenCV 함수가 다른 이유",
+          "body": "강의 예제는CDF 자체에7을 곱한다. OpenCV equalizeHist는 일반8비트 출력에 첫 비영 누적값을 빼고 범위를 맞추는 방식이어서 단순히L만8로 바꾼 함수가 아니다. 원문 답안을 계산할 때 equalizeHist 결과를 그대로 옮기지 말고 강의의L8·직접CDF·반올림 조건을 사용한다."
         }
       ],
       "keyPoints": [
@@ -874,7 +1063,15 @@
         "file": "학습진단문제/7주차학습진단문제.pdf",
         "page": 1,
         "label": "7주차3번 / 이론3장p.28"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w7-3",
+        "th-q-equalize-one",
+        "th-q-equalize-lut",
+        "th-q-output-hist",
+        "th-q-cdf-values"
+      ],
+      "lectureSourceId": "theory3"
     },
     {
       "id": "th-c-hist-code",
@@ -905,7 +1102,13 @@
         "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
         "page": 29,
         "label": "평활화 슈도코드"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-hist-code",
+        "th-q-cdf-code",
+        "th-q-lut-code",
+        "th-q-equalize-code-result"
+      ]
     },
     {
       "id": "th-c-hist-week7",
@@ -940,7 +1143,140 @@
         "file": "학습진단문제/7주차학습진단문제.pdf",
         "page": 1,
         "label": "7주차1번 히스토그램"
-      }
+      },
+      "relatedQuestionIds": [
+        "th-q-w7-1",
+        "th-q-hist-zero",
+        "th-q-normalized",
+        "th-q-prob-range"
+      ],
+      "lectureSourceId": "theory3"
+    },
+    {
+      "id": "th-c-mat-info",
+      "track": "theory",
+      "chapter": "2장",
+      "title": "dtype·채널과 OpenCV 자료형 표기",
+      "summary": "CV_8UC3에서8U는 채널당8비트 unsigned 자료형, C3는3채널을 뜻한다.",
+      "sections": [
+        {
+          "title": "원문 자료형 대응",
+          "body": "uint8→CV_8U, int8→CV_8S, uint16→CV_16U, int16→CV_16S, float32→CV_32F, float64→CV_64F다. U는unsigned, S는signed, F는floating point를 뜻한다. 8U 뒤에C1 또는C3를 붙이면 전체 영상 원소 형식이 된다."
+        },
+        {
+          "title": "같은 파일을 두 방식으로 읽기",
+          "body": "uint8 회색조 파일을GRAYSCALE로 읽으면 기본적으로ndim2,CV_8UC1이다. COLOR로 읽으면ndim3,CV_8UC3이다. 밝기v의 회색조 픽셀은 기본 컬러 표현에서[B,G,R]=[v,v,v]가 된다. 특정v는 실제 파일을 읽어 확인해야 한다."
+        },
+        {
+          "title": "읽기 실패와 좌표 검사",
+          "body": "imread 실패는None이다. 원문의is None 검사를 통과한 뒤shape와화소에 접근한다. image[100,100]을 읽으려면 높이·폭이 각각101이상이어야 한다. 파일의 정확한 값은 원본 이미지와 디코딩 결과에 달려 있으므로 고정 숫자를 외우지 않는다."
+        }
+      ],
+      "keyPoints": [
+        "CV_8UC1=8비트 unsigned·1채널",
+        "CV_8UC3=8비트 unsigned·3채널",
+        "dtype·ndim·shape·channels를 구별",
+        "읽기 실패None을 먼저 검사"
+      ],
+      "pitfalls": [
+        "C3를3비트라고 읽지 않는다.",
+        "ndim만으로 모든 종류의 채널 수를 판별하지 않는다."
+      ],
+      "source": {
+        "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+        "page": 2,
+        "label": "3주차2번 print_matInfo"
+      },
+      "lectureSourceId": "theory2a",
+      "relatedQuestionIds": [
+        "th-q-w3-2",
+        "th-q-mat-info-types",
+        "th-q-read-depth",
+        "th-q-read-shape",
+        "th-q-read-none"
+      ]
+    },
+    {
+      "id": "th-c-probability-transform",
+      "track": "theory",
+      "chapter": "3장",
+      "title": "확률변수 변환과 밀도의 배율",
+      "summary": "입출력 구간에 담긴 확률은 같으며 밀도는 구간 길이의 변화에 맞춰 바뀐다.",
+      "sections": [
+        {
+          "title": "공식",
+          "body": "s=T(r)가 해당 영역에서 단조이고 역함수가 미분 가능할 때 p_s(s)=p_r(r)|dr/ds|다. 입력r와 출력s를 섞지 않고s에 대응하는r에서 원래 밀도를 평가해야 한다."
+        },
+        {
+          "title": "두 배 확대 예",
+          "body": "r가0~1의 균일분포이고s=2r이면s는0~2에 분포한다. dr/ds=1/2이므로 출력밀도는1/2다. 높이는절반, 구간폭은두배가되어 전체면적1이유지된다."
+        },
+        {
+          "title": "CDF 평활화와 연결",
+          "body": "CDF변환은ds/dr=p_r(r)로설계한다. 그러면p_s(s)=p_r(r)×1/p_r(r)=1이되는이상적연속상황을얻는다. 이유도는유한픽셀에서각정수레벨빈도가똑같아진다는뜻은아니다."
+        }
+      ],
+      "keyPoints": [
+        "p_r(r)Δr=p_s(s)Δs",
+        "밀도변환 배율은|dr/ds|",
+        "두 배 넓히면 균일 밀도는 절반"
+      ],
+      "pitfalls": [
+        "p_s=p_r|ds/dr|로미분방향을뒤집지않는다.",
+        "이산확률질량에는같은미분공식을기계적으로대입하지않는다."
+      ],
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 24,
+        "label": "PDF of Transformed Variable p.24~26"
+      },
+      "relatedQuestionIds": [
+        "th-q-pdf-scale",
+        "th-q-cdf-continuous",
+        "th-q-pdf"
+      ]
+    },
+    {
+      "id": "th-c-equalize-implementation",
+      "track": "theory",
+      "chapter": "3장",
+      "title": "평활화 슈도코드를 실제 계산으로 연결",
+      "summary": "강의의L8 예제를 그대로 실행해 빈도표·변환표·결과영상을 함께 검산한다.",
+      "sections": [
+        {
+          "title": "배열과 타입",
+          "body": "빈도표는픽셀수가256이상이될수있으므로충분한정수범위를쓴다. 예제에서는int64빈도표,실수확률,최종uint8변환표를사용한다. 원문행렬의값0~7이L8인덱스범위내인지확인한다."
+        },
+        {
+          "title": "세 가지 검산값",
+          "body": "histogram합은16,확률합은1,변환표마지막값은7이다. T=[0,3,5,7,7,7,7,7]을확인한다. output=T[image]는원본각값을인덱스로삼아표를조회하므로출력모양은원본과같다."
+        },
+        {
+          "title": "실행 코드",
+          "body": "실제 실행 코드는 관련 문제 「강의 평활화 코드를 실행하면」에서 확인할 수 있다. 실제 8비트 파일 실습으로 바꾸려면 L=256과 읽기 성공 확인을 적용하고 입력 밝기 범위를 확인한다. 수업의 직접 CDF 규칙을 유지할지 OpenCV 함수 결과를 비교할지 목적을 명시한다."
+        }
+      ],
+      "keyPoints": [
+        "빈도합16·확률합1",
+        "L8의최대출력7",
+        "T[image]는밝기변환표조회"
+      ],
+      "pitfalls": [
+        "중간확률을uint8로바꾸지않는다.",
+        "최댓값이7이라고모든8비트영상의L을8로줄이지않는다."
+      ],
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 29,
+        "label": "평활화 슈도코드 / p.28 계산예제"
+      },
+      "relatedQuestionIds": [
+        "th-q-equalize-code-result",
+        "th-q-w7-3",
+        "th-q-hist-code",
+        "th-q-cdf-code",
+        "th-q-lut-code"
+      ]
     }
   ],
   "questions": [
@@ -1148,7 +1484,7 @@
       "title": "3주차1번 · 3비트 부호화",
       "prompt": "원문 그림의 표본은 왼쪽부터 [1.1,1.6,2.0,1.6,1.1,0.3,0,0.3]이다. 3비트로 부호화하라. 강의 p.16처럼 [0,2]를 폭0.25의8구간으로 나누고 마지막 구간은2를 포함한다.",
       "answer": "100 110 111 110 100 001 000 001",
-      "explanation": "L=2^3=8이고 Δ=2/8=0.25다. 구간 레벨은4,6,7,6,4,1,0,1이다. 대표값은1.125,1.625,1.875,1.625,1.125,0.375,0.125,0.375다. 레벨을3자리 이진수로 쓰면 답이 된다.",
+      "explanation": "L=2^3=8이고 Δ=2/8=0.25다. 구간 레벨은4,6,7,6,4,1,0,1이다. 대표값은1.125,1.625,1.875,1.625,1.125,0.375,0.125,0.375다. 레벨을3자리 이진수로 쓰면 답이 된다. 입력최댓값2.0은레벨8이아니라마지막레벨7로제한한다. 표본8개×3비트=24비트인지검산한다.",
       "steps": [
         "L8과 Δ0.25를 구한다.",
         "표본이 속한 구간의 레벨 번호를 찾는다.",
@@ -1180,16 +1516,21 @@
       "title": "3주차2번 · 읽어 온 값",
       "prompt": "교재 p.120~122의 이미지 읽기 코드를 실습하라. 파일에서 읽어 온 디지털 값은 물리적으로 무엇을 의미하는가? 회색조와 컬러 저장 구조도 확인하라.",
       "answer": "픽셀 밝기 또는 채널별 빛의 세기. 회색조는2차원 행렬, 기본 컬러는3채널 배열.",
-      "explanation": "회색조는 위치마다 값 하나이며 컬러는 기본 BGR 세 값이다. 원문이2차원 행렬이라 표현한 것은 회색조 또는 각 채널 평면의 관점이다. read_gray.jpg의 특정 픽셀 숫자는 실제 파일을 읽어 확인해야 한다.",
+      "explanation": "회색조는 위치마다 값 하나이며 컬러는 기본 BGR 세 값이다. 원문이2차원 행렬이라 표현한 것은 회색조 또는 각 채널 평면의 관점이다. read_gray.jpg의 특정 픽셀 숫자는 실제 파일을 읽어 확인해야 한다. 원문 전체 코드의dtype 대응은uint8→CV_8U,int8→CV_8S,uint16→CV_16U,int16→CV_16S,float32→CV_32F,float64→CV_64F다. uint8 회색조/기본컬러의mat_type 출력은각각CV_8UC1/CV_8UC3다. images/read_gray.jpg를별도로준비하고가로·세로가101이상인환경에서원문의[100,100]접근을실행한다. 원문함수의ndim분기는기본1/3채널에한정된가정이다.",
       "steps": [
         "GRAYSCALE과 COLOR로 각각 읽는다.",
         "None,dtype,ndim,shape를 확인한다.",
-        "image[100,100]의 값과 밝기의 의미를 설명한다."
+        "image[100,100]의 값과 밝기의 의미를 설명한다.",
+        "uint8인경우CV_8U와채널수1/3을붙여CV_8UC1/CV_8UC3를확인한다.",
+        "경로·파일존재·해당좌표범위가맞는지확인하고두창을표시한다."
       ],
       "hint": "숫자가 측정한 빛의 세기와 연결된다.",
       "source": {
         "file": "학습진단문제/3주차 학습진단 문제지.pdf",
-        "page": 1,
+        "page": [
+          1,
+          2
+        ],
         "label": "3주차2번, 코드 p.1~2"
       },
       "tags": [
@@ -1197,7 +1538,8 @@
         "실습",
         "서술형"
       ],
-      "difficulty": 1
+      "difficulty": 1,
+      "code": "import cv2\n\ndef print_matInfo(name, image):\n    if image.dtype == 'uint8':     mat_type = \"CV_8U\"\n    elif image.dtype == 'int8':    mat_type = \"CV_8S\"\n    elif image.dtype == 'uint16':  mat_type = \"CV_16U\"\n    elif image.dtype == 'int16':   mat_type = \"CV_16S\"\n    elif image.dtype == 'float32': mat_type = \"CV_32F\"\n    elif image.dtype == 'float64': mat_type = \"CV_64F\"\n    nchannel = 3 if image.ndim == 3 else 1\n    print(\"%12s: depth(%s), channels(%s) -> mat_type(%sC%d)\"\n          % (name, image.dtype, nchannel, mat_type, nchannel))\n\ntitle1, title2 = \"gray2gray\", \"gray2color\"\ngray2gray = cv2.imread(\"images/read_gray.jpg\", cv2.IMREAD_GRAYSCALE)\ngray2color = cv2.imread(\"images/read_gray.jpg\", cv2.IMREAD_COLOR)\nif gray2gray is None or gray2color is None:\n    raise Exception(\"영상파일 읽기 에러\")\n\nprint(\"행렬 좌표 (100, 100) 화소값\")\nprint(\"%s %s\" % (title1, gray2gray[100,100]))\nprint(\"%s %s\\n\" % (title2, gray2color[100,100]))\nprint_matInfo(title1, gray2gray)\nprint_matInfo(title2, gray2color)\ncv2.imshow(title1, gray2gray)\ncv2.imshow(title2, gray2color)\ncv2.waitKey(0)\ncv2.destroyAllWindows()"
     },
     {
       "id": "th-q-w3-3",
@@ -1411,11 +1753,12 @@
       "title": "7주차2번 · 스트레칭 실습",
       "prompt": "교재 예제6.3.5의 히스토그램 스트레칭 코드를 실습하라. 스트레칭을 계산하는 과정을 설명하라.",
       "answer": "min과max를 찾고 각 픽셀을(r-min)/(max-min)×255로 변환한다. min=max의 예외를 처리한다.",
-      "explanation": "원문은 실습 과제다. 강의 p.19는max>min이면 선형 변환하고 같으면 원래 값을 보존한다. 범위를 늘리는 방법이며 빈도를 균등하게 만드는 평활화와 구별한다.",
+      "explanation": "원문은 실습 과제다. 강의 p.19는max>min이면 선형 변환하고 같으면 원래 값을 보존한다. 범위를 늘리는 방법이며 빈도를 균등하게 만드는 평활화와 구별한다. 첨부된실제함수는강의p.19의단일채널코드를옮긴것이며마지막sample은사이트에서직접검산하기위해만든변형입력이다. sample의100은수식상127.5이지만np.uint8저장으로127이된다. 출력[[0,127,255]]를확인하면최소·최대의이동과정수변환까지연결할수있다.",
       "steps": [
         "min,max를 계산한다.",
         "각 픽셀에 선형식을 적용한다.",
-        "상수 영상에서 분모0을 피한다."
+        "상수 영상에서 분모0을 피한다.",
+        "int 변환과 np.uint8 저장을구별하고수식127.5가저장127이됨을확인한다."
       ],
       "hint": "min은0, max는255로 옮긴다.",
       "source": {
@@ -1428,7 +1771,8 @@
         "실습",
         "핵심"
       ],
-      "difficulty": 2
+      "difficulty": 2,
+      "code": "import numpy as np\n\n# 강의 3장 p.19의 함수. 단일 채널 영상을 가정한다.\ndef histogram_stretching(image):\n    image1 = np.zeros(image.shape[:2], image.dtype)\n    min_val = np.min(image)\n    max_val = np.max(image)\n    for i in range(image.shape[0]):\n        for j in range(image.shape[1]):\n            pixel = int(image[i,j])\n            if max_val > min_val:\n                value = ((pixel-int(min_val))*255\n                         /(int(max_val)-int(min_val)))\n            else:\n                value = pixel\n            image1[i,j] = np.uint8(value)\n    return image1\n\n# 강의 공식을 확인하기 위한 별도 소형 예제\nsample = np.array([[50,100,150]], dtype=np.uint8)\nprint(histogram_stretching(sample))  # [[0 127 255]]"
     },
     {
       "id": "th-q-w7-3",
@@ -1438,12 +1782,13 @@
       "title": "7주차3번 · 원문 결과영상",
       "prompt": "입력에 히스토그램 평활화를 적용한 결과영상 값을 행 순서로 작성하라. 강의 p.28~29처럼 L=8, T(k)=round(7×CDF(k))를 쓴다.",
       "answer": "0 5 5 3 / 3 5 7 5 / 3 5 7 5 / 3 7 3 7",
-      "explanation": "h=[1,5,6,3,0,0,0,1], 누적빈도=[1,6,12,15,15,15,15,16]이다. T=[0,3,5,7,7,7,7,7]을 원본에 적용한다. 이 답은 강의의 직접CDF·L8·반올림 규칙이다. 다른 정수화나 OpenCV cdf_min 보정에서는 결과가 달라질 수 있다.",
+      "explanation": "h=[1,5,6,3,0,0,0,1], 누적빈도=[1,6,12,15,15,15,15,16]이다. T=[0,3,5,7,7,7,7,7]을 원본에 적용한다. 이 답은 강의의 직접CDF·L8·반올림 규칙이다. 다른 정수화나 OpenCV cdf_min 보정에서는 결과가 달라질 수 있다. 밝기0~7의7×CDF는[0.4375,2.625,5.25,6.5625,6.5625,6.5625,6.5625,7]이다. 현재예제에는정확히소수부0.5인동률이없다. 중간확률을먼저반올림하지않는다.",
       "steps": [
         "N16,L8을 확인한다.",
         "빈도와 누적빈도를 구한다.",
         "round(7×누적빈도/16)로 표를 만든다.",
-        "원본을 변환표로 치환한다."
+        "원본을 변환표로 치환한다.",
+        "빈도합16, CDF마지막1, 변환표마지막7로검산한다."
       ],
       "hint": "밝기2의 CDF는12/16, 출력은5다.",
       "source": {
@@ -1813,8 +2158,7 @@
       ],
       "difficulty": 1,
       "accepted": [
-        "11, 12",
-        "11 12"
+        "11, 12"
       ]
     },
     {
@@ -3022,9 +3366,7 @@
       "difficulty": 2,
       "code": "value=(pixel-int(min_val))*255/(____)",
       "accepted": [
-        "int(max_val) - int(min_val)",
-        "max_val-min_val",
-        "max_val - min_val"
+        "int(max_val) - int(min_val)"
       ]
     },
     {
@@ -3056,6 +3398,250 @@
         "1/p_r(r)",
         "항상0",
         "r의 공간 좌표"
+      ]
+    },
+    {
+      "id": "th-q-mat-info-types",
+      "track": "theory",
+      "topic": "이미지 자료형",
+      "type": "output",
+      "title": "회색조·컬러의 mat_type",
+      "prompt": "원문 print_matInfo에서 두 배열 모두 dtype=uint8이다. gray의ndim은2,color의ndim은3일 때 각각의 최종 mat_type 표기는? 순서대로 쓰라.",
+      "answer": "CV_8UC1, CV_8UC3",
+      "explanation": "uint8은CV_8U다. gray는조건거짓으로채널1,color는조건참으로채널3이다. CV_8U뒤에C1,C3을붙인다.8은채널당비트수이며C뒤의숫자가채널수다.",
+      "steps": [
+        "uint8→CV_8U를찾는다.",
+        "ndim2→1채널,ndim3→3채널을적용한다.",
+        "자료형과C채널수를연결한다."
+      ],
+      "hint": "8U와C1/C3을구별한다.",
+      "source": {
+        "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+        "page": 2,
+        "label": "3주차2번 자료형 출력 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2,
+      "accepted": [
+        "CV_8UC1 CV_8UC3",
+        "CV_8UC1 / CV_8UC3"
+      ],
+      "answerFormat": "literal"
+    },
+    {
+      "id": "th-q-read-none",
+      "track": "theory",
+      "topic": "이미지 읽기",
+      "type": "choice",
+      "title": "파일 읽기 실패를 먼저 확인",
+      "prompt": "아래 코드에서 파일읽기에실패한경우image.shape보다먼저확인해야할것은?",
+      "answer": "image is None",
+      "explanation": "imread가실패하면정상배열대신None이다.None.shape는유효하지않으므로읽기성공을먼저검사한다. 원문은두배열중하나라도None이면예외를발생시킨다.",
+      "steps": [
+        "imread반환값을확인한다.",
+        "None이면접근을멈춘다.",
+        "정상배열일때shape와화소를조회한다."
+      ],
+      "hint": "원문의예외처리조건을떠올린다.",
+      "source": {
+        "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+        "page": 2,
+        "label": "3주차2번 예외처리 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2,
+      "choices": [
+        "image is None",
+        "image == 255",
+        "image.ndim == 100",
+        "파일확장자의문자수"
+      ],
+      "code": "image=cv2.imread(\"images/read_gray.jpg\",cv2.IMREAD_GRAYSCALE)\n# 여기서 실패 확인\nprint(image.shape)"
+    },
+    {
+      "id": "th-q-piecewise-value",
+      "track": "theory",
+      "topic": "구간별 선형 변환",
+      "type": "blank",
+      "title": "가운데 구간 계산",
+      "prompt": "a=80,b=160,α=0.5,β=1.5이다. 연속이되도록va=αa로정했다. r=120의출력s=β(r-a)+va는?",
+      "answer": "100",
+      "explanation": "먼저va=0.5×80=40이다.120은80이상160미만의가운데구간이다. s=1.5×(120-80)+40=100이다. βr만계산하면시작점이동과va를빠뜨린다.",
+      "steps": [
+        "va40을구한다.",
+        "가운데구간임을판정한다.",
+        "1.5×40+40을계산한다."
+      ],
+      "hint": "구간시작점a를뺀후va를더한다.",
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 12,
+        "label": "구간별 선형식 및 p.13 기울기 기반 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "th-q-pdf-scale",
+      "track": "theory",
+      "topic": "확률변수 변환",
+      "type": "blank",
+      "title": "밝기 범위를 두 배 넓히면",
+      "prompt": "r는0~1의균일분포라p_r(r)=1이다. s=2r로변환했을때0<s<2에서출력밀도p_s(s)는?",
+      "answer": "0.5",
+      "explanation": "dr/ds=1/2이므로p_s=1×1/2=0.5다. 폭2×높이0.5=전체확률1로검산한다. 변환으로범위가넓어져밀도높이가낮아졌다.",
+      "steps": [
+        "역변환r=s/2를쓴다.",
+        "미분dr/ds=1/2을구한다.",
+        "원래밀도1에곱한다."
+      ],
+      "hint": "밀도변환에는|dr/ds|를곱한다.",
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 24,
+        "label": "밀도변환 공식 p.24~25 기반 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2,
+      "accepted": [
+        "1/2",
+        ".5"
+      ]
+    },
+    {
+      "id": "th-q-equalize-code-result",
+      "track": "theory",
+      "topic": "히스토그램 평활화",
+      "type": "output",
+      "title": "강의 평활화 코드를 실행하면",
+      "prompt": "아래코드는강의L8예제의변환표와출력을직접계산한다. print(T)의결과8개를쓰라.",
+      "answer": "0,3,5,7,7,7,7,7",
+      "explanation": "h=[1,5,6,3,0,0,0,1]이고확률의누적값에7을곱해반올림한다. output=T[image]는표를원본에적용하는다음단계다. 빈도배열과변환표는목적이다르다.",
+      "steps": [
+        "빈도배열을확인한다.",
+        "정규화와누적합을계산한다.",
+        "L-1배후반올림한다."
+      ],
+      "hint": "T는빈도가아닌출력밝기표다.",
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 29,
+        "label": "평활화 슈도코드 실행 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 3,
+      "code": "import numpy as np\n\n# 강의 p.28~29의 L=8, 직접 CDF, 반올림 규칙\nimage = np.array([[0,2,2,1], [1,2,3,2],\n                  [1,2,3,2], [1,3,1,7]], dtype=np.uint8)\nL = 8\nhistogram = np.zeros(L, dtype=np.int64)\nfor i in range(image.shape[0]):\n    for j in range(image.shape[1]):\n        histogram[int(image[i,j])] += 1\np = histogram / image.size\ncumulative = 0.0\nT = np.zeros(L, dtype=np.uint8)\nfor k in range(L):\n    cumulative += p[k]\n    T[k] = round((L-1) * cumulative)\noutput = T[image]\nprint(histogram)\nprint(T)\nprint(output)",
+      "accepted": [
+        "[0,3,5,7,7,7,7,7]",
+        "0 3 5 7 7 7 7 7"
+      ]
+    },
+    {
+      "id": "th-q-display-rgb",
+      "track": "theory",
+      "topic": "영상 표시",
+      "type": "choice",
+      "title": "저장된 값은 화면에서 무엇을 조절하나",
+      "prompt": "디지털이미지의RGB값이화면에표시될때직접조절하는것은?",
+      "answer": "각 위치의 R·G·B 부화소 밝기",
+      "explanation": "강의p.32~35는행렬값에따라RGB LED밝기를조절해영상을재현한다. 파일헤더나Bayer필터를새로생성하는과정과구별한다.",
+      "steps": [
+        "저장행렬의위치와화면위치를연결한다.",
+        "채널수치를부화소빛의밝기로해석한다."
+      ],
+      "hint": "수치에서빛으로재현하는단계다.",
+      "source": {
+        "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
+        "page": 32,
+        "label": "Displays p.31~35 기반 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "각 위치의 R·G·B 부화소 밝기",
+        "카메라 렌즈의 초점거리",
+        "파일 헤더의 글자 수",
+        "Bayer 필터의 물리적 위치"
+      ]
+    },
+    {
+      "id": "th-q-quant-error",
+      "track": "theory",
+      "topic": "양자화 오차",
+      "type": "blank",
+      "title": "대표값과 양자화 오차",
+      "prompt": "강의2비트예제에서1.7은[1.5,2]구간의대표값1.75로표현된다. 절대양자화오차는?",
+      "answer": "0.05",
+      "explanation": "원래값과대표값의차이절댓값은|1.7-1.75|=0.05다. 레벨번호3이나코드11을원래표본과빼는것이아니다.",
+      "steps": [
+        "원래표본1.7을쓴다.",
+        "대표값1.75를확인한다.",
+        "차이의절댓값을구한다."
+      ],
+      "hint": "실수표본과대표값을비교한다.",
+      "source": {
+        "file": "이론_2장. 디지털 이미지 생성 (2-2) - 샘플링 및 양자화 (수정본, 2026).pptx",
+        "page": 14,
+        "label": "2비트 대표값 기반 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2,
+      "accepted": [
+        ".05",
+        "1/20"
+      ]
+    },
+    {
+      "id": "th-q-stretch-stored",
+      "track": "theory",
+      "topic": "히스토그램 스트레칭",
+      "type": "output",
+      "title": "수식 결과와 uint8 저장값",
+      "prompt": "강의스트레칭함수에8비트회색조배열[[50,100,150]]을넣었다. 결과배열값을순서대로쓰라.",
+      "answer": "0,127,255",
+      "explanation": "min50,max150이다. 수식은0,127.5,255지만np.uint8변환으로중간값이127로저장된다. 강의함수는round를호출하지않는다.",
+      "steps": [
+        "최소·최대를찾는다.",
+        "정수화전값을계산한다.",
+        "강의uint8저장을반영한다."
+      ],
+      "hint": "127.5를반올림하지않는다.",
+      "source": {
+        "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+        "page": 19,
+        "label": "스트레칭 실제함수 결과 변형"
+      },
+      "tags": [
+        "변형",
+        "재검토 보강"
+      ],
+      "difficulty": 2,
+      "code": "sample=np.array([[50,100,150]],dtype=np.uint8)\nprint(histogram_stretching(sample))",
+      "accepted": [
+        "[0,127,255]",
+        "[[0,127,255]]",
+        "0 127 255"
       ]
     }
   ]

@@ -1,0 +1,468 @@
+{
+  "reviewedAt": "2026-10-20",
+  "summary": "2026-10-20 16:57 KST 기준으로 원본9개를 다시 읽고 슬라이드·페이지·진단18문항을 현재49개념·159문항·8집중풀이·18주별노트에 대응했습니다. 코드·조건·선택지·허용답을 대조하고 결과예측50개 중48개를 Python 코드 또는 계산 실행으로 검산했습니다. 원문오류는 사이트의 정정 여부를 함께 기록합니다.",
+  "sources": [
+    {
+      "sourceId": "ch04",
+      "units": 87,
+      "unitLabel": "슬라이드",
+      "coverage": "4.1~4.6의 예제 01~23, 함수표, 결과 그림, 단원 요약을 현재 실습16개념·79문항·8집중 풀이에 대조",
+      "checks": [
+        "원본 XML 87개 슬라이드와 삽입 그림128개의 범위를 확인하고 페이지별 대응표를 작성",
+        "좌표·shape·BGR·도형·shift·타입·ROI·포화·뷰·FPS·키 분기를 대조",
+        "보강된 출력8개를 포함해 실습 결과 예측33개 중31개를 코드 또는 계산으로 재검산",
+        "Matplotlib 6개 보간과 axs.flat을 Agg 환경에서 실행"
+      ],
+      "corrections": [
+        "23/24쪽 pt2 불일치와21쪽 버튼 오기를 제시 코드 기준으로 설명",
+        "58쪽 >=0 키 조건과 콜론 누락,82쪽 보색 표현을 정정",
+        "grab/retrieve·Common.utils·자료형·보간·AUTOFOCUS·저장 개념을 보강"
+      ],
+      "limitations": [
+        "p-q06의 실제 윈도우 크기와 p-q10의 실제 키 입력 대기는 GUI 실행하지 않음",
+        "실제 카메라·장치 속성 지원·원본 코덱 설치 결과는 검증하지 않음",
+        "교수의 구두 강조를 확인할 별도 녹취·필기는 제공되지 않음"
+      ]
+    },
+    {
+      "sourceId": "theory2a",
+      "units": 8,
+      "unitLabel": "슬라이드",
+      "coverage": "신호·ADC·회색조/컬러 행렬·배열 생성/읽기·영상처리 작업을 슬라이드별로 대조",
+      "checks": [
+        "전체8장과 현재 개념·진단문제의 용어·입력 물리량을 비교",
+        "행렬 shape·size·밝기 출력의 결정적 변형을 실행"
+      ],
+      "corrections": [
+        "이진 전압 두 레벨과 영상의 여러 양자화 레벨을 구별",
+        "카메라의 빛 입력과 ADC의 전기 입력을 구별"
+      ],
+      "limitations": [
+        "원본 수업 사진의 특정 픽셀값은 해당 이미지 파일이 없으므로 임의로 생성하지 않음"
+      ]
+    },
+    {
+      "sourceId": "theory2b",
+      "units": 35,
+      "unitLabel": "슬라이드",
+      "coverage": "카메라·Bayer·디모자이킹·1D/2D 샘플링·2/3비트 양자화·행렬·색·파일 헤더·디스플레이를 35장 각각 대응",
+      "checks": [
+        "양자화 구간·대표값·레벨·2비트/3비트 전체 부호열을 독립 계산",
+        "채널당 깊이·24비트 조합·픽셀 데이터 용량의 조건을 확인",
+        "Bayer의 R1/G2/B1과 RGB 화면 부화소 역할을 구별"
+      ],
+      "corrections": [
+        "최댓값2는 마지막 레벨에 포함하며 앞자리0을 보존",
+        "RGB로 명시된 이론과 OpenCV BGR 조건을 분리"
+      ],
+      "limitations": [
+        "특정 파일 포맷의 모든 바이트 배치를 암기하는 내용으로 확대하지 않음",
+        "원본 그림을 공개 사이트에 복제한 검토가 아니라 개념·조건 대응 검토"
+      ]
+    },
+    {
+      "sourceId": "theory3",
+      "units": 32,
+      "unitLabel": "슬라이드",
+      "coverage": "점 처리·반전·로그·감마·구간별 선형·히스토그램·스트레칭·PMF/PDF·CDF·평활화·슈도 코드·과제 안내까지 32장 대응",
+      "checks": [
+        "반전·감마 정수화·이진화·히스토그램·누적빈도·LUT·출력 빈도 계산을 확인",
+        "스트레칭 함수를 실행해 소수 저장 및 상수 영상 분기를 검산",
+        "구간별 연속성 va/vb 및 r120→100, 범위2배 밀도0.5, 양자화 오차0.05를 계산",
+        "원본32쪽 제출·발표 지시는 참고 내용으로만 처리"
+      ],
+      "corrections": [
+        "범위 스트레칭과 완전한 빈도 균등화를 구별",
+        "감마의 지수가 γ임을 명시하고 역수 관례와 분리",
+        "L8·직접CDF·반올림과 OpenCV 보정을 구별하고 실제 함수 예를 보강"
+      ],
+      "limitations": [
+        "로그·감마가 모든 영상의 검출 성능을 보장한다고 설명하지 않음",
+        "실제 과제용 실험영상은 제공되지 않아 원본 결과 사진의 픽셀을 대조하지 않음"
+      ]
+    },
+    {
+      "sourceId": "exercise4",
+      "units": 12,
+      "unitLabel": "페이지",
+      "coverage": "지정 1·2·5·6·9·10·13·16번의 문제·제출 답안·코드·결과 그림을 12쪽 모두 대조",
+      "checks": [
+        "지정8문항과 사이트 집중 학습8풀이의 요구사항을 비교",
+        "11쪽은16번 ROI 결과 그림,12쪽은 본문 없는 빈 페이지임을 개별 확인",
+        "도형 좌표·shift·끝점 포함·카메라ROI·G+50 포화 결과를 검산"
+      ],
+      "corrections": [
+        "2555·변수 오타·채움/shift 해설·카메라/파일 입력 불일치를 정정",
+        "PNG 압축 수준과 JPEG 최대 품질을 구별",
+        "정확한 ROI 마지막 화소·실패 종료·자원 해제 조건을 보강"
+      ],
+      "limitations": [
+        "원본 학생 이름·학번·제출 PDF는 공개 데이터에 포함하지 않음",
+        "코드 해석을 대조했으며 원본 사진과 동일한 카메라 장면을 재현한 것은 아님"
+      ]
+    },
+    {
+      "sourceId": "week2",
+      "units": 7,
+      "unitLabel": "문항",
+      "coverage": "원문1~6번 개념 문항과7번 실습 안내를 문제·주별 개념노트에 각각 대응",
+      "checks": [
+        "1·2·5번의 선택지4개씩과 정답을 원문과 대조",
+        "3·4·6번의 ADC·물리량·필터 요구를 유지",
+        "7번 설치/도구 실습을 단일 자동채점 정답과 구별"
+      ],
+      "corrections": [
+        "도구의 역할과 빛→센서 전기 신호→ADC 흐름을 구체화"
+      ],
+      "limitations": [
+        "설치 안내는 실제 사용자의 Anaconda/Spyder 설치가 완료되었다는 뜻이 아님"
+      ]
+    },
+    {
+      "sourceId": "week3",
+      "units": 3,
+      "unitLabel": "문항",
+      "coverage": "3비트 그림·두 페이지 읽기 실습 코드·imread 인수를 원문 조건대로 대조",
+      "checks": [
+        "그림의 표본8개를 다시 읽고 레벨·대표값·24비트 부호열 계산",
+        "원문 전체 print_matInfo의6개 dtype 분기·두 영상·예외·표시 순서를 비교",
+        "CV_8UC1/CV_8UC3 표기를 실제 배열로 출력 확인"
+      ],
+      "corrections": [
+        "전체 실습 코드를 보강하고 파일·좌표 크기·기본1/3채널 가정을 설명",
+        "부호열 앞자리0을 숫자 정규화에서 잃지 않도록 채점 구분"
+      ],
+      "limitations": [
+        "read_gray.jpg가 제공되지 않아 원문의 특정 좌표 수치와 사진은 확정하지 않음"
+      ]
+    },
+    {
+      "sourceId": "week4",
+      "units": 5,
+      "unitLabel": "문항",
+      "coverage": "Word 본문의 저장 코드와 확장자·압축·헤더 5문항을 각각 대응",
+      "checks": [
+        "JPEG params tuple10·PNG params list9 및4개의 저장 호출을 원문과 대조",
+        "이미지/동영상/압축 선택지 모두 비교",
+        "헤더 질문의 크기·비트 깊이·픽셀 시작 위치 조건을 확인"
+      ],
+      "corrections": [
+        "PNG 압축을 화질 점수로 해석하지 않도록 설명",
+        "print 실행과 저장 성공 확인의 차이를 보강"
+      ],
+      "limitations": [
+        "Word XML의28개 문단을 확인했으며 편집 환경에 따른 실제 페이지 수는 확정하지 않음",
+        "입력 영상·쓰기 권한이 있어야 실제4개 파일 생성이 가능"
+      ]
+    },
+    {
+      "sourceId": "week7",
+      "units": 3,
+      "unitLabel": "문항",
+      "coverage": "스캔 원문 히스토그램·스트레칭·평활화 3문항과 주별 노트를 대조",
+      "checks": [
+        "스캔의 두4×4 행렬을 원소별로 비교",
+        "1번 h=[1,2,4,0,3,1,5],합16을 계산",
+        "3번 h·CDF·T·출력16개와 출력 히스토그램을 독립 계산",
+        "보강한 스트레칭·평활화 함수를 실행"
+      ],
+      "corrections": [
+        "스트레칭 함수와 별도 소형 검산 입력을 보강",
+        "L8/최대7/반올림/직접CDF 조건을 명시",
+        "모든 평활화 결과 빈도가 같아야 한다는 오개념을 구별"
+      ],
+      "limitations": [
+        "2번 원문에는 별도 숫자 행렬이 없으므로 검산 입력을 원문으로 표기하지 않음",
+        "OpenCV equalizeHist 결과를 수업 수식의 정답으로 대체하지 않음"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "src-typos",
+      "title": "원문 코드의 범위 밖 값과 변수 오타",
+      "sourceId": "exercise4",
+      "location": "PDF 2~3쪽 · 5번 뒤 도형 코드",
+      "detail": "2555는 uint8 범위 밖이며 iamge 등의 이름은 image와 다르다. 정상 그림 결과를 그대로 단정할 수 없다.",
+      "correction": "정상 예제와 원문 오류 판단을 구별하고 p-q63에 오류 조건을 명시했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q63"
+      ]
+    },
+    {
+      "id": "src-shift",
+      "title": "채움 인수와 shift를 혼동한 해설",
+      "sourceId": "exercise4",
+      "location": "PDF 2~3쪽 · rectangle 인수",
+      "detail": "-1이 내부 채움이고 마지막 1은 shift다. shift=1이면 입력 좌표를 2로 나눈다.",
+      "correction": "실제 꼭짓점 (100,150)~(150,200)을 OpenCV로 확인하고 두께·선 종류·shift를 분리했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q21",
+        "p-q23",
+        "p-q24"
+      ]
+    },
+    {
+      "id": "src-pt2",
+      "title": "강의 코드와 결과 그림의 좌표 불일치",
+      "sourceId": "ch04",
+      "location": "23~24쪽",
+      "detail": "23쪽 코드의 pt2=(250,350)과 24쪽 결과 설명의 pt2=(250,150)이 다르다.",
+      "correction": "사이트 p-draw 주의점에서 불일치를 알리고 시험에 제시된 코드의 좌표를 우선하도록 설명했다.",
+      "status": "source-error",
+      "questionIds": []
+    },
+    {
+      "id": "src-mouse-button",
+      "title": "마우스 밝기 변화의 버튼 표기 오기",
+      "sourceId": "ch04",
+      "location": "20~21쪽",
+      "detail": "실제 코드는 오른쪽 누름 +10, 왼쪽 누름 -10이다. 21쪽은 두 문장 모두 오른쪽이라고 적었다.",
+      "correction": "코드 분기와 245/246·5/10 경계값을 따라 결과를 설명했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q20",
+        "p-q66"
+      ]
+    },
+    {
+      "id": "src-png",
+      "title": "PNG 압축 수준과 화질의 구별",
+      "sourceId": "exercise4",
+      "location": "PDF 8~9쪽 · 13번",
+      "detail": "PNG 0과9는 복원 픽셀 품질이 같으며 압축 수준은 JPEG quality와 다른 척도다.",
+      "correction": "PNG 두 수준의 복원 배열 일치를 검산하고 최고 품질과 무손실을 구별했다.",
+      "status": "clarified",
+      "questionIds": [
+        "p-q39",
+        "p-q40",
+        "th-q-png"
+      ]
+    },
+    {
+      "id": "src-camera",
+      "title": "카메라 요구와 영상 파일 입력의 불일치",
+      "sourceId": "exercise4",
+      "location": "PDF 9~10쪽 · 16번",
+      "detail": "요구는 PC 카메라이지만 원문 답안은 동영상 경로를 연다. 읽기 실패의 무조건 반복도 안전한 종료가 아니다.",
+      "correction": "VideoCapture(0), ret 검사, ROI 크기 검사, 종료와 release를 명시했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q42",
+        "p-q44",
+        "p-q50",
+        "p-q51"
+      ]
+    },
+    {
+      "id": "src-trackbar-dtype",
+      "title": "트랙바 밝기 코드의 NumPy 버전 조건",
+      "sourceId": "ch04",
+      "location": "18쪽",
+      "detail": "uint8 배열에 음수 Python 정수를 더하는 원문 방식은 현재 NumPy에서 오류가 날 수 있다.",
+      "correction": "해당 버전 차이를 설명하고 균일 밝기 예제는 image.fill(value)로 제시했다.",
+      "status": "clarified",
+      "questionIds": [
+        "p-q18"
+      ]
+    },
+    {
+      "id": "src-bgr",
+      "title": "BGR/RGB 교환을 보색으로 표현한 문장",
+      "sourceId": "ch04",
+      "location": "82쪽",
+      "detail": "BGR을 RGB로 해석하면 R/B 채널이 바뀐다. 모든 채널의 보색 반전은 아니다.",
+      "correction": "색 왜곡의 원인을 채널 순서로 설명하고 cvtColor 변환과 cmap을 구별했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q59",
+        "p-q74"
+      ]
+    },
+    {
+      "id": "src-endpoints",
+      "title": "사각형 크기와 끝점 포함 규칙",
+      "sourceId": "exercise4",
+      "location": "5~6쪽 · 9번 및 16번 ROI",
+      "detail": "두 꼭짓점 rectangle은 끝점을 포함하지만 NumPy 슬라이스는 끝을 제외한다.",
+      "correction": "좌표차의 수업 관례와 정확한 픽셀 수를 구별하고 Rect 튜플·마지막 화소 좌표를 검산했다.",
+      "status": "clarified",
+      "questionIds": [
+        "p-q27",
+        "p-q64",
+        "p-q67"
+      ]
+    },
+    {
+      "id": "src-key-comment",
+      "title": ">=0 조건과 스페이스 주석의 차이",
+      "sourceId": "ch04",
+      "location": "57~58쪽 · 예제 17",
+      "detail": "waitKey(...)>=0은 일반적인 키 입력이면 종료한다. 스페이스만 검사한 조건은 아니다.",
+      "correction": "키가 -1/97/32/27인 조건을 실행해 False/True/True/True를 확인했다.",
+      "status": "source-error",
+      "questionIds": [
+        "p-q73"
+      ]
+    },
+    {
+      "id": "src-colon",
+      "title": "while True 뒤의 콜론 누락",
+      "sourceId": "ch04",
+      "location": "58쪽 · 카메라 예제 캡처",
+      "detail": "코드 캡처의 while True 줄에 콜론이 빠져 있다.",
+      "correction": "p-capture 주의점에서 while True:로 고쳐야 실행됨을 명시했다.",
+      "status": "source-error",
+      "questionIds": []
+    },
+    {
+      "id": "src-levels",
+      "title": "두 전압 레벨과 여러 영상 밝기 레벨",
+      "sourceId": "theory2a",
+      "location": "2쪽",
+      "detail": "이진 신호의 두 레벨 설명을 영상 밝기 두 단계로 해석하면 3비트·8비트 양자화와 충돌한다.",
+      "correction": "비트 신호와 비트 묶음의 2^b 레벨을 구별했다.",
+      "status": "clarified",
+      "questionIds": [
+        "th-q-w2-2",
+        "th-q-levels"
+      ]
+    },
+    {
+      "id": "src-stretch",
+      "title": "스트레칭과 완전한 빈도 균등화의 구별",
+      "sourceId": "theory3",
+      "location": "18~20쪽",
+      "detail": "스트레칭은 입력 밝기 범위를 선형으로 펼치며 모든 밝기 빈도를 같게 만들지는 않는다. 이산 평활화도 완전 균등 빈도를 보장하지 않는다.",
+      "correction": "선형 범위 변환과 CDF 매핑의 목적·식을 분리했다.",
+      "status": "clarified",
+      "questionIds": [
+        "th-q-compare",
+        "th-q-not-uniform"
+      ]
+    },
+    {
+      "id": "src-cdf",
+      "title": "강의 L=8 평활화와 구현 조건",
+      "sourceId": "week7",
+      "location": "1쪽 · 3번 / 강의 3장 28~29쪽",
+      "detail": "레벨 수·직접 CDF·반올림 조건을 바꾸면 결과도 달라진다.",
+      "correction": "입력16개, 빈도·누적값·변환표·출력16개를 다시 계산하고 OpenCV cdf_min 보정과 구별했다.",
+      "status": "clarified",
+      "questionIds": [
+        "th-q-w7-3",
+        "th-q-equalize-code-result"
+      ]
+    },
+    {
+      "id": "content-read-code",
+      "title": "3주차 원문 실습의 전체 코드 보강",
+      "sourceId": "week3",
+      "location": "1~2쪽 · 2번",
+      "detail": "개념 설명만으로는 원문 print_matInfo의 전체 분기와 두 영상 출력 흐름을 따라 하기 어려웠다.",
+      "correction": "전체 코드, 6개 dtype 대응, CV_8UC1/CV_8UC3, 파일 존재·좌표 범위·기본 채널 가정을 보강했다.",
+      "status": "clarified",
+      "questionIds": [
+        "th-q-w3-2",
+        "th-q-mat-info-types"
+      ]
+    },
+    {
+      "id": "content-stretch-code",
+      "title": "7주차 스트레칭의 함수와 저장값 보강",
+      "sourceId": "week7",
+      "location": "1쪽 · 2번",
+      "detail": "실습 요구에 맞춰 계산 설명 외 실제 함수와 정수 저장 결과도 필요했다.",
+      "correction": "강의 함수와 별도 소형 검산 입력을 제시하고 [[50,100,150]]→[[0,127,255]] 및 상수80 유지를 실행했다.",
+      "status": "clarified",
+      "questionIds": [
+        "th-q-w7-2",
+        "th-q-stretch-stored"
+      ]
+    },
+    {
+      "id": "content-api",
+      "title": "강의 후반 예제와 함수표 보강",
+      "sourceId": "ch04",
+      "location": "11·36·40·42·50·53·56·62·81·83~85쪽",
+      "detail": "기존 핵심 문제 외 문자 사전·두 클릭·자료형·로컬 모듈·grab/retrieve·보간·저장과 축 범위의 대응을 추가 점검했다.",
+      "correction": "관련 개념 절과 p-q65~79를 추가하고 새 출력8개를 독립 실행했다.",
+      "status": "clarified",
+      "questionIds": [
+        "p-q65",
+        "p-q66",
+        "p-q67",
+        "p-q68",
+        "p-q69",
+        "p-q70",
+        "p-q71",
+        "p-q72",
+        "p-q73",
+        "p-q74",
+        "p-q75",
+        "p-q76",
+        "p-q77",
+        "p-q78",
+        "p-q79"
+      ]
+    },
+    {
+      "id": "grade-insertion",
+      "title": "빈칸에 넣으면 틀린 허용답 제거",
+      "sourceId": "ch04",
+      "location": "웹의 코드 빈칸 채점",
+      "detail": "cap.____()에 cap.read()를 넣거나 writer.____(frame)에 writer.write를 넣으면 중복 호출이 된다. cmap=\"____\" 안에 따옴표를 추가해도 다르다.",
+      "correction": "p-q43·48·61의 잘못된 허용답을 제거하고 최종 채점기의 거부를 확인했다.",
+      "status": "corrected",
+      "questionIds": [
+        "p-q43",
+        "p-q48",
+        "p-q61"
+      ]
+    },
+    {
+      "id": "grade-boundaries",
+      "title": "수치·비트열·식별자 경계 채점 수정",
+      "sourceId": "ch04",
+      "location": "웹의 결과 예측·코드 빈칸 채점",
+      "detail": "미응답과 첫 선택지, [1,23]과[12,3], 불완전 지수1e, 1-2, 연속 쉼표, on Mouse/1 0 0처럼 분리된 토큰이 합쳐지는 반례를 점검했다.",
+      "correction": "최종 토큰화 채점기에서 반례를 거부하고 3주차24비트 부호열의 앞자리0과 올바른 표현을 보존함을 확인했다.",
+      "status": "corrected",
+      "questionIds": [
+        "p-q14",
+        "p-q39",
+        "p-q71",
+        "th-q-w3-1"
+      ]
+    },
+    {
+      "id": "literal-output-case",
+      "title": "출력 문자열의 대소문자 구분",
+      "sourceId": "ch04",
+      "location": "키보드·비디오 결과 예측",
+      "detail": "코드가 출력하는 upper/lower, True/False와 자료형 표기는 실제 대소문자를 구별해야 합니다. 문자열을 일괄 소문자로 바꾸는 비교는 다른 출력을 정답으로 인정할 수 있었습니다.",
+      "correction": "문자열 출력 문항에는 대소문자를 보존하는 채점을 적용하고, 식별자·숫자 내부에 공백을 넣거나 불완전한 수치를 적은 답도 구별하도록 회귀 검사를 추가했습니다.",
+      "status": "corrected",
+      "questionIds": [
+        "p-q65",
+        "p-q73",
+        "th-q-mat-info-types"
+      ]
+    }
+  ],
+  "questionChecks": {
+    "reviewed": 159,
+    "executed": 48,
+    "notes": [
+      "executed는 결과예측 문항 중 실제 코드 또는 명시 계산을 실행해 대조한48개입니다. 전체 출력 문항은50개입니다.",
+      "p-q06 창 크기와 p-q10 실제 키 입력은 GUI로 실행하지 않고 API 조건·배열 불변 의미를 대조했습니다.",
+      "OpenCV5.0.0·NumPy2.3.5를 사용했습니다. Matplotlib 검증은 시스템Python의3.10.7 Agg 환경을 사용했습니다.",
+      "진단 원문18개와 weekly 노트18개의 입력 조건·선택지·행렬·연결ID를 대조했습니다.",
+      "최종 허용답·토큰화 채점기로 미응답·수치 경계·앞자리0·식별자 내부 공백·잘못된 메서드/따옴표 반례를 재확인했습니다.",
+      "원본 카메라 장치·수업 이미지 픽셀·실제 HighGUI 창 표시를 모두 실행한 것으로 주장하지 않습니다.",
+      "이 검토 이후 콘텐츠나 채점기가 바뀌면 변경 부분은 다시 확인해야 합니다."
+    ]
+  }
+}

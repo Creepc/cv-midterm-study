@@ -8,9 +8,11 @@
   <title>VISION NOTE · 컴퓨터비전 중간고사</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./study.css">
   <script src="./data.js" defer></script>
   <script src="./grading.js" defer></script>
   <script src="./progress.js" defer></script>
+  <script src="./study-views.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -20,24 +22,27 @@
     <div class="semester">2026 · 2학기 <span>중간고사</span></div>
     <div class="nav-label">MY STUDY</div>
     <nav aria-label="주 메뉴">
-      <a href="#home" data-nav="home"><span>▦</span>학습 대시보드</a>
-      <a href="#concepts" data-nav="concepts"><span>▤</span>개념 노트</a>
-      <a href="#practice" data-nav="practice"><span>⌨</span>문제 풀기</a>
+      <a href="#home" data-nav="home"><span>▦</span>한눈에 보기</a>
+      <a href="#concepts" data-nav="concepts"><span>▤</span>주별 핵심 개념</a>
       <a href="#exercises" data-nav="exercises"><span>◎</span>4장 집중 학습 <b>8</b></a>
-      <a href="#lab" data-nav="lab"><span>⌘</span>코드 실험실</a>
-      <a href="#review" data-nav="review"><span>↺</span>오답 노트 <b id="wrong-count">0</b></a>
-      <a href="#exam" data-nav="exam"><span>◷</span>모의고사</a>
+      <a href="#materials" data-nav="materials"><span>▱</span>강의자료 전체 정리</a>
+      <a href="#practice" data-nav="practice"><span>⌨</span>문제 풀기</a>
+      <details class="nav-more"><summary>복습 · 실험실 <span>⌄</span></summary>
+        <a href="#review" data-nav="review"><span>↺</span>오답 노트 <b id="wrong-count">0</b></a>
+        <a href="#exam" data-nav="exam"><span>◷</span>모의고사</a>
+        <a href="#lab" data-nav="lab"><span>⌘</span>코드 실험실</a>
+      </details>
     </nav>
     <div class="sidebar-bottom">
       <div class="study-note"><span class="live-dot"></span> 나의 속도로, 확실하게<p>개념을 이해하고<br>코드를 직접 떠올려 보세요.</p></div>
-      <a href="#sources" data-nav="sources">ⓘ &nbsp; 자료 및 학습 범위</a>
+      <a href="#sources" data-nav="sources">ⓘ &nbsp; 원본 자료 · 검토 내역</a>
       <small>학습 기록은 이 브라우저에 저장됩니다.</small>
     </div>
   </aside>
   <div class="workspace">
     <header class="topbar">
       <button id="menu-toggle" class="icon-btn mobile-menu" aria-label="메뉴 열기" aria-expanded="false">☰</button>
-      <div class="breadcrumb">나의 학습 공간 <span>/</span> <strong id="page-name">학습 대시보드</strong></div>
+      <div class="breadcrumb">나의 학습 공간 <span>/</span> <strong id="page-name">한눈에 보기</strong></div>
       <button class="search-trigger" id="search-open"><span>⌕</span> 개념·문제 검색 <kbd>/</kbd></button>
       <span class="avatar" aria-label="나의 학습">CV</span>
     </header>

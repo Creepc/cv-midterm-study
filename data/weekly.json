@@ -1,0 +1,664 @@
+{
+  "weeks": [
+    {
+      "id": "week2",
+      "week": 2,
+      "title": "2주차 · 신호·ADC·카메라",
+      "summary": "연속적인 빛이 디지털 픽셀 값이 되는 흐름을 먼저 정리합니다. 원문 1~6번 개념과 7번 실습 역할을 함께 확인하세요.",
+      "sourceId": "week2",
+      "items": [
+        {
+          "id": "w2-1",
+          "number": 1,
+          "title": "영상처리 기술과 단어 임베딩",
+          "questionIds": [
+            "th-q-w2-1"
+          ],
+          "conceptIds": [
+            "th-c-processing"
+          ],
+          "definition": "디지털 영상처리는 픽셀 행렬을 대상으로 영상을 강화·복원·압축하거나 대상을 인식하는 기술이다. 원문 보기의 단어 임베딩은 단어를 벡터로 바꾸는 자연어 처리 기술이므로 정답이다.",
+          "keyPoints": [
+            "영상복원: 흐림·잡음 등으로 열화된 영상의 회복을 목표로 한다.",
+            "영상압축: 영상 데이터의 저장·전송량을 줄인다.",
+            "컴퓨터 비전: 영상으로 대상·범주 등의 정보를 얻는다.",
+            "단어 임베딩: 단어의 의미 관계를 수치 벡터로 나타낸다."
+          ],
+          "example": "원문 보기 분류: 영상복원 = 영상 / 영상압축 = 영상 / 컴퓨터 비전 = 영상 / 단어 임베딩 = 단어. 정답: 단어 임베딩.",
+          "pitfalls": [
+            "강화·복원·압축을 같은 목적의 동의어로 외우지 않는다.",
+            "컴퓨터 비전을 비영상 항목으로 고르지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차1번"
+          },
+          "primaryQuestionId": "th-q-w2-1"
+        },
+        {
+          "id": "w2-2",
+          "number": 2,
+          "title": "아날로그와 디지털 신호",
+          "questionIds": [
+            "th-q-w2-2",
+            "th-q-sampling",
+            "th-q-levels"
+          ],
+          "conceptIds": [
+            "th-c-signals",
+            "th-c-sampling",
+            "th-c-quantization"
+          ],
+          "definition": "아날로그 신호는 시간이나 공간에 따라 연속적인 물리량을 나타낸다. 디지털 표현은 유한한 값을 구분해 비트로 나타낸다. 원문의 정답은 디지털 시계다.",
+          "keyPoints": [
+            "온도·소리·빛은 연속적으로 변하는 물리량의 예다.",
+            "강의의 0/1 두 레벨은 이진 전기 신호의 설명이다.",
+            "여러 비트를 묶으면 2^b개의 수치 레벨을 표현한다.",
+            "8비트 영상은 0~255의 256레벨이므로 밝기가 0/1뿐인 것은 아니다."
+          ],
+          "example": "예: 자연의 빛 세기 1.1은 연속값이다. 3비트 양자화 뒤에는 레벨 4, 비트 코드 100으로 표현할 수 있다.",
+          "pitfalls": [
+            "디지털 시계의 표시와 자연 물리량의 연속성을 구별한다.",
+            "디지털을 무조건 밝기 2단계라고 해석하지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차2번"
+          },
+          "primaryQuestionId": "th-q-w2-2"
+        },
+        {
+          "id": "w2-3",
+          "number": 3,
+          "title": "ADC의 정의와 일상 예",
+          "questionIds": [
+            "th-q-w2-3",
+            "th-q-sampling",
+            "th-q-step"
+          ],
+          "conceptIds": [
+            "th-c-adc",
+            "th-c-sampling",
+            "th-c-quantization"
+          ],
+          "definition": "ADC는 Analog to Digital Converter로 아날로그 전기 신호를 디지털 수치로 바꾼다. 표본화로 시점·위치를 고르고 양자화로 진폭을 유한 레벨에 대응시킨 뒤 비트로 표현한다.",
+          "keyPoints": [
+            "Sampling: 언제·어디서 측정할지를 이산화한다.",
+            "Quantization: 측정한 진폭을 몇 단계로 나타낼지 정한다.",
+            "Encoding: 양자화 레벨 번호를 비트 부호로 나타낸다.",
+            "일상 예: 디지털카메라와 마이크 음성 녹음에서 센서의 아날로그 출력을 디지털화한다."
+          ],
+          "example": "음성 → 마이크 → 아날로그 전압 → ADC → 디지털 음성 샘플. 카메라는 빛 → 센서 전기 신호 → ADC → 픽셀 값.",
+          "pitfalls": [
+            "ADC의 입력을 처음부터 디지털 파일이라고 쓰지 않는다.",
+            "DAC는 반대인 Digital to Analog 변환이다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차3번"
+          },
+          "primaryQuestionId": "th-q-w2-3"
+        },
+        {
+          "id": "w2-4",
+          "number": 4,
+          "title": "카메라의 입력 물리량",
+          "questionIds": [
+            "th-q-w2-4",
+            "th-q-w3-2"
+          ],
+          "conceptIds": [
+            "th-c-adc",
+            "th-c-camera",
+            "th-c-matrix"
+          ],
+          "definition": "카메라 전체가 받는 물리적 입력은 장면의 빛이며 픽셀 값은 그 빛에 대응하는 밝기 수치다. 센서가 빛을 전하·전압으로 바꾼 뒤 ADC에 아날로그 전기 신호를 전달한다.",
+          "keyPoints": [
+            "물체에서 반사된 빛이 렌즈를 통해 센서에 도달한다.",
+            "카메라의 외부 물리량은 빛의 세기다.",
+            "ADC 바로 앞에서는 센서의 아날로그 전기 신호가 된다.",
+            "디지털화 후 픽셀 값은 위치별 밝기 또는 색 성분의 세기를 나타낸다."
+          ],
+          "example": "시험 답안 예: 입력 물리량은 빛의 세기다. 이미지 센서가 빛을 아날로그 전기 신호로 바꾸고 ADC가 이를 디지털 픽셀 값으로 변환한다.",
+          "pitfalls": [
+            "카메라 전체 입력과 ADC 회로의 직접 입력을 구별한다.",
+            "픽셀 밝기를 좌표 번호나 물체 이름으로 설명하지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차4번"
+          },
+          "primaryQuestionId": "th-q-w2-4"
+        },
+        {
+          "id": "w2-5",
+          "number": 5,
+          "title": "렌즈·센서·필터·ADC 역할",
+          "questionIds": [
+            "th-q-w2-5",
+            "th-q-bayer",
+            "th-q-demosaic"
+          ],
+          "conceptIds": [
+            "th-c-camera",
+            "th-c-bayer",
+            "th-c-demosaic"
+          ],
+          "definition": "렌즈는 상을 맺고 센서는 빛을 전기 신호로 바꾸며 색 필터는 특정 파장을 통과시킨다. 아날로그를 디지털로 변환하는 것은 ADC다. 원문에서 카메라 모듈이 아닌 보기는 DAC다.",
+          "keyPoints": [
+            "렌즈: 빛을 모아 영상이 센서에 맺히게 한다.",
+            "이미지 센서: 빛의 세기에 대응하는 전하·전압을 생성한다.",
+            "색 필터: 빨강·초록·파랑 중 필요한 파장 성분을 선택한다.",
+            "ADC와 DAC의 변환 방향을 구별한다."
+          ],
+          "example": "원문 선택지: 렌즈(O), 이미지 센서(O), DAC(X), 칼라 필터(O). 카메라의 디지털화 방향은 Analog → Digital이다.",
+          "pitfalls": [
+            "색 필터가 비트를 만드는 장치라고 쓰지 않는다.",
+            "디모자이킹은 빠진 색을 보간하는 별도 과정이다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차5번"
+          },
+          "primaryQuestionId": "th-q-w2-5"
+        },
+        {
+          "id": "w2-6",
+          "number": 6,
+          "title": "빨간 계통만 통과시키는 부품",
+          "questionIds": [
+            "th-q-w2-6",
+            "th-q-bayer"
+          ],
+          "conceptIds": [
+            "th-c-bayer",
+            "th-c-camera"
+          ],
+          "definition": "특정 파장 범위의 빛만 통과시키는 부품은 색 필터다. 빨간 계통을 측정하려면 빨간색 필터 또는 R 필터를 사용한다.",
+          "keyPoints": [
+            "백색광에는 여러 파장의 빛이 섞여 있다.",
+            "R 필터는 빨간 계통의 파장대를 선택한다.",
+            "Bayer 배열은 센서 위에 R, G, B 필터를 배치한다.",
+            "강의의 RGGB 블록은 R 1개, G 2개, B 1개이며 각 위치는 한 성분을 직접 측정한다."
+          ],
+          "example": "빨간 빛 성분 → R 필터 통과 → 그 위치 센서의 전기 신호 → ADC의 디지털 값. 정답 부품은 R 색 필터다.",
+          "pitfalls": [
+            "ADC·렌즈와 파장 선택의 역할을 혼동하지 않는다.",
+            "Bayer 한 위치가 처음부터 RGB를 모두 측정한다고 쓰지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차6번"
+          },
+          "primaryQuestionId": "th-q-w2-6"
+        },
+        {
+          "id": "w2-7",
+          "number": 7,
+          "title": "파이썬 도구의 꼭 필요한 역할",
+          "questionIds": [
+            "th-q-w2-7",
+            "th-q-shape",
+            "th-q-pixel"
+          ],
+          "conceptIds": [
+            "th-c-matrix",
+            "th-c-gray-color"
+          ],
+          "definition": "Anaconda는 실행 환경·패키지 관리, Spyder는 코드 편집·실행, NumPy는 영상 배열, Matplotlib는 시각화에 사용한다. 원문은 설치·사용 실습 안내이며 여기서는 시험에 연결되는 배열과 표시의 역할을 확인한다.",
+          "keyPoints": [
+            "NumPy의 2차원 배열에서 한 원소를 회색조 한 픽셀로 해석한다.",
+            "shape=(높이, 폭)이며 배열 접근은 [행, 열]이다.",
+            "uint8 회색조의 값 범위는 0~255다.",
+            "배열을 표시할 때 데이터 값과 색상표·채널 순서를 구별한다."
+          ],
+          "example": "import numpy as np\nimage=np.zeros((2,3),dtype=np.uint8)\nimage[:]=200\n# shape=(2,3), 픽셀 6개, 모든 밝기 200",
+          "pitfalls": [
+            "영상의 폭과 높이를 바꾸어 외우지 않는다.",
+            "설치 버전 암기보다 실제 배열의 shape·dtype·값을 확인한다."
+          ],
+          "source": {
+            "file": "학습진단문제/2주차 학습진단 문제.pdf",
+            "page": 1,
+            "label": "2주차7번"
+          },
+          "primaryQuestionId": "th-q-w2-7"
+        }
+      ],
+      "checklist": [
+        "아날로그와 디지털을 연속성·이산값으로 설명할 수 있다.",
+        "ADC·DAC의 변환 방향과 카메라 전체의 입력을 구별한다.",
+        "렌즈·색 필터·센서·ADC의 역할을 연결할 수 있다.",
+        "NumPy 행렬의 행·열·밝기 값을 설명할 수 있다."
+      ]
+    },
+    {
+      "id": "week3",
+      "week": 3,
+      "title": "3주차 · 부호화·픽셀·imread",
+      "summary": "원문 그림의 3비트 부호열을 직접 계산하고, 읽은 영상의 수치·자료형·채널을 구별합니다.",
+      "sourceId": "week3",
+      "items": [
+        {
+          "id": "w3-1",
+          "number": 1,
+          "title": "3비트 양자화와 고정 길이 부호화",
+          "questionIds": [
+            "th-q-w3-1",
+            "th-q-step",
+            "th-q-boundary",
+            "th-q-representative",
+            "th-q-2bit",
+            "th-q-quant-error"
+          ],
+          "conceptIds": [
+            "th-c-sampling",
+            "th-c-quantization",
+            "th-c-encoding"
+          ],
+          "definition": "표본값을 8개의 구간 중 하나에 배정한 뒤 레벨 번호 0~7을 3자리 이진수로 나타낸다. 원문은 입력 범위 0~2와 강의의 폭 0.25 구간을 사용한다. 표본값·레벨·대표값·비트 코드는 서로 다른 개념이다.",
+          "keyPoints": [
+            "레벨 수 L=2^3=8, 구간 폭 Δ=(2-0)/8=0.25다.",
+            "구간은 [0,0.25), …, [1.75,2]이며 마지막만 최댓값 2를 포함한다.",
+            "1.1 → 레벨 4 → 대표값 1.125 → 코드 100, 1.6 → 레벨 6 → 대표값 1.625 → 코드 110이다.",
+            "원문 표본 [1.1,1.6,2,1.6,1.1,0.3,0,0.3]의 레벨은 [4,6,7,6,4,1,0,1]이다.",
+            "표본 8개 × 3비트 = 24비트로 검산하고 앞자리 0을 유지한다."
+          ],
+          "example": "표본: 1.1  1.6  2.0  1.6  1.1  0.3  0.0  0.3\n레벨:   4    6    7    6    4    1    0    1\n코드: 100  110  111  110  100  001  000  001",
+          "pitfalls": [
+            "2.0을 레벨 8·4비트 1000으로 쓰지 않는다.",
+            "1.1 자체를 이진 실수로 바꾸거나 대표값을 코드로 쓰지 않는다.",
+            "반올림으로 가장 가까운 정수 레벨을 고르는 문제가 아니라 제시된 구간을 따른다."
+          ],
+          "source": {
+            "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+            "page": 1,
+            "label": "3주차1번"
+          },
+          "primaryQuestionId": "th-q-w3-1"
+        },
+        {
+          "id": "w3-2",
+          "number": 2,
+          "title": "읽어 온 값과 dtype·채널·형식",
+          "questionIds": [
+            "th-q-w3-2",
+            "th-q-mat-info-types",
+            "th-q-read-depth",
+            "th-q-read-shape",
+            "th-q-read-none"
+          ],
+          "conceptIds": [
+            "th-c-matrix",
+            "th-c-gray-color",
+            "th-c-mat-info",
+            "th-c-rgb"
+          ],
+          "definition": "픽셀 숫자는 그 위치의 밝기 또는 색 채널별 빛의 세기를 나타낸다. 회색조는 H×W의 1채널 배열이고 기본 컬러는 H×W×3의 BGR 배열이다. dtype은 한 채널 값의 자료형이며 채널 수와 다르다.",
+          "keyPoints": [
+            "uint8 → CV_8U, int8 → CV_8S, uint16 → CV_16U, int16 → CV_16S, float32 → CV_32F, float64 → CV_64F다.",
+            "uint8 회색조는 CV_8UC1, 기본 3채널 컬러는 CV_8UC3로 표시한다.",
+            "원문 함수의 ndim==3이면 채널 수를 3으로 정하는 분기는 회색조/기본 컬러만 가정한 편의식이다.",
+            "회색조 밝기 v는 컬러로 읽을 때 [B,G,R]=[v,v,v]로 표현될 수 있다.",
+            "파일 읽기 실패인 None을 먼저 검사하고, [100,100]에 접근하려면 행·열이 각각 101 이상인지도 확인한다."
+          ],
+          "example": "회색조가 uint8, shape=(240,320)이면 ndim=2·CV_8UC1이다.\n같은 회색조를 COLOR로 읽어 shape=(240,320,3)이면 ndim=3·CV_8UC3다.\n실제 v는 read_gray.jpg를 읽어서 확인한다. 원문 전체 코드는 연결된 문제의 코드 창에 있다.",
+          "pitfalls": [
+            "파일 없이 원본 사진의 [100,100] 수치를 임의로 암기하지 않는다.",
+            "C3을 3비트라고 읽지 않는다.",
+            "원문의 2차원 행렬 표현을 컬러 ndarray도 항상 ndim=2라는 뜻으로 해석하지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+            "page": [
+              1,
+              2
+            ],
+            "label": "3주차2번"
+          },
+          "primaryQuestionId": "th-q-w3-2"
+        },
+        {
+          "id": "w3-3",
+          "number": 3,
+          "title": "imread의 경로와 flags",
+          "questionIds": [
+            "th-q-w3-3",
+            "th-q-read-shape",
+            "th-q-read-none"
+          ],
+          "conceptIds": [
+            "th-c-gray-color",
+            "th-c-mat-info"
+          ],
+          "definition": "cv2.imread(filename, flags)는 파일 경로와 읽기 방식을 받아 영상 배열을 반환한다. IMREAD_GRAYSCALE은 1채널 회색조, IMREAD_COLOR는 기본 3채널 BGR 배열로 읽는다. 읽기 실패는 None이다.",
+          "keyPoints": [
+            "첫 인수 filename에는 상대경로 또는 절대경로 문자열을 준다.",
+            "IMREAD_GRAYSCALE: 회색조 배열 H×W로 읽는다.",
+            "IMREAD_COLOR: 기본 BGR 배열 H×W×3으로 읽는다.",
+            "원본이 회색조여도 COLOR 옵션은 3채널 표현으로 읽는다.",
+            "이미지 표시 imshow와 파일 읽기 imread는 역할이 다르다."
+          ],
+          "example": "gray=cv2.imread(\"images/read_gray.jpg\",cv2.IMREAD_GRAYSCALE)\ncolor=cv2.imread(\"images/read_gray.jpg\",cv2.IMREAD_COLOR)\nif gray is None or color is None:\n    raise Exception(\"영상파일 읽기 에러\")",
+          "pitfalls": [
+            "RGB로 반환된다고 설명하지 않는다.",
+            "상대경로는 현재 작업 폴더를 기준으로 찾으므로 파일 위치가 맞는지 확인한다."
+          ],
+          "source": {
+            "file": "학습진단문제/3주차 학습진단 문제지.pdf",
+            "page": 2,
+            "label": "3주차3번"
+          },
+          "primaryQuestionId": "th-q-w3-3"
+        }
+      ],
+      "checklist": [
+        "3비트 원문의 표본 8개를 구간표부터 24비트 부호열까지 계산할 수 있다.",
+        "표본값·레벨 번호·대표값·부호를 구별한다.",
+        "dtype·ndim·shape·채널 수·CV_8UC3의 뜻을 설명할 수 있다.",
+        "imread의 두 인수와 None 예외 처리를 쓸 수 있다."
+      ]
+    },
+    {
+      "id": "week4",
+      "week": 4,
+      "title": "4주차 · 저장·압축·헤더",
+      "summary": "저장 코드를 읽으며 확장자·JPEG 화질·PNG 압축 수준·파일 헤더를 구별합니다.",
+      "sourceId": "week4",
+      "items": [
+        {
+          "id": "w4-1",
+          "number": 1,
+          "title": "imwrite와 JPEG·PNG 설정",
+          "questionIds": [
+            "th-q-w4-1",
+            "th-q-png"
+          ],
+          "conceptIds": [
+            "th-c-compression",
+            "th-c-header"
+          ],
+          "definition": "cv2.imwrite(filename, image, params)는 배열을 파일로 저장한다. 원문은 기본 JPEG, quality 10인 JPEG, compression 9인 PNG, BMP의 4개 파일을 만든다. JPEG 화질과 PNG 압축 수준의 숫자는 같은 척도가 아니다.",
+          "keyPoints": [
+            "파일 확장자 .jpg/.png/.bmp가 저장 형식을 결정한다.",
+            "원문의 기본 JPEG quality는 95이며 quality 10은 낮은 화질의 손실 압축이다.",
+            "PNG compression 9는 높은 압축 수준이며 무손실 성질을 유지한다.",
+            "params는 옵션 식별자와 설정값의 쌍이다. 원문은 tuple과 list를 각각 사용한다.",
+            "저장 성공은 imwrite 반환값 또는 실제 파일을 확인한다. print 실행만으로 성공이 보장되지는 않는다."
+          ],
+          "example": "params_jpg=(cv2.IMWRITE_JPEG_QUALITY,10)\nparams_png=[cv2.IMWRITE_PNG_COMPRESSION,9]\ncv2.imwrite(\"a.jpg\",image)        # 강의기본quality95\ncv2.imwrite(\"b.jpg\",image,params_jpg)\ncv2.imwrite(\"c.png\",image,params_png)\ncv2.imwrite(\"d.bmp\",image)",
+          "pitfalls": [
+            "PNG 압축 9를 낮은 화질이라고 설명하지 않는다.",
+            "JPEG와 PNG의 파일 크기 차이는 영상 내용에도 영향을 받으므로 항상 정확한 크기를 단정하지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
+            "page": 1,
+            "label": "4주차1번"
+          },
+          "primaryQuestionId": "th-q-w4-1"
+        },
+        {
+          "id": "w4-2",
+          "number": 2,
+          "title": "이미지 확장자 구별",
+          "questionIds": [
+            "th-q-w4-2"
+          ],
+          "conceptIds": [
+            "th-c-header"
+          ],
+          "definition": "BMP, JPG/JPEG, PNG는 대표적인 이미지 파일 형식이다. 원문에서 이미지 확장자가 아닌 것은 MPG다.",
+          "keyPoints": [
+            "BMP: 비트맵 이미지 형식이다.",
+            "JPG/JPEG: JPEG 방식의 압축 이미지에 사용한다.",
+            "PNG: 무손실 압축 이미지 형식이다.",
+            "MPG: 원문 보기의 동영상 형식이다."
+          ],
+          "example": "BMP(O) / JPG(O) / MPG(X) / PNG(O). 정답: MPG.",
+          "pitfalls": [
+            "MPG와 JPG의 철자가 비슷해도 서로 다른 형식이다."
+          ],
+          "source": {
+            "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
+            "page": 1,
+            "label": "4주차2번"
+          },
+          "primaryQuestionId": "th-q-w4-2"
+        },
+        {
+          "id": "w4-3",
+          "number": 3,
+          "title": "동영상 확장자 구별",
+          "questionIds": [
+            "th-q-w4-3"
+          ],
+          "conceptIds": [
+            "th-c-header"
+          ],
+          "definition": "AVI, MP4, MOV는 대표적인 동영상 파일 형식이다. 원문에서 동영상 확장자가 아닌 것은 PNG다.",
+          "keyPoints": [
+            "AVI: 동영상 컨테이너 형식이다.",
+            "MP4: 동영상·오디오를 담는 대표적인 컨테이너다.",
+            "MOV: 동영상 컨테이너 형식이다.",
+            "PNG: 원문 분류에서 정지 이미지 형식이다."
+          ],
+          "example": "AVI(O) / MP4(O) / PNG(X) / MOV(O). 정답: PNG.",
+          "pitfalls": [
+            "이미지·동영상의 대표 용도를 분류하는 문제로 풀고 확장자 철자를 확인한다."
+          ],
+          "source": {
+            "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
+            "page": 1,
+            "label": "4주차3번"
+          },
+          "primaryQuestionId": "th-q-w4-3"
+        },
+        {
+          "id": "w4-4",
+          "number": 4,
+          "title": "압축·ADC·RGB·평활화의 목적",
+          "questionIds": [
+            "th-q-w4-4",
+            "th-q-compare"
+          ],
+          "conceptIds": [
+            "th-c-compression",
+            "th-c-adc",
+            "th-c-rgb",
+            "th-c-equalize"
+          ],
+          "definition": "JPEG는 이미지 압축 기법이다. ADC는 신호 변환, RGB는 색 표현, 히스토그램 평활화는 밝기 분포를 바꾸는 영상 강화이므로 압축 기법과 구별한다.",
+          "keyPoints": [
+            "JPEG: 저장·전송할 영상 데이터 양을 줄인다.",
+            "ADC: 아날로그 전기 신호를 디지털 수치로 바꾼다.",
+            "RGB: 세 색 성분의 값으로 컬러를 표현한다.",
+            "Histogram Equalization: 누적분포 매핑으로 대비 개선을 목표로 한다."
+          ],
+          "example": "원문 정답은 JPEG다. 비슷한 보기로 변형되어도 각 방법의 목적을 한 문장으로 설명해 분류한다.",
+          "pitfalls": [
+            "평활화가 밝기 분포를 바꾼다고 파일 크기를 줄이는 압축이라고 고르지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
+            "page": 1,
+            "label": "4주차4번"
+          },
+          "primaryQuestionId": "th-q-w4-4"
+        },
+        {
+          "id": "w4-5",
+          "number": 5,
+          "title": "헤더와 실제 픽셀 데이터",
+          "questionIds": [
+            "th-q-w4-5"
+          ],
+          "conceptIds": [
+            "th-c-header",
+            "th-c-matrix"
+          ],
+          "definition": "파일 헤더는 영상 크기·비트 깊이·픽셀 데이터 시작 위치처럼 파일을 해석하는 정보를 저장한다. 실제 밝기·색 수치는 픽셀 데이터 영역에 있다.",
+          "keyPoints": [
+            "폭·높이는 몇 행 몇 열로 읽을지 정하는 정보다.",
+            "비트 깊이는 한 값을 어떻게 해석할지 정하는 정보다.",
+            "픽셀 데이터 시작 위치는 파일에서 실제 값이 어디서 시작되는지 알려준다.",
+            "헤더와 픽셀 데이터를 합쳐 전체 이미지 파일을 구성한다."
+          ],
+          "example": "예: 헤더에 폭 320·높이 240·픽셀 형식이 기록되어야 뒤의 수치를 240×320 영상으로 해석할 수 있다. 정답 영역은 헤더(Header)다.",
+          "pitfalls": [
+            "헤더에 모든 픽셀 밝기 값이 저장된다고 쓰지 않는다.",
+            "BMP의 헤더 구조 설명과 모든 파일 형식의 정확한 바이트 배치를 동일시하지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/4주차 학습진단 문제 (수정본).docx",
+            "page": 1,
+            "label": "4주차5번"
+          },
+          "primaryQuestionId": "th-q-w4-5"
+        }
+      ],
+      "checklist": [
+        "원문의 저장 파일 4개가 어떤 형식이며 어떤 옵션을 사용하는지 설명할 수 있다.",
+        "JPEG quality와 PNG compression의 영향을 구별한다.",
+        "MPG·PNG를 이미지/동영상 보기에서 올바르게 분류한다.",
+        "파일 헤더와 픽셀 데이터의 차이를 설명할 수 있다."
+      ]
+    },
+    {
+      "id": "week7",
+      "week": 7,
+      "title": "7주차 · 히스토그램·스트레칭·평활화",
+      "summary": "원문의 4×4 행렬 두 개를 직접 계산합니다. 빈도수와 CDF를 구별하고, 스트레칭의 uint8 저장과 평활화의 반올림 규칙을 각각 적용하세요.",
+      "sourceId": "week7",
+      "items": [
+        {
+          "id": "w7-1",
+          "number": 1,
+          "title": "원문 행렬의 히스토그램",
+          "questionIds": [
+            "th-q-w7-1",
+            "th-q-hist-zero",
+            "th-q-normalized",
+            "th-q-prob-range"
+          ],
+          "conceptIds": [
+            "th-c-histogram",
+            "th-c-hist-week7",
+            "th-c-contrast"
+          ],
+          "definition": "히스토그램 h(k)는 밝기 k인 픽셀의 개수다. 원문은 최소 0·최대 6으로 간주하므로 밝기 축 0~6의 7칸에 빈도를 센다. 정규화 히스토그램은 이를 전체 픽셀 수 16으로 나눈 값이다.",
+          "keyPoints": [
+            "입력은 [[5,4,6,6],[2,1,6,4],[2,2,4,6],[1,6,0,2]]다.",
+            "밝기 0~6의 빈도는 [1,2,4,0,3,1,5]다. 등장하지 않는 3도 0으로 표시한다.",
+            "빈도 합 1+2+4+0+3+1+5=16으로 검산한다.",
+            "p(6)=5/16=0.3125이며 P(밝기≤2)=(1+2+4)/16=7/16이다.",
+            "히스토그램은 밝기 개수만 담으므로 물체 모양·픽셀 위치를 그대로 알 수 없다."
+          ],
+          "example": "입력\n5 4 6 6\n2 1 6 4\n2 2 4 6\n1 6 0 2\n\n밝기: 0 1 2 3 4 5 6\n빈도: 1 2 4 0 3 1 5\n막대그래프는 각 밝기 칸의 높이를 이 빈도로 설정한다.",
+          "pitfalls": [
+            "밝기 값 6을 빈도 6이라고 쓰지 않는다. 실제 개수는 5다.",
+            "입력값을 255 범위로 바꾼 뒤 세는 것은 원문의 히스토그램 문제가 아니다.",
+            "히스토그램과 누적 히스토그램을 구별한다."
+          ],
+          "source": {
+            "file": "학습진단문제/7주차학습진단문제.pdf",
+            "page": 1,
+            "label": "7주차1번"
+          },
+          "primaryQuestionId": "th-q-w7-1"
+        },
+        {
+          "id": "w7-2",
+          "number": 2,
+          "title": "스트레칭 공식과 실제 코드",
+          "questionIds": [
+            "th-q-w7-2",
+            "th-q-stretch-value",
+            "th-q-stretch-stored",
+            "th-q-stretch-constant",
+            "th-q-stretch-code",
+            "th-q-compare"
+          ],
+          "conceptIds": [
+            "th-c-stretch",
+            "th-c-contrast"
+          ],
+          "definition": "스트레칭은 입력의 최소~최대 범위를 선형으로 펴는 연산이다. 기본 8비트 식은 s=(r-min)/(max-min)×255이며 최솟값은 0, 최댓값은 255로 간다. 강의 코드는 np.uint8 저장으로 소수부를 버린다.",
+          "keyPoints": [
+            "먼저 np.min과 np.max로 영상 전체의 최소·최대를 구한다.",
+            "max>min일 때 각 픽셀에 선형식을 적용한다.",
+            "max=min이면 강의의 else 분기는 원래 pixel을 보존해 분모 0을 피한다.",
+            "강의는 입력과 최솟값·최댓값을 int로 바꾼 후 연산하고 마지막에 np.uint8로 저장한다.",
+            "스트레칭은 범위 확대이며 밝기별 빈도를 모두 똑같게 만드는 방법은 아니다."
+          ],
+          "example": "변형 검산: 입력 [[50,100,150]]에서 min 50, max 150.\n수식 결과 [[0,127.5,255]] → 강의의 uint8 저장 [[0,127,255]].\n상수 입력 [[80,80]] → 강의의 else 분기로 [[80,80]].\n원문 실습의 실제 함수는 연결된 문제의 코드 창에서 복사해 실행할 수 있다.",
+          "pitfalls": [
+            "수식 127.5·반올림 128·강의 저장값 127을 구별한다.",
+            "상수 영상에서 분모 0을 무시하지 않는다.",
+            "스트레칭을 CDF 평활화와 동일한 계산으로 풀지 않는다."
+          ],
+          "source": {
+            "file": "학습진단문제/7주차학습진단문제.pdf",
+            "page": 1,
+            "label": "7주차2번"
+          },
+          "primaryQuestionId": "th-q-w7-2"
+        },
+        {
+          "id": "w7-3",
+          "number": 3,
+          "title": "원문 평활화 결과와 전체 계산표",
+          "questionIds": [
+            "th-q-w7-3",
+            "th-q-cdf-values",
+            "th-q-equalize-one",
+            "th-q-equalize-lut",
+            "th-q-output-hist",
+            "th-q-equalize-code-result"
+          ],
+          "conceptIds": [
+            "th-c-equalize",
+            "th-c-equalize-example",
+            "th-c-cdf",
+            "th-c-hist-code",
+            "th-c-equalize-implementation"
+          ],
+          "definition": "원문 평활화는 강의 p.28~29의 L=8·직접 CDF·반올림 규칙으로 계산한다. 빈도 → 정규화 → 누적확률 → T(k)=round(7×CDF(k)) → 원본 치환 순서다. 일반 8비트 출력의 255나 OpenCV의 CDF 최솟값 보정을 섞지 않는다.",
+          "keyPoints": [
+            "입력은 [[0,2,2,1],[1,2,3,2],[1,2,3,2],[1,3,1,7]]이며 N=16, L=8이다.",
+            "밝기 0~7의 h=[1,5,6,3,0,0,0,1], 누적 빈도=[1,6,12,15,15,15,15,16]이다.",
+            "7×CDF=[0.4375,2.625,5.25,6.5625,6.5625,6.5625,6.5625,7]이다.",
+            "마지막에 반올림한 T=[0,3,5,7,7,7,7,7]이다. 0→0, 1→3, 2→5, 3·7→7로 치환한다.",
+            "출력 빈도 [1,0,0,5,0,6,0,4]는 완전 균일하지 않다. 여러 입력 레벨이 한 출력에 합쳐질 수 있기 때문이다."
+          ],
+          "example": "입력              결과\n0 2 2 1          0 5 5 3\n1 2 3 2          3 5 7 5\n1 2 3 2          3 5 7 5\n1 3 1 7          3 7 3 7\n\n밝기 2 검산: CDF(2)=(1+5+6)/16=12/16 → 7×12/16=5.25 → round=5.",
+          "pitfalls": [
+            "L=8의 최대 출력은 7이며 8이 아니다.",
+            "중간 확률을 먼저 반올림하지 않는다.",
+            "수업의 직접 CDF 식·OpenCV equalizeHist·버림 규칙의 결과를 동일시하지 않는다.",
+            "원문의 3과 7은 출력 7로 합쳐지므로 모든 출력 빈도가 같을 필요는 없다."
+          ],
+          "source": {
+            "file": "학습진단문제/7주차학습진단문제.pdf",
+            "page": 1,
+            "label": "7주차3번"
+          },
+          "primaryQuestionId": "th-q-w7-3"
+        }
+      ],
+      "checklist": [
+        "원문 두 행렬의 숫자를 바꾸지 않고 빈도 합 16을 검산한다.",
+        "히스토그램과 정규화·누적 히스토그램을 구별한다.",
+        "스트레칭의 분모 0·정수 저장을 코드대로 해석한다.",
+        "L=8·반올림 CDF의 변환표와 4×4 결과를 직접 계산한다.",
+        "수업 평활화와 OpenCV 구현의 조건 차이를 설명할 수 있다."
+      ]
+    }
+  ]
+}
