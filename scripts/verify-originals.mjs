@@ -7,7 +7,12 @@ const codes=new Map(originals.snippets.map(s=>[s.id,s]));
 let blanks=0,outputs=0;
 for(const s of codes.values())assert.equal(createHash('sha256').update(s.code).digest('hex'),s.sha256,'Source snapshot changed: '+s.id);
 for(const q of practice.questions){
-  if(['blank','output'].includes(q.type))assert.ok(q.originalCodeId,'Every practice blank/output must have an original: '+q.id);
+  if(['blank','output'].includes(q.type)&&q.tags.includes('원본코드'))assert.ok(q.originalCodeId,'Original-code practice must have a source snapshot: '+q.id);
+  if(['blank','output'].includes(q.type)&&!q.originalCodeId){
+    assert.equal(q.codeOrigin,'exercise-variation','Extra exercise code is explicitly marked as a variation: '+q.id);
+    assert.ok(q.tags.includes('4장집중연습'));
+    assert.ok(q.codeExplanation?.length,'Variation code has a line explanation: '+q.id);
+  }
   if(!q.originalCodeId)continue;
   const s=codes.get(q.originalCodeId);assert.ok(s,'Unknown original: '+q.id);
   if(q.type==='blank'){

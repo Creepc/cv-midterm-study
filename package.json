@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {"build": "node scripts/build.mjs", "test": "node scripts/verify.mjs && node scripts/verify-study.mjs && node scripts/verify-originals.mjs && node scripts/verify-code-notes.mjs", "dev": "node scripts/serve.mjs"},
-  "engines": {"node": ">=20"}
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/verify.mjs && node scripts/verify-study.mjs && node scripts/verify-originals.mjs && node scripts/verify-code-notes.mjs && node scripts/verify-exercises.mjs",
+    "dev": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

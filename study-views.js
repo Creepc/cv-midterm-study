@@ -124,7 +124,7 @@
         &&(filters.topic==='all'||q.topic===filters.topic)
         &&(filters.source==='all'||q.source?.file===material(filters.source)?.file));
     }
-    function exerciseQuestions(number){return filterQuestions({track:'practice'}).filter(q=>q.exerciseNumbers?.includes(Number(number)));}
+    function exerciseQuestions(number){return filterQuestions({track:'practice',tag:'4장집중연습'}).filter(q=>q.exerciseNumbers?.includes(Number(number)));}
     return {home,weekly,materials,sources,relatedConcepts,weeklyQuestions,filterQuestions,exerciseQuestions,renderGuide,extraDetails,threeBit,quantize,updateEncoding,randomEncoding};
   }
   globalThis.CV_STUDY={create};

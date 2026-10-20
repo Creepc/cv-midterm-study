@@ -366,13 +366,14 @@
     {
       "id": "pdf-ex16",
       "title": "4장 연습문제 16번 답안 코드",
-      "code": "import cv2\ncap = cv2.VideoCapture(\"images/video_file.avi\")\nif cap.isOpened() == False:\n    raise Exception(\"동영상 파일 읽기 에러\")\nfps = cap.get(cv2.CAP_PROP_FPS)\ndelay = int(1000 / fps) if fps > 0 else 33\nwhile True:\n    ret, frame = cap.read()\n    if not ret:\n        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)\n        continue\n    x, y, w, h = 200, 100, 100, 200\n    roi = frame[y:y + h, x:x + w]\n    roi[:, :, 1] = cv2.add(roi[:, :, 1], 50)\n    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)\n    cv2.imshow(\"Camera\", frame)\n    if cv2.waitKey(delay) == 27:\n        break\ncap.release()\ncv2.destroyAllWindows()",
+      "code": "import cv2\n\ncap = cv2.VideoCapture(0)\ntry:\n    if not cap.isOpened():\n        raise RuntimeError(\"카메라를 열 수 없습니다.\")\n\n    x, y, w, h = 200, 100, 100, 200\n    while True:\n        ret, frame = cap.read()\n        if not ret:\n            break\n\n        frame_h, frame_w = frame.shape[:2]\n        if frame_h < y + h or frame_w < x + w:\n            raise RuntimeError(\"프레임은 높이 300, 너비 300 이상이어야 합니다.\")\n\n        roi = frame[y:y + h, x:x + w]\n        roi[:, :, 1] = cv2.add(roi[:, :, 1], 50)\n        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)\n        cv2.imshow(\"Camera\", frame)\n        if cv2.waitKey(1) & 0xFF == 27:\n            break\nfinally:\n    cap.release()\n    cv2.destroyAllWindows()",
       "source": {
         "file": "학습진단문제/4장 연습문제.pdf",
         "page": 9,
-        "label": "PDF 9~10쪽"
+        "label": "PDF 9~11쪽 / 연습문제 16"
       },
-      "sha256": "0500c42927a8270c4a29c5434b8b5ccdf23332b7ea882e3a67ea8be8a7afd9bf"
+      "sha256": "08c48701e792e964f52312b760419fa5218eacd7840f78b8ffb1255e159b2c1d",
+      "normalization": "사용자 요청에 따라 PC 카메라 문제의 조건에 맞는 정상 코드로 통일"
     },
     {
       "id": "book-6-3-4",
