@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#142e31">
+  <meta name="description" content="강의자료와 학습진단문제로 준비하는 컴퓨터비전 중간고사. 개념, 코드 빈칸, 출력 예측, 모의고사와 오답 복습.">
+  <title>VISION NOTE · 컴퓨터비전 중간고사</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./data.js" defer></script>
+  <script src="./grading.js" defer></script>
+  <script src="./progress.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 이동</a>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#home"><span class="brand-icon">◈</span><span>VISION<span class="brand-light">NOTE</span><small>COMPUTER VISION / MIDTERM</small></span></a>
+    <div class="semester">2026 · 2학기 <span>중간고사</span></div>
+    <div class="nav-label">MY STUDY</div>
+    <nav aria-label="주 메뉴">
+      <a href="#home" data-nav="home"><span>▦</span>학습 대시보드</a>
+      <a href="#concepts" data-nav="concepts"><span>▤</span>개념 노트</a>
+      <a href="#practice" data-nav="practice"><span>⌨</span>문제 풀기</a>
+      <a href="#exercises" data-nav="exercises"><span>◎</span>4장 집중 학습 <b>8</b></a>
+      <a href="#lab" data-nav="lab"><span>⌘</span>코드 실험실</a>
+      <a href="#review" data-nav="review"><span>↺</span>오답 노트 <b id="wrong-count">0</b></a>
+      <a href="#exam" data-nav="exam"><span>◷</span>모의고사</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="study-note"><span class="live-dot"></span> 나의 속도로, 확실하게<p>개념을 이해하고<br>코드를 직접 떠올려 보세요.</p></div>
+      <a href="#sources" data-nav="sources">ⓘ &nbsp; 자료 및 학습 범위</a>
+      <small>학습 기록은 이 브라우저에 저장됩니다.</small>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button id="menu-toggle" class="icon-btn mobile-menu" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="breadcrumb">나의 학습 공간 <span>/</span> <strong id="page-name">학습 대시보드</strong></div>
+      <button class="search-trigger" id="search-open"><span>⌕</span> 개념·문제 검색 <kbd>/</kbd></button>
+      <span class="avatar" aria-label="나의 학습">CV</span>
+    </header>
+    <main id="main" tabindex="-1"><div class="loading">학습 자료를 불러오는 중입니다.</div></main>
+    <footer>VISION NOTE <span>이해하고, 풀고, 다시 확인하기.</span><a href="#sources">학습 자료 보기 ↗</a></footer>
+  </div>
+  <dialog id="search-dialog"><form method="dialog" class="search-head"><input id="global-search" type="search" placeholder="예: 히스토그램, waitKey, ROI" aria-label="전체 자료 검색"><button class="icon-btn" aria-label="검색 닫기">✕</button></form><div id="search-results" class="search-results">검색어를 입력하세요.</div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

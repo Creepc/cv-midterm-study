@@ -1,0 +1,2618 @@
+{
+  "concepts": [
+    {
+      "id": "p-array",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "영상 행렬·좌표·BGR",
+      "summary": "행렬은 (행, 열, 채널), 그리기 좌표는 (x, y)다. 이 순서 차이가 대부분의 실습 문제를 가른다.",
+      "sections": [
+        {
+          "title": "행렬의 크기",
+          "body": "np.zeros((300, 400), np.uint8)은 300행·400열인 1채널 검정 영상이다. 화면에서 가로 400, 세로 300으로 보인다. np.zeros((400, 600, 3), np.uint8)은 높이 400, 너비 600인 3채널 영상이다. uint8 화소의 정상 범위는 0~255다."
+        },
+        {
+          "title": "화소와 좌표",
+          "body": "image[y, x]는 (x, y) 화소다. image[100, 200]은 x=200, y=100이다. 원점은 왼쪽 위이며 x는 오른쪽, y는 아래쪽으로 증가한다."
+        },
+        {
+          "title": "배경과 색",
+          "body": "image[:] = 100 또는 image.fill(100)은 모든 원소를 100으로 만든다. 3채널 BGR의 파랑=(255,0,0), 초록=(0,255,0), 빨강=(0,0,255), 흰색=(255,255,255)이다."
+        }
+      ],
+      "keyPoints": [
+        "shape=(높이, 너비[, 채널])",
+        "OpenCV 좌표=(x, y)=(열, 행)",
+        "uint8 1채널: 0은 검정, 255는 흰색"
+      ],
+      "pitfalls": [
+        "(300, 400)을 가로 300·세로 400으로 읽지 않는다.",
+        "BGR을 RGB로 해석하면 빨강과 파랑이 바뀐다.",
+        "2555처럼 범위 밖의 정수를 넣는 코드는 버전에 따라 예외가 발생하므로 정상 화소로 취급하지 않는다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 5,
+        "label": "슬라이드 5·23·43~44"
+      }
+    },
+    {
+      "id": "p-window",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "창 생성·이동·크기 변경",
+      "summary": "namedWindow는 창, imshow는 영상 표시, moveWindow는 화면 위치, resizeWindow는 표시할 창 크기를 다룬다.",
+      "sections": [
+        {
+          "title": "생성과 표시",
+          "body": "cv2.namedWindow(title, flags)로 창 이름과 속성을 정한다. cv2.imshow(title, image)는 해당 창에 행렬을 영상으로 표시한다. 존재하지 않는 이름을 imshow에 주면 창이 자동 생성될 수도 있지만, 크기 조절 옵션을 명확히 하려면 먼저 namedWindow를 호출한다."
+        },
+        {
+          "title": "두 옵션 비교",
+          "body": "WINDOW_AUTOSIZE는 영상 크기에 맞춰 표시 크기를 정하며 사용자의 자유로운 창 크기 변경을 허용하지 않는다. WINDOW_NORMAL은 창 크기를 변경할 수 있다. resizeWindow(title, 600, 500)은 너비 600, 높이 500 순서다."
+        },
+        {
+          "title": "위치와 데이터 구분",
+          "body": "moveWindow(title, 100, 200)은 화면의 x=100, y=200 부근으로 창을 옮긴다. resizeWindow는 표시 방식만 바꾼다. image.shape와 원본 화소를 변경하려면 cv2.resize 등 별도의 영상 연산이 필요하다. 창 테두리나 종횡비의 실제 표시 크기는 GUI 백엔드에 영향을 받을 수 있다."
+        }
+      ],
+      "keyPoints": [
+        "namedWindow → imshow → waitKey → destroyAllWindows",
+        "moveWindow: 화면 좌표 x, y",
+        "resizeWindow: 너비, 높이"
+      ],
+      "pitfalls": [
+        "500행·600열 창은 resizeWindow(title, 600, 500)이다.",
+        "창 크기를 바꿔도 image.shape는 그대로다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 4,
+        "label": "슬라이드 4~8 / 연습문제 2·5·6"
+      }
+    },
+    {
+      "id": "p-keyboard",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "waitKey·waitKeyEx와 키보드 이벤트",
+      "summary": "waitKey는 키를 기다리는 동시에 HighGUI 창의 이벤트를 처리한다. 지연 시간은 밀리초다.",
+      "sections": [
+        {
+          "title": "대기와 반환",
+          "body": "cv2.waitKey(0)은 키가 눌릴 때까지 기다린다. delay>0은 대략 그 밀리초 동안 기다리며 입력이 없으면 -1을 반환한다. 양의 delay가 정확한 실시간 타이머라는 뜻은 아니다."
+        },
+        {
+          "title": "키 비교",
+          "body": "ESC의 일반적인 문자 코드는 27이고 스페이스는 ord(\" \")=32다. 입력 문자 비교에는 ord(\"a\") 등을 쓴다. 특정 특수키의 전체 코드는 waitKeyEx로 받을 수 있으나 운영체제와 GUI 백엔드에 따라 달라진다."
+        },
+        {
+          "title": "이벤트가 작동할 조건",
+          "body": "영상 창이 활성화되어야 키 이벤트를 받을 수 있다. imshow만 호출하고 프로그램을 즉시 종료하면 창을 관찰하기 어렵다. 반복 영상에서는 매 프레임 waitKey를 통해 이벤트를 처리하고 종료 키를 확인한다."
+        }
+      ],
+      "keyPoints": [
+        "delay 단위 ms, delay=0은 무한 대기",
+        "입력 없음: -1",
+        "특수키 전체 코드: waitKeyEx"
+      ],
+      "pitfalls": [
+        "waitKey(30)이 항상 정확히 30ms를 보장한다고 쓰지 않는다.",
+        "화살표키 숫자 코드는 모든 OS에서 같지 않다.",
+        "waitKey(0)은 자동으로 0을 반환한다는 뜻이 아니다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 10,
+        "label": "슬라이드 10~12"
+      }
+    },
+    {
+      "id": "p-callback",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "콜백과 마우스 이벤트",
+      "summary": "함수 자체를 등록하면 시스템이 이벤트 발생 시 호출한다. 등록할 때 함수를 실행하는 것이 아니다.",
+      "sections": [
+        {
+          "title": "콜백 정의",
+          "body": "개발자가 매번 직접 호출하는 대신, 특정 사건이 생겼을 때 시스템이 미리 등록한 함수를 호출하는 방식이다. 마우스 클릭과 트랙바 이동이 대표적인 예다."
+        },
+        {
+          "title": "마우스 콜백 형태",
+          "body": "def onMouse(event, x, y, flags, param): 형태를 사용한다. event는 사건 종류, (x,y)는 영상 안의 좌표, flags는 버튼·보조키 상태, param은 등록 시 전달한 사용자 데이터다. cv2.setMouseCallback(title, onMouse)로 창에 등록한다."
+        },
+        {
+          "title": "이벤트 상수",
+          "body": "EVENT_LBUTTONDOWN은 왼쪽 누름, EVENT_RBUTTONDOWN은 오른쪽 누름, EVENT_MOUSEMOVE는 이동, EVENT_LBUTTONUP은 왼쪽 뗌이다. event와 flags의 역할을 구분한다."
+        }
+      ],
+      "keyPoints": [
+        "등록: setMouseCallback(title, onMouse)",
+        "onMouse에 괄호를 붙이지 않는다.",
+        "버튼 DOWN과 UP은 서로 다른 사건"
+      ],
+      "pitfalls": [
+        "setMouseCallback(title, onMouse())는 등록 전에 함수를 호출하므로 틀리다.",
+        "마우스 좌표는 배열 접근 시 image[y, x]로 바뀐다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 9,
+        "label": "슬라이드 9·13~15 / 연습문제 1·10"
+      }
+    },
+    {
+      "id": "p-trackbar",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "트랙바와 밝기 제어",
+      "summary": "트랙바 값은 0부터 최대값까지이며 콜백은 현재 위치 정수를 받는다.",
+      "sections": [
+        {
+          "title": "만들기",
+          "body": "cv2.createTrackbar(\"Brightness\", title, 100, 255, onChange)는 시작값 100, 최댓값 255인 트랙바를 만든다. Python 콜백은 def onChange(value): 형태다. 시스템이 콜백에 현재 위치를 전달한다."
+        },
+        {
+          "title": "값 읽기·설정",
+          "body": "getTrackbarPos(bar_name, title)는 현재 정수 위치를 읽는다. setTrackbarPos(bar_name, title, value)는 위치를 바꾼다. 마우스 조작으로 바뀐 밝기와 트랙바 위치를 동기화할 때 사용한다."
+        },
+        {
+          "title": "밝기 예제의 안전한 해석",
+          "body": "모든 화소가 같은 회색이면 image.fill(value)와 imshow로 원하는 밝기를 바로 표시할 수 있다. 강의 18쪽은 현재 화소와 목표값의 차이를 더하는 방식이지만, 최신 NumPy에서 uint8 배열에 음수 Python 정수를 더하는 경우 오류가 날 수 있어 이 학습 사이트의 실행 예제는 fill을 사용한다. 20쪽 실제 코드는 오른쪽 누름 +10, 왼쪽 누름 -10이다. 21쪽 설명의 두 번째 \"오른쪽\"은 오기다."
+        }
+      ],
+      "keyPoints": [
+        "createTrackbar: 이름, 창, 초기값, 최대값, 콜백",
+        "getTrackbarPos: 읽기 / setTrackbarPos: 설정",
+        "회색 밝기 0=검정, 255=흰색"
+      ],
+      "pitfalls": [
+        "count=255는 최댓값 255이며 가능한 위치는 0~255다.",
+        "트랙바와 영상 값을 함께 갱신해야 서로 일치한다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 16,
+        "label": "슬라이드 16~21 (21쪽 오기 정정)"
+      }
+    },
+    {
+      "id": "p-draw",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "직선·사각형·두께·shift",
+      "summary": "도형 함수는 전달한 영상 행렬을 직접 변경한다. 색, 두께, 선 종류, 좌표의 shift를 순서대로 읽는다.",
+      "sections": [
+        {
+          "title": "직선과 사각형",
+          "body": "cv2.line(image, pt1, pt2, color, thickness, lineType, shift)는 두 점을 잇는다. cv2.rectangle(image, pt1, pt2, color, thickness, lineType, shift)는 두 반대 꼭짓점의 사각형이다. (x,y,w,h) 4원소 튜플을 받는 사각형 형식도 있다."
+        },
+        {
+          "title": "채움과 선 종류",
+          "body": "rectangle과 circle 등의 thickness=-1 또는 cv2.FILLED는 내부 채움이다. 양수 1은 두께 1의 윤곽선이다. LINE_4와 LINE_8은 연결 형태이며 LINE_AA는 경계의 계단 현상을 완화한다."
+        },
+        {
+          "title": "끝점과 shift",
+          "body": "두 꼭짓점 형식은 경계 화소를 포함한다. (100,100)~(300,400)은 좌표 차로 200×300이지만 채워진 화소 개수를 엄밀히 세면 201×301이다. 정확히 200×300개를 채우려면 끝점 (299,399) 또는 슬라이스 [100:400,100:300]을 쓴다. shift는 좌표의 소수 비트 수로 실제 좌표=입력 좌표/2**shift다. shift=1이면 모든 좌표가 절반이다."
+        }
+      ],
+      "keyPoints": [
+        "두께 -1=채움 / 두께 1=윤곽선",
+        "색상 BGR",
+        "shift=0은 입력 좌표 그대로, shift=1은 절반"
+      ],
+      "pitfalls": [
+        "과제 5번 원문의 마지막 1은 두께가 아니라 shift다.",
+        "화면 밖 도형은 잘리며 영상 크기가 커지지 않는다.",
+        "line 함수에서 음수 두께를 채움으로 해석하지 않는다.",
+        "강의 23쪽 코드의 pt2=(250,350)과 24쪽 결과 설명의 pt2=(250,150)이 다르다. 시험에서는 제시된 코드의 좌표로 결과를 판단한다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23~24 / 연습문제 5·9"
+      }
+    },
+    {
+      "id": "p-text",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "putText의 기준점과 폰트",
+      "summary": "putText의 위치는 기본적으로 글자의 왼쪽 아래 기준점이며 fontScale은 확대 비율이다.",
+      "sections": [
+        {
+          "title": "인수 읽기",
+          "body": "cv2.putText(image, text, org, fontFace, fontScale, color, thickness, lineType)는 문자열을 영상에 그린다. 기본 bottomLeftOrigin=False에서는 영상 원점이 왼쪽 위이고 org는 문자열의 왼쪽 아래 기준이다. 글자마다 기준선 아래로 내려가는 부분이 있을 수 있다."
+        },
+        {
+          "title": "폰트 옵션",
+          "body": "FONT_HERSHEY_SIMPLEX와 DUPLEX 등으로 폰트 모양을 정한다. FONT_ITALIC은 기울임 플래그이며 FONT_HERSHEY_PLAIN | FONT_ITALIC처럼 조합한다. fontScale을 키우면 글자 크기가 커지고 thickness를 키우면 선이 두꺼워진다."
+        },
+        {
+          "title": "그림자",
+          "body": "먼저 (x+2,y+2)에 검은 글자를 쓰고 원래 (x,y)에 색 글자를 덧그리면 그림자처럼 보인다. 그리기 순서가 겹침 결과를 결정한다."
+        }
+      ],
+      "keyPoints": [
+        "org=(x,y)는 보통 왼쪽 아래 기준",
+        "fontScale과 thickness는 역할이 다르다.",
+        "FONT_ITALIC은 비트 OR로 조합"
+      ],
+      "pitfalls": [
+        "org를 글자 상자의 왼쪽 위라고 단정하지 않는다.",
+        "기본 Hershey 글꼴만으로 한글 문자열이 정상 렌더링되리라 가정하지 않는다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 25,
+        "label": "슬라이드 25~28·30"
+      }
+    },
+    {
+      "id": "p-circle",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "원과 타원·호",
+      "summary": "원은 중심과 반지름, 타원은 중심·반축 길이·회전·호 범위를 순서대로 읽는다.",
+      "sections": [
+        {
+          "title": "원",
+          "body": "cv2.circle(image, center, radius, color, thickness)는 중심 (x,y), 반지름 radius인 원을 그린다. 원의 지름은 2×radius다. image.shape가 (300,500,3)이면 정수 중심은 (500//2,300//2)=(250,150)이다."
+        },
+        {
+          "title": "타원",
+          "body": "cv2.ellipse(image, center, axes, angle, startAngle, endAngle, color, thickness)를 쓴다. axes=(120,60)은 가로·세로 반축이므로 angle=0의 전체 외형은 약 240×120이다. angle은 타원 전체 회전이고 startAngle/endAngle은 그 타원 위에서 그릴 호의 범위다."
+        },
+        {
+          "title": "전체·부분",
+          "body": "startAngle=0,endAngle=360이면 전체 타원이다. 0~90은 1/4 호다. 영상 y축이 아래로 증가하므로 화면상 양의 회전은 시계 방향으로 보인다. 두 번의 클릭으로 원을 만들면 첫 점을 중심으로, 두 점 거리 sqrt(dx**2+dy**2)를 반지름으로 쓸 수 있다."
+        }
+      ],
+      "keyPoints": [
+        "axes는 전체 너비·높이가 아니라 반축 길이",
+        "angle과 startAngle은 다른 인수",
+        "반지름은 정수로 전달"
+      ],
+      "pitfalls": [
+        "shape[0]을 x 중심으로 쓰지 않는다.",
+        "np.shape/2의 실수 결과를 좌표에 그대로 넣기보다 //2로 정수화한다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 29,
+        "label": "슬라이드 29~37"
+      }
+    },
+    {
+      "id": "p-read",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "imread·읽기 플래그·실패 확인",
+      "summary": "imread의 반환 행렬은 파일의 외형보다 읽기 플래그에 의해 결정된다.",
+      "sections": [
+        {
+          "title": "반환 형태",
+          "body": "cv2.imread(path, cv2.IMREAD_GRAYSCALE)은 1채널 명암도 영상, IMREAD_COLOR는 일반적으로 8비트 BGR 3채널 영상을 읽는다. 회색 파일을 COLOR로 읽으면 B=G=R인 3채널이 될 수 있다. 컬러 파일을 GRAYSCALE로 읽으면 단일 밝기 채널로 변환된다."
+        },
+        {
+          "title": "깊이 보존",
+          "body": "IMREAD_UNCHANGED는 입력의 원래 채널·깊이(알파 채널 포함)를 보존하여 읽는 데 사용한다. 16비트/32비트 자료는 일반 COLOR로 읽으면 원래 깊이가 유지되지 않을 수 있다. ANYDEPTH는 지원되는 원본 깊이를 유지하는 읽기 옵션이다."
+        },
+        {
+          "title": "파일 실패",
+          "body": "Python에서 파일이 없거나 디코딩에 실패하면 일반적으로 None이 반환된다. image is None을 검사한 뒤 shape, imshow 등을 호출한다. 상대 경로는 현재 작업 폴더 기준이므로 코드 파일 위치와 같다고 단정하지 않는다."
+        }
+      ],
+      "keyPoints": [
+        "GRAYSCALE=0 / COLOR=1 / UNCHANGED=-1",
+        "dtype=각 원소의 자료형, shape=차원 크기",
+        "실패 시 image is None 확인"
+      ],
+      "pitfalls": [
+        "화면이 회색으로 보여도 3채널일 수 있다.",
+        "강의 예시 특정 사진의 화소값은 다른 파일에서 동일하지 않다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 38,
+        "label": "슬라이드 38~46"
+      }
+    },
+    {
+      "id": "p-save",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "imwrite·JPEG 품질·PNG 압축",
+      "summary": "저장 포맷은 확장자로 정하고 압축 옵션은 포맷마다 의미가 다르다.",
+      "sections": [
+        {
+          "title": "기본 저장",
+          "body": "cv2.imwrite(\"test.png\", image, params)는 행렬을 파일로 저장하며 성공 여부를 bool로 반환한다. params는 [옵션 상수, 값, ...] 형식이다. 파일 확장자가 .jpg인지 .png인지가 포맷 선택에 사용된다."
+        },
+        {
+          "title": "JPEG와 PNG",
+          "body": "JPEG는 손실 압축이며 IMWRITE_JPEG_QUALITY 범위 0~100에서 100이 최대 품질이다. 품질 100도 원본 화소의 완전한 보존을 보장하지 않는다. PNG는 무손실이며 IMWRITE_PNG_COMPRESSION 0~9는 압축 수준이다. 0도 9도 저장 가능한 원본 화소를 같은 품질로 복원하며, 주로 처리 시간·파일 크기에 차이가 생긴다."
+        },
+        {
+          "title": "고비트 행렬",
+          "body": "uint8 영상을 uint16 범위로 대응시키려면 image.astype(np.uint16)*257처럼 255→65535로 확장한다. [0,1] float32는 image.astype(np.float32)/255.0으로 만든다. 저장 포맷이 해당 자료형을 지원하는지 확인하며 강의 예제는 TIFF를 사용한다."
+        }
+      ],
+      "keyPoints": [
+        "JPEG 품질 최댓값=100",
+        "PNG 압축 0~9는 화질 점수가 아니다.",
+        "uint8 255 → uint16 65535의 배율은 257"
+      ],
+      "pitfalls": [
+        "PNG 0을 저화질, PNG 9를 고화질이라고 외우지 않는다.",
+        "기존 JPEG를 다시 저장하면 처음의 손실을 되돌릴 수 없다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 47,
+        "label": "슬라이드 47~51 / 연습문제 13"
+      }
+    },
+    {
+      "id": "p-capture",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "VideoCapture와 프레임 반복",
+      "summary": "카메라는 장치 인덱스, 동영상은 파일 경로로 연다. 매번 ret를 확인한 뒤 frame을 처리한다.",
+      "sections": [
+        {
+          "title": "입력 열기",
+          "body": "cv2.VideoCapture(0)은 보통 첫 번째 PC 카메라다. cv2.VideoCapture(\"images/video_file.avi\")는 동영상 파일이다. isOpened()는 입력 개방 여부를 확인한다. 카메라 연결 여부와 실제 읽기 성공 여부는 따로 검사해야 한다."
+        },
+        {
+          "title": "한 프레임 읽기",
+          "body": "ret, frame = cap.read()는 읽기 성공 bool과 프레임 행렬을 반환한다. ret가 False이면 frame을 처리하지 않고 종료한다. 파일 끝에 반복 재생하려면 프레임 위치를 되돌릴 수 있으나 실패를 무조건 continue하면 입력 오류 때 무한 반복할 수 있다."
+        },
+        {
+          "title": "종료",
+          "body": "반복문은 imshow와 waitKey로 표시·종료 입력을 처리한다. 마지막에 cap.release()와 cv2.destroyAllWindows()를 호출한다. 영상 저장 객체가 있으면 writer.release()도 필요하다."
+        }
+      ],
+      "keyPoints": [
+        "열기 → isOpened → read의 ret 확인 → 처리 → release",
+        "read() 반환값은 2개",
+        "카메라 0과 파일 경로는 목적이 다르다."
+      ],
+      "pitfalls": [
+        "과제 16번의 문제 요구는 PC 카메라이므로 VideoCapture(0)이 맞다.",
+        "프레임 실패 전에 shape나 ROI 접근을 하지 않는다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 52,
+        "label": "슬라이드 52~61 / 연습문제 16"
+      }
+    },
+    {
+      "id": "p-property",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "카메라 속성·get/set·FPS",
+      "summary": "get은 속성 조회, set은 설정 요청이다. 장치와 백엔드가 지원해야 실제 적용된다.",
+      "sections": [
+        {
+          "title": "주요 상수",
+          "body": "CAP_PROP_FRAME_WIDTH/HEIGHT는 너비/높이, CAP_PROP_FPS는 초당 프레임 수, CAP_PROP_FRAME_COUNT는 파일의 전체 프레임 수, CAP_PROP_POS_FRAMES는 프레임 위치다. BRIGHTNESS·EXPOSURE·ZOOM·FOCUS는 장치 속성이다."
+        },
+        {
+          "title": "설정의 한계",
+          "body": "cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)은 너비 640을 요청한다. 모든 장치에서 지원되거나 정확히 반영되는 것은 아니므로 반환값과 다시 get한 값을 확인한다. 카메라 밝기 143, 노출 -6 등의 강의 출력은 그 장치에서 관측한 예시다."
+        },
+        {
+          "title": "재생 간격",
+          "body": "fps=25이면 이상적인 프레임 간격은 1000/25=40ms다. int(1000/fps)나 round를 사용하지만 연산 시간·OS 스케줄링도 실제 재생에 영향을 준다. fps가 0 또는 유효하지 않으면 0으로 나누지 않도록 대체 간격을 정한다."
+        }
+      ],
+      "keyPoints": [
+        "get(prop) / set(prop,value)",
+        "FPS와 waitKey의 ms는 단위가 다르다.",
+        "640×480의 width=640,height=480"
+      ],
+      "pitfalls": [
+        "카메라에서 얻은 FPS가 항상 정확한 양수라고 가정하지 않는다.",
+        "FOCUS와 AUTOFOCUS는 다른 속성이다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 55,
+        "label": "슬라이드 55~64"
+      }
+    },
+    {
+      "id": "p-writer",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "VideoWriter·코덱·저장 속도",
+      "summary": "동영상 저장의 재생 속도는 저장 객체의 FPS와 쓴 프레임 개수로 결정된다.",
+      "sections": [
+        {
+          "title": "저장 객체",
+          "body": "fourcc = cv2.VideoWriter_fourcc(*\"MJPG\")처럼 4문자 코덱을 정한다. cv2.VideoWriter(\"out.avi\", fourcc, fps, (width,height))로 연다. isOpened()로 확인한 뒤 writer.write(frame)으로 프레임을 순서대로 기록한다."
+        },
+        {
+          "title": "형태 일치",
+          "body": "기록할 프레임의 너비·높이와 writer의 frameSize가 일치해야 한다. 기본 isColor=True이면 일반적으로 3채널 컬러 프레임을 쓴다. 실제 사용할 수 있는 코덱은 운영체제와 설치 환경에 따라 달라진다."
+        },
+        {
+          "title": "시간 계산",
+          "body": "300프레임을 30fps로 저장하면 재생시간은 10초다. 같은 300프레임을 60fps로 저장하면 5초로 2배속이 된다. waitKey만 줄이면 현재 프로그램의 표시 속도는 바뀔 수 있지만, 이미 지정한 저장 FPS는 바뀌지 않는다."
+        }
+      ],
+      "keyPoints": [
+        "VideoWriter frameSize=(너비,높이)",
+        "write로 기록, release로 마무리",
+        "재생시간=기록 프레임 수/FPS"
+      ],
+      "pitfalls": [
+        "fourcc 문자열을 파일 확장자와 같은 개념으로 보지 않는다.",
+        "FPS를 두 배로 하면 같은 프레임 개수의 영상은 길이가 절반이다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 54,
+        "label": "슬라이드 54·56·65~72"
+      }
+    },
+    {
+      "id": "p-roi",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "ROI·녹색 증가·포화 연산",
+      "summary": "(x,y,w,h)를 슬라이스 [y:y+h,x:x+w]로 변환하고, G 채널에 포화 덧셈을 적용한다.",
+      "sections": [
+        {
+          "title": "ROI 계산",
+          "body": "(200,100)에서 가로 100·세로 200인 영역은 frame[100:300,200:300]이다. 슬라이스 끝은 포함되지 않으므로 shape=(200,100,3)이다. NumPy의 이 기본 슬라이스는 보통 원본을 공유하는 view여서 roi의 화소를 바꾸면 frame도 바뀐다."
+        },
+        {
+          "title": "G만 증가",
+          "body": "BGR의 G 인덱스는 1이다. roi[:,:,1] = cv2.add(roi[:,:,1],50)은 G를 50 올리되 255에서 포화시킨다. uint8 배열끼리의 일반 NumPy 덧셈은 범위 초과 시 256으로 순환하므로 230+50이 24가 될 수 있다. OpenCV 포화 덧셈은 255다."
+        },
+        {
+          "title": "테두리와 순서",
+          "body": "ROI를 처리한 뒤 cv2.rectangle(frame,(x,y),(x+w-1,y+h-1),(0,0,255),3)으로 정확한 ROI 경계의 빨간 테두리를 그릴 수 있다. 테두리를 먼저 그리고 G 증가를 하면 빨간 경계에도 녹색이 섞일 수 있다. 카메라 해상도가 ROI를 포함하는지 먼저 확인한다."
+        }
+      ],
+      "keyPoints": [
+        "ROI=[행 범위,열 범위]=[y:y+h,x:x+w]",
+        "B/G/R 인덱스=0/1/2",
+        "cv2.add는 uint8에서 255 포화"
+      ],
+      "pitfalls": [
+        "(100,200) 크기를 높이 100·너비 200으로 뒤집지 않는다.",
+        "끝점 (x+w,y+h)는 슬라이스의 마지막 화소보다 한 칸 밖이다.",
+        "roi.copy()를 바꾸면 원본 frame은 자동 변경되지 않는다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74~75 / 연습문제 16"
+      }
+    },
+    {
+      "id": "p-channels",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "split·merge와 프레임별 처리",
+      "summary": "split은 B,G,R을 분리하고 merge는 전달한 순서대로 다시 묶는다.",
+      "sections": [
+        {
+          "title": "분리와 결합",
+          "body": "blue, green, red = cv2.split(frame)으로 3채널을 분리한다. frame = cv2.merge([blue,green,red])로 원래 BGR 순서로 결합한다. merge([red,green,blue])는 B/R 순서를 교환한 행렬이다."
+        },
+        {
+          "title": "구간 조건 읽기",
+          "body": "강의 코드는 frame_cnt를 1 증가시킨 뒤 100<=frame_cnt<200이면 B에 100, 200<=frame_cnt<300이면 G에 100, 300<=frame_cnt<400이면 R에 100을 포화 덧셈한다. 199와 200 사이에서 적용 채널이 바뀐다."
+        },
+        {
+          "title": "분리한 배열",
+          "body": "cv2.split이 반환한 개별 채널을 바꿨다면 merge로 다시 결합해야 결과 프레임에 반영된다. frame[:,:,1]처럼 기본 슬라이스를 직접 수정하는 접근과 구분한다."
+        }
+      ],
+      "keyPoints": [
+        "split 결과 순서는 B,G,R",
+        "100<=n<200은 100~199",
+        "분리 후 수정 → merge"
+      ],
+      "pitfalls": [
+        "프레임 200에 B 증가 조건을 적용하지 않는다.",
+        "여러 if와 if/elif는 중첩 조건에서 결과가 다를 수 있다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 73,
+        "label": "슬라이드 73~75"
+      }
+    },
+    {
+      "id": "p-matplotlib",
+      "track": "practice",
+      "chapter": "4장",
+      "title": "Matplotlib 색 순서·subplot·그래프",
+      "summary": "OpenCV 영상은 BGR이므로 Matplotlib에 컬러로 표시할 때 RGB로 변환한다.",
+      "sections": [
+        {
+          "title": "색과 명암도",
+          "body": "rgb = cv2.cvtColor(image,cv2.COLOR_BGR2RGB) 후 plt.imshow(rgb)를 사용한다. BGR을 그대로 imshow에 주면 R/B를 바꾸어 해석해 색이 왜곡된다. 강의 82쪽의 \"보색\" 표현은 엄밀히 모든 채널의 반전이 아니라 R/B 교환이다. 명암도는 plt.imshow(gray,cmap=\"gray\")로 표시한다."
+        },
+        {
+          "title": "서브플롯",
+          "body": "plt.subplot(2,3,4)는 2행 3열 배치의 네 번째 칸이다. 인덱스는 1부터 왼쪽→오른쪽, 위→아래로 간다. fig,axs=plt.subplots(2,3)은 여러 축을 한 번에 만들고 axs.flat으로 순회할 수 있다. tight_layout은 겹침·여백을 조정한다."
+        },
+        {
+          "title": "그래프와 파일",
+          "body": "plt.plot(x,y,\"go-\",linewidth=3)은 초록색 g, 원 마커 o, 실선 -을 뜻한다. title은 제목, axis(\"off\")는 축 숨기기, show는 표시, savefig(\"sample.png\",dpi=300)는 파일 저장이다. 무작위 데이터의 정확한 결과값은 시드나 배열을 지정하지 않으면 고정할 수 없다."
+        }
+      ],
+      "keyPoints": [
+        "BGR→RGB: cvtColor(...,COLOR_BGR2RGB)",
+        "subplot 인덱스는 1부터",
+        "imshow=영상 / plot=선 그래프"
+      ],
+      "pitfalls": [
+        "cmap=\"gray\"는 3채널 BGR을 RGB로 바꾸는 옵션이 아니다.",
+        "interpolation은 표시 보간이며 원본 grid 행렬 크기를 바꾸지 않는다."
+      ],
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 76,
+        "label": "슬라이드 76~85"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "p-q01",
+      "track": "practice",
+      "topic": "행렬과 좌표",
+      "type": "output",
+      "title": "행렬 shape 읽기",
+      "prompt": "print의 출력을 적으시오.",
+      "answer": "(300, 400)",
+      "explanation": "zeros의 튜플은 행 300, 열 400이다. 화면의 가로×세로는 400×300이다.",
+      "steps": [
+        "zeros의 첫 수를 높이로 읽는다.",
+        "shape는 행렬 차원 그대로 반환한다."
+      ],
+      "hint": "화면 크기와 shape의 순서는 다르다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 5,
+        "label": "슬라이드 5"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image = np.zeros((300, 400), np.uint8)\nimage[:] = 100\nprint(image.shape)",
+      "accepted": [
+        "(300,400)"
+      ]
+    },
+    {
+      "id": "p-q02",
+      "track": "practice",
+      "topic": "행렬과 좌표",
+      "type": "output",
+      "title": "회색 화소값",
+      "prompt": "print의 출력을 적으시오.",
+      "answer": "100",
+      "explanation": "[:]는 모든 위치를 선택한다. 인덱스 [20,30]은 y=20,x=30인 한 화소이며 값은 100이다.",
+      "steps": [
+        "모든 화소가 100이다.",
+        "선택 위치도 동일하다."
+      ],
+      "hint": "[:] 대입은 행렬 전체다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 5,
+        "label": "슬라이드 5"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image = np.zeros((300, 400), np.uint8)\nimage[:] = 100\nprint(image[20, 30])"
+    },
+    {
+      "id": "p-q03",
+      "track": "practice",
+      "topic": "행렬과 좌표",
+      "type": "choice",
+      "title": "BGR의 빨간색",
+      "prompt": "OpenCV의 일반적인 BGR 영상에서 순수한 빨간색은?",
+      "answer": "(0, 0, 255)",
+      "explanation": "세 값은 B,G,R 순서다. 세 번째 R만 최대 255면 빨강이다.",
+      "steps": [
+        "채널 순서 B,G,R을 적는다.",
+        "R의 위치에 255를 넣는다."
+      ],
+      "hint": "RGB와 순서를 구분한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "(255, 0, 0)",
+        "(0, 255, 0)",
+        "(0, 0, 255)",
+        "(255, 255, 255)"
+      ]
+    },
+    {
+      "id": "p-q04",
+      "track": "practice",
+      "topic": "행렬과 좌표",
+      "type": "blank",
+      "title": "가로 600·세로 400 컬러 영상",
+      "prompt": "빈칸에 튜플 하나를 적으시오.",
+      "answer": "(400, 600, 3)",
+      "explanation": "컬러 3채널을 마지막에 두고 높이,너비 순으로 쓴다.",
+      "steps": [
+        "세로 400→행 수",
+        "가로 600→열 수",
+        "BGR→3채널"
+      ],
+      "hint": "높이, 너비, 채널 순서다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image = np.zeros(____, np.uint8)",
+      "accepted": [
+        "(400,600,3)"
+      ]
+    },
+    {
+      "id": "p-q05",
+      "track": "practice",
+      "topic": "윈도우",
+      "type": "blank",
+      "title": "창 크기 변경 허용",
+      "prompt": "빈칸에 OpenCV 상수를 적으시오.",
+      "answer": "cv2.WINDOW_NORMAL",
+      "explanation": "WINDOW_NORMAL은 사용자가 창 크기를 변경할 수 있게 한다. AUTOSIZE는 영상 크기에 맞춘다.",
+      "steps": [
+        "크기 조절 가능이라는 요구를 찾는다.",
+        "NORMAL을 선택한다."
+      ],
+      "hint": "AUTOSIZE와 비교한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 7,
+        "label": "슬라이드 7"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "cv2.namedWindow(\"Window\", ____)\ncv2.resizeWindow(\"Window\", 600, 500)",
+      "accepted": [
+        "WINDOW_NORMAL"
+      ]
+    },
+    {
+      "id": "p-q06",
+      "track": "practice",
+      "topic": "윈도우",
+      "type": "output",
+      "title": "표시 창과 실제 행렬",
+      "prompt": "창 크기를 바꾼 뒤 print 출력은? GUI가 정상 동작한다고 가정한다.",
+      "answer": "(300, 400)",
+      "explanation": "resizeWindow는 창의 표시 크기를 바꾸며 원본 배열을 재할당하지 않는다.",
+      "steps": [
+        "원본 shape=(300,400)",
+        "창만 너비600,높이500으로 변경",
+        "행렬 shape 유지"
+      ],
+      "hint": "resizeWindow와 resize는 다르다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 7,
+        "label": "슬라이드 7"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image = np.zeros((300,400), np.uint8)\ncv2.namedWindow(\"W\", cv2.WINDOW_NORMAL)\ncv2.imshow(\"W\", image)\ncv2.resizeWindow(\"W\", 600, 500)\nprint(image.shape)",
+      "accepted": [
+        "(300,400)"
+      ]
+    },
+    {
+      "id": "p-q07",
+      "track": "practice",
+      "topic": "윈도우",
+      "type": "blank",
+      "title": "500행·600열 크기의 창",
+      "prompt": "빈칸 두 값을 쉼표로 구분하시오.",
+      "answer": "600, 500",
+      "explanation": "resizeWindow는 width,height 순서다. 500행은 높이500,600열은 너비600이다.",
+      "steps": [
+        "행→높이500",
+        "열→너비600",
+        "인수 순서 width,height에 배치"
+      ],
+      "hint": "함수는 너비를 먼저 받는다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 4,
+        "label": "PDF 4쪽 / 연습문제 6 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 6"
+      ],
+      "difficulty": 1,
+      "code": "cv2.resizeWindow(\"Window\", ____, ____) ",
+      "accepted": [
+        "600,500",
+        "600 500"
+      ]
+    },
+    {
+      "id": "p-q08",
+      "track": "practice",
+      "topic": "윈도우",
+      "type": "choice",
+      "title": "창 이동의 의미",
+      "prompt": "cv2.moveWindow(\"W\",100,200)이 바꾸는 것은?",
+      "answer": "화면에서 창의 위치",
+      "explanation": "moveWindow의 x,y는 화면상 창의 위치다. 영상의 화소나 shape를 바꾸지 않는다.",
+      "steps": [
+        "함수 이름 move를 해석한다.",
+        "화면 위치 x100,y200을 적용한다."
+      ],
+      "hint": "영상 좌표와 화면상 창 좌표를 구분한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 5,
+        "label": "슬라이드 5"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "영상의 가로·세로 크기",
+        "모든 화소의 값",
+        "화면에서 창의 위치",
+        "BGR 채널 순서"
+      ]
+    },
+    {
+      "id": "p-q09",
+      "track": "practice",
+      "topic": "키보드",
+      "type": "blank",
+      "title": "아무 키까지 기다리기",
+      "prompt": "아무 키를 누를 때까지 기다리려면 빈칸의 숫자는?",
+      "answer": "0",
+      "explanation": "waitKey의 delay=0은 키 입력까지 무한 대기한다. 양수는 지정 시간 동안 기다린다.",
+      "steps": [
+        "delay의 의미를 확인한다.",
+        "무한 대기는 0이다."
+      ],
+      "hint": "0밀리초 후 즉시 종료라는 뜻이 아니다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 2,
+        "label": "PDF 1~2쪽 / 연습문제 5 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 5"
+      ],
+      "difficulty": 1,
+      "code": "cv2.imshow(\"W\", image)\ncv2.waitKey(____)\ncv2.destroyAllWindows()"
+    },
+    {
+      "id": "p-q10",
+      "track": "practice",
+      "topic": "키보드",
+      "type": "output",
+      "title": "입력 없는 waitKey",
+      "prompt": "활성 HighGUI 창이 있고 50ms 동안 키 입력이 전혀 없었다. k 값은?",
+      "answer": "-1",
+      "explanation": "양의 지연 동안 키 입력이 없으면 -1이다. 실제 대기 시간은 시스템 사정으로 더 길 수 있다.",
+      "steps": [
+        "delay=50>0이다.",
+        "키 입력 없음 조건을 적용한다."
+      ],
+      "hint": "키 미입력 반환값을 묻는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 10,
+        "label": "슬라이드 10"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "k = cv2.waitKey(50)"
+    },
+    {
+      "id": "p-q11",
+      "track": "practice",
+      "topic": "키보드",
+      "type": "blank",
+      "title": "ESC 종료 조건",
+      "prompt": "이 환경에서 ESC 키 코드는 27이다. 빈칸을 채우시오.",
+      "answer": "27",
+      "explanation": "ESC 코드와 반환값을 비교하여 반복문을 빠져나간다.",
+      "steps": [
+        "문제에서 ESC 코드27을 확인한다.",
+        "비교식 우변에 넣는다."
+      ],
+      "hint": "문제에 주어진 코드값을 사용한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 11,
+        "label": "슬라이드 11"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "if cv2.waitKey(30) == ____:\n    break"
+    },
+    {
+      "id": "p-q12",
+      "track": "practice",
+      "topic": "키보드",
+      "type": "choice",
+      "title": "특수키와 운영체제",
+      "prompt": "화살표키 전체 코드를 읽고 싶은 경우 적절한 함수는?",
+      "answer": "cv2.waitKeyEx()",
+      "explanation": "waitKeyEx는 전체 키 코드를 반환한다. 특정 숫자 코드는 GUI 백엔드에 따라 달라질 수 있다.",
+      "steps": [
+        "전체 키 코드를 요구한다.",
+        "Ex 함수를 선택한다."
+      ],
+      "hint": "확장 키 처리 함수다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 10,
+        "label": "슬라이드 10"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "cv2.waitKeyEx()",
+        "cv2.imread()",
+        "cv2.setTrackbarPos()",
+        "cv2.release()"
+      ]
+    },
+    {
+      "id": "p-q13",
+      "track": "practice",
+      "topic": "콜백",
+      "type": "choice",
+      "title": "콜백의 정의",
+      "prompt": "콜백 방식의 설명으로 가장 알맞은 것은?",
+      "answer": "이벤트가 생기면 시스템이 등록한 함수를 호출한다.",
+      "explanation": "개발자는 함수를 정의하고 등록한다. 시스템이 사건 발생 시 호출한다.",
+      "steps": [
+        "호출 주체가 시스템임을 확인한다.",
+        "호출 시점이 이벤트 발생임을 확인한다."
+      ],
+      "hint": "누가 언제 호출하는지가 핵심이다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 1,
+        "label": "PDF 1쪽 / 연습문제 1 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 1"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "항상 개발자가 반복문에서 직접 호출한다.",
+        "이벤트가 생기면 시스템이 등록한 함수를 호출한다.",
+        "프로그램이 끝난 뒤에만 실행된다.",
+        "화소값을 파일로 저장하는 함수다."
+      ]
+    },
+    {
+      "id": "p-q14",
+      "track": "practice",
+      "topic": "마우스 이벤트",
+      "type": "blank",
+      "title": "마우스 콜백 등록",
+      "prompt": "빈칸에 함수 이름을 적으시오.",
+      "answer": "onMouse",
+      "explanation": "콜백 함수 자체를 전달한다. onMouse()로 호출하면 함수 반환값을 등록하려 하게 된다.",
+      "steps": [
+        "등록할 함수 이름을 찾는다.",
+        "호출 괄호 없이 전달한다."
+      ],
+      "hint": "함수를 즉시 실행하지 않는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 14,
+        "label": "슬라이드 14"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "def onMouse(event,x,y,flags,param):\n    pass\ncv2.setMouseCallback(\"Mouse Event\", ____)"
+    },
+    {
+      "id": "p-q15",
+      "track": "practice",
+      "topic": "마우스 이벤트",
+      "type": "blank",
+      "title": "오른쪽 버튼 누르기",
+      "prompt": "빈칸에 상수를 적으시오.",
+      "answer": "cv2.EVENT_RBUTTONDOWN",
+      "explanation": "R은 right, BUTTONDOWN은 누르는 순간이다. UP은 떼는 순간이다.",
+      "steps": [
+        "오른쪽→R",
+        "누름→DOWN"
+      ],
+      "hint": "BUTTONUP과 구분한다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 7,
+        "label": "PDF 6~7쪽 / 연습문제 10 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 10"
+      ],
+      "difficulty": 1,
+      "code": "if event == ____:\n    cv2.circle(image, (x,y), 20, (0,255,0), 2)",
+      "accepted": [
+        "EVENT_RBUTTONDOWN"
+      ]
+    },
+    {
+      "id": "p-q16",
+      "track": "practice",
+      "topic": "마우스 이벤트",
+      "type": "output",
+      "title": "클릭 좌표를 배열 인덱스로",
+      "prompt": "onMouse에 x=80,y=120이 전달되었다. 바뀐 화소의 NumPy 인덱스를 [행,열]로 적으시오.",
+      "answer": "[120, 80]",
+      "explanation": "OpenCV (x,y)와 배열 [y,x]는 순서가 반대다.",
+      "steps": [
+        "행=y120",
+        "열=x80"
+      ],
+      "hint": "행은 y다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 13,
+        "label": "슬라이드 13"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image[y, x] = (0,0,255)",
+      "accepted": [
+        "[120,80]",
+        "120,80",
+        "(120,80)"
+      ]
+    },
+    {
+      "id": "p-q17",
+      "track": "practice",
+      "topic": "트랙바",
+      "type": "blank",
+      "title": "밝기 트랙바 최대값",
+      "prompt": "8비트 명암도 밝기를 모두 선택하도록 빈칸을 채우시오.",
+      "answer": "255",
+      "explanation": "트랙바 최솟값은0이다. 최댓값255를 지정하면 8비트 명암도0~255를 선택할 수 있다.",
+      "steps": [
+        "uint8 범위0~255를 확인한다.",
+        "count에 최댓값을 넣는다."
+      ],
+      "hint": "최댓값이지 선택지 개수가 아니다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 18,
+        "label": "슬라이드 18"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "cv2.createTrackbar(\"Brightness\", title, 0, ____, onChange)"
+    },
+    {
+      "id": "p-q18",
+      "track": "practice",
+      "topic": "트랙바",
+      "type": "output",
+      "title": "트랙바 콜백의 결과",
+      "prompt": "onChange(170)을 호출한 뒤 print의 출력은?",
+      "answer": "170",
+      "explanation": "fill은 현재 값과 무관하게 모든 화소를170으로 바꾼다.",
+      "steps": [
+        "콜백 value=170",
+        "전체 행렬에 fill170",
+        "한 화소 출력170"
+      ],
+      "hint": "콜백에 전달된 값이 목표 밝기다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 18,
+        "label": "슬라이드 18"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image = np.zeros((20,30), np.uint8)\ndef onChange(value):\n    image.fill(value)\nonChange(170)\nprint(image[0,0])"
+    },
+    {
+      "id": "p-q19",
+      "track": "practice",
+      "topic": "트랙바",
+      "type": "blank",
+      "title": "트랙바 위치 동기화",
+      "prompt": "영상 밝기값 value와 트랙바 위치를 같게 만드는 함수는? 함수명만 적어도 된다.",
+      "answer": "cv2.setTrackbarPos",
+      "explanation": "get은 조회,set은 변경이다. 인수는 트랙바 이름,창 이름,새 위치다.",
+      "steps": [
+        "바꾼다는 요구→set",
+        "트랙바 위치→TrackbarPos"
+      ],
+      "hint": "get 함수는 값을 읽는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 20,
+        "label": "슬라이드 20"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "____(\"Brightness\", title, value)",
+      "accepted": [
+        "setTrackbarPos",
+        "cv2.setTrackbarPos()"
+      ]
+    },
+    {
+      "id": "p-q20",
+      "track": "practice",
+      "topic": "트랙바",
+      "type": "output",
+      "title": "원문 코드와 설명 비교",
+      "prompt": "아래 코드에 오른쪽 클릭 이벤트가 한 번 들어왔다. 출력은?",
+      "answer": "110",
+      "explanation": "실제 코드는 오른쪽 버튼을 누르면 10을 더한다. 강의 21쪽의 설명 문장에 오기가 있어도, 실행 결과는 20쪽 코드의 분기를 따라 판단한다.",
+      "steps": [
+        "event=RBUTTONDOWN이므로 첫 분기가 실행된다.",
+        "100+10=110이다."
+      ],
+      "hint": "조건에 있는 실제 코드를 따라간다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 20,
+        "label": "슬라이드 20"
+      },
+      "tags": [
+        "원문 기반",
+        "오류 점검"
+      ],
+      "difficulty": 1,
+      "code": "value = 100\nif event == cv2.EVENT_RBUTTONDOWN:\n    value += 10\nelif event == cv2.EVENT_LBUTTONDOWN:\n    value -= 10\nprint(value)"
+    },
+    {
+      "id": "p-q21",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "blank",
+      "title": "내부를 채운 빨간 사각형",
+      "prompt": "빈칸에 두께 인수를 적으시오.",
+      "answer": "-1",
+      "explanation": "rectangle에서 thickness=-1 또는 cv2.FILLED는 내부를 채운다. 양수 1은 두께 1의 윤곽선이다.",
+      "steps": [
+        "요구가 내부 채움인지 확인한다.",
+        "thickness 인수에 -1을 넣는다."
+      ],
+      "hint": "1과-1을 구분한다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 5,
+        "label": "PDF 5~6쪽 / 연습문제 9 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 9"
+      ],
+      "difficulty": 1,
+      "code": "cv2.rectangle(image, (100,100), (300,400), (0,0,255), ____) ",
+      "accepted": [
+        "cv2.FILLED",
+        "FILLED"
+      ]
+    },
+    {
+      "id": "p-q22",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "output",
+      "title": "도형 색 읽기",
+      "prompt": "이 선은 OpenCV 창에서 무슨 색으로 보이는가?",
+      "answer": "초록색",
+      "explanation": "BGR=(0,255,0)이므로 G 성분만 최대다. 시작점과 끝점은 선의 방향을 정하고 색은 color 인수가 정한다.",
+      "steps": [
+        "색 인수 확인",
+        "가운데 G=255"
+      ],
+      "hint": "B,G,R 세 값을 나눠 본다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "cv2.line(image, (50,100), (200,300), (0,255,0), 5)",
+      "accepted": [
+        "초록",
+        "녹색",
+        "green"
+      ]
+    },
+    {
+      "id": "p-q23",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "choice",
+      "title": "두께 인수 오독",
+      "prompt": "rectangle(..., color, -1, cv2.LINE_4, 1)의 마지막 1은?",
+      "answer": "좌표의 shift",
+      "explanation": "color 다음 인수는 thickness, lineType, shift 순서다. -1이 내부 채움을 결정하며, 마지막 1은 좌표의 소수 비트 수다.",
+      "steps": [
+        "color 뒤 첫 값 -1은 두께다.",
+        "LINE_4는 선 종류다.",
+        "마지막 1은 shift다."
+      ],
+      "hint": "각 인수의 자리를 센다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 2,
+        "label": "PDF 2~3쪽 / 연습문제 5 도형 코드 검증"
+      },
+      "tags": [
+        "원문 기반",
+        "오류 점검"
+      ],
+      "difficulty": 2,
+      "choices": [
+        "선 두께",
+        "좌표의 shift",
+        "채널 수",
+        "파란색 값"
+      ]
+    },
+    {
+      "id": "p-q24",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "output",
+      "title": "shift=1의 좌표",
+      "prompt": "오타를 고친 다음 코드의 실제 두 꼭짓점을 순서대로 적으시오.",
+      "answer": "(100,150), (150,200)",
+      "explanation": "shift=1이므로 모든 좌표를 2로 나눈다. (200,300)은 (100,150), (300,400)은 (150,200)이 된다.",
+      "steps": [
+        "실제 좌표=입력 좌표/2**shift다.",
+        "두 점의 x와 y를 각각 2로 나눈다."
+      ],
+      "hint": "마지막1은 shift다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 2,
+        "label": "PDF 2~3쪽 / 연습문제 5 검증 변형"
+      },
+      "tags": [
+        "변형",
+        "연습문제 5",
+        "shift"
+      ],
+      "difficulty": 3,
+      "code": "cv2.rectangle(image, (200,300), (300,400), (0,0,255), -1, cv2.LINE_4, 1)",
+      "accepted": [
+        "(100, 150), (150, 200)",
+        "100,150,150,200"
+      ]
+    },
+    {
+      "id": "p-q25",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "output",
+      "title": "채운 사각형 내부·외부",
+      "prompt": "각 print의 출력을 위에서부터 쓰시오. NumPy .tolist() 형식을 사용하시오.",
+      "answer": "[0, 0, 255]\n[0, 0, 0]",
+      "explanation": "[50,60]은 y50,x60으로 사각형 내부다. [10,10]은 바깥의 원래 검정이다.",
+      "steps": [
+        "사각형 x20~80,y30~90",
+        "첫 위치x60,y50은 내부",
+        "둘째x10,y10은 외부"
+      ],
+      "hint": "배열 인덱스와 좌표 순서를 바꿔 확인한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "image = np.zeros((120,120,3), np.uint8)\ncv2.rectangle(image,(20,30),(80,90),(0,0,255),-1)\nprint(image[50,60].tolist())\nprint(image[10,10].tolist())"
+    },
+    {
+      "id": "p-q26",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "output",
+      "title": "겹친 도형의 순서",
+      "prompt": "마지막 print의 출력은?",
+      "answer": "[255, 0, 0]",
+      "explanation": "동일한 영역에 나중에 그린 파란 사각형이 이전 빨간 화소를 덮는다.",
+      "steps": [
+        "(20,20)은 두 도형 안이다.",
+        "두 번째 호출의BGR을 선택한다."
+      ],
+      "hint": "마지막에 쓴 값이 남는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "image=np.zeros((60,60,3),np.uint8)\ncv2.rectangle(image,(0,0),(40,40),(0,0,255),-1)\ncv2.rectangle(image,(10,10),(30,30),(255,0,0),-1)\nprint(image[20,20].tolist())"
+    },
+    {
+      "id": "p-q27",
+      "track": "practice",
+      "topic": "그리기",
+      "type": "output",
+      "title": "끝점 포함과 화소 개수",
+      "prompt": "채워진 흰색 화소는 몇 개인가?",
+      "answer": "9",
+      "explanation": "두 꼭짓점(1,1)~(3,3)은 x=1,2,3과y=1,2,3을 포함하여3×3=9개다. 슬라이스[1:3]과 다르다.",
+      "steps": [
+        "포함되는x3개",
+        "포함되는y3개",
+        "3×3=9"
+      ],
+      "hint": "두 점 형식의 끝점은 포함된다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 3,
+      "code": "image=np.zeros((5,5),np.uint8)\ncv2.rectangle(image,(1,1),(3,3),255,-1)\nprint(np.count_nonzero(image))"
+    },
+    {
+      "id": "p-q28",
+      "track": "practice",
+      "topic": "글자",
+      "type": "choice",
+      "title": "putText 위치의 기준",
+      "prompt": "기본 설정에서 putText의 org=(50,100)은 주로 어디를 기준으로 하는가?",
+      "answer": "글자 문자열의 왼쪽 아래 기준점",
+      "explanation": "org는 문자열의 왼쪽 아래 기준이다. 바운딩박스의 왼쪽 위가 아니다.",
+      "steps": [
+        "org의 의미를 확인한다.",
+        "기본 bottomLeftOrigin=False를 적용한다."
+      ],
+      "hint": "문자 기준선에 주의한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 26,
+        "label": "슬라이드 26"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "글자의 정중앙",
+        "글자 문자열의 왼쪽 아래 기준점",
+        "영상의 오른쪽 위",
+        "전체 창의 왼쪽 위"
+      ]
+    },
+    {
+      "id": "p-q29",
+      "track": "practice",
+      "topic": "글자",
+      "type": "blank",
+      "title": "기울임체 조합",
+      "prompt": "빈칸에 사용할 상수를 적으시오.",
+      "answer": "cv2.FONT_ITALIC",
+      "explanation": "FONT_ITALIC은 다른Hershey글꼴과 비트OR로 조합하는 기울임 플래그다.",
+      "steps": [
+        "기본글꼴PLAIN",
+        "기울임플래그ITALIC",
+        "|연산으로 조합"
+      ],
+      "hint": "기울임 전용 플래그다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 27,
+        "label": "슬라이드 27"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "font = cv2.FONT_HERSHEY_PLAIN | ____",
+      "accepted": [
+        "FONT_ITALIC"
+      ]
+    },
+    {
+      "id": "p-q30",
+      "track": "practice",
+      "topic": "원",
+      "type": "blank",
+      "title": "영상 중심 좌표",
+      "prompt": "shape=(300,500,3) 영상의 정수 중심을 (x,y) 튜플로 적으시오.",
+      "answer": "(250, 150)",
+      "explanation": "너비500의 절반이x250,높이300의 절반이y150이다.",
+      "steps": [
+        "x=shape[1]//2",
+        "y=shape[0]//2"
+      ],
+      "hint": "그리기 좌표에서는 너비가 먼저다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 30,
+        "label": "슬라이드 30"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "center = ____\ncv2.circle(image, center, 100, (255,0,0), 1)",
+      "accepted": [
+        "(250,150)"
+      ]
+    },
+    {
+      "id": "p-q31",
+      "track": "practice",
+      "topic": "원",
+      "type": "output",
+      "title": "반지름과 지름",
+      "prompt": "다음 원의 기하학적 지름은 몇 화소인가? 선 두께는 제외한다.",
+      "answer": "40",
+      "explanation": "원의 지름은 반지름의 2배다. circle의 세 번째 인수 20은 반지름이므로 지름은 40이다.",
+      "steps": [
+        "radius=20을 확인한다.",
+        "20×2=40을 계산한다."
+      ],
+      "hint": "circle의 세 번째 인수는 반지름이다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 7,
+        "label": "PDF 6~7쪽 / 연습문제 10 변형"
+      },
+      "tags": [
+        "변형",
+        "연습문제 10"
+      ],
+      "difficulty": 1,
+      "code": "cv2.circle(image, (80,120), 20, (0,255,0), 2)"
+    },
+    {
+      "id": "p-q32",
+      "track": "practice",
+      "topic": "타원",
+      "type": "output",
+      "title": "타원 axes 해석",
+      "prompt": "회전각0인 타원의 기하학적 전체 가로·세로 길이를 가로,세로로 적으시오.",
+      "answer": "240, 120",
+      "explanation": "axes=(120,60)은 두 반축의 길이다. 회전각이 0이므로 가로는 120×2=240, 세로는 60×2=120이다.",
+      "steps": [
+        "가로 반축 120을 두 배 한다.",
+        "세로 반축 60을 두 배 한다."
+      ],
+      "hint": "axes는 반지름에 해당한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 34,
+        "label": "슬라이드 34"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "cv2.ellipse(image,(180,150),(120,60),0,0,360,(255,0,0),1)",
+      "accepted": [
+        "240,120",
+        "(240,120)"
+      ]
+    },
+    {
+      "id": "p-q33",
+      "track": "practice",
+      "topic": "타원",
+      "type": "choice",
+      "title": "회전각과 호의 각도",
+      "prompt": "ellipse(...,(120,60),90,0,360,...)에서 90이 뜻하는 것은?",
+      "answer": "타원 전체의 회전각",
+      "explanation": "axes 다음의 90은 타원 전체 회전각 angle이다. 그다음 0과 360은 그릴 호의 시작각과 종료각이므로 전체 타원이 그려진다.",
+      "steps": [
+        "axes, angle, startAngle, endAngle의 순서를 확인한다.",
+        "angle=90을 읽는다."
+      ],
+      "hint": "startAngle과 다르다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 33,
+        "label": "슬라이드 33"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "타원 전체의 회전각",
+        "반지름",
+        "호 종료각",
+        "선 두께"
+      ]
+    },
+    {
+      "id": "p-q34",
+      "track": "practice",
+      "topic": "마우스 이벤트",
+      "type": "output",
+      "title": "두 클릭으로 원 반지름",
+      "prompt": "첫 점이 (10,10), 둘째 점이 (40,50)이다. 계산된 radius는?",
+      "answer": "50",
+      "explanation": "dx=-30, dy=-40이다. 두 점의 거리 sqrt(30**2+40**2)=sqrt(2500)=50을 반지름으로 사용한다.",
+      "steps": [
+        "두 축의 차이 30과 40을 구한다.",
+        "제곱합 2500을 구한다.",
+        "제곱근은 50이다."
+      ],
+      "hint": "두 점 거리 공식을 쓴다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 36,
+        "label": "슬라이드 36"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "dx, dy = 10-40, 10-50\nradius=int(np.sqrt(dx*dx+dy*dy))\nprint(radius)"
+    },
+    {
+      "id": "p-q35",
+      "track": "practice",
+      "topic": "영상 읽기",
+      "type": "blank",
+      "title": "명암도로 읽기",
+      "prompt": "빈칸에 상수를 적으시오.",
+      "answer": "cv2.IMREAD_GRAYSCALE",
+      "explanation": "컬러 파일을 IMREAD_GRAYSCALE로 읽으면 1채널 명암도 행렬로 변환된다.",
+      "steps": [
+        "요구가 명암도 1채널인지 확인한다.",
+        "GRAYSCALE을 선택한다."
+      ],
+      "hint": "COLOR는 3채널이다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 43,
+        "label": "슬라이드 43"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image=cv2.imread(\"color.jpg\", ____) ",
+      "accepted": [
+        "IMREAD_GRAYSCALE",
+        "0"
+      ]
+    },
+    {
+      "id": "p-q36",
+      "track": "practice",
+      "topic": "영상 읽기",
+      "type": "choice",
+      "title": "읽기 실패 확인",
+      "prompt": "Python에서 imread 실패를 확인하는 조건은?",
+      "answer": "image is None",
+      "explanation": "읽기 실패 시 Python에서는 일반적으로 None이 반환된다. None을 먼저 검사한 뒤 shape나 imshow를 사용해야 한다.",
+      "steps": [
+        "반환값이 유효한 영상인지 확인한다.",
+        "image is None으로 실패를 검사한다."
+      ],
+      "hint": "shape 접근 전에 검사한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 40,
+        "label": "슬라이드 40"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "image is None",
+        "image == 255",
+        "image.shape == 0",
+        "image is True"
+      ]
+    },
+    {
+      "id": "p-q37",
+      "track": "practice",
+      "topic": "영상 읽기",
+      "type": "output",
+      "title": "컬러 행렬의 차원",
+      "prompt": "240행320열 컬러 파일을 IMREAD_COLOR로 정상 읽었다. print 출력은?",
+      "answer": "(240, 320, 3)",
+      "explanation": "BGR 세 채널을 마지막 차원으로 가지므로 높이 240, 너비 320, 채널 3의 튜플이다.",
+      "steps": [
+        "행은 240이다.",
+        "열은 320이다.",
+        "채널 수는 3이다."
+      ],
+      "hint": "지원되는 일반 8비트 컬러 파일이라고 가정한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 43,
+        "label": "슬라이드 43"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image=cv2.imread(\"color.jpg\", cv2.IMREAD_COLOR)\nprint(image.shape)",
+      "accepted": [
+        "(240,320,3)"
+      ]
+    },
+    {
+      "id": "p-q38",
+      "track": "practice",
+      "topic": "영상 읽기",
+      "type": "blank",
+      "title": "원래 깊이·알파 보존",
+      "prompt": "16비트PNG의 깊이와 알파 채널을 그대로 읽으려면 빈칸은?",
+      "answer": "cv2.IMREAD_UNCHANGED",
+      "explanation": "UNCHANGED는 원래 입력의 깊이와 채널을 보존해서 읽는 옵션이다. COLOR는 보통 8비트 3채널로 변환한다.",
+      "steps": [
+        "원래 깊이와 알파를 보존해야 한다.",
+        "UNCHANGED를 선택한다."
+      ],
+      "hint": "알파 채널까지 포함하는 읽기다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 45,
+        "label": "슬라이드 45"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "image=cv2.imread(\"depth16.png\", ____) ",
+      "accepted": [
+        "IMREAD_UNCHANGED",
+        "-1"
+      ]
+    },
+    {
+      "id": "p-q39",
+      "track": "practice",
+      "topic": "영상 저장",
+      "type": "blank",
+      "title": "JPEG 최대 품질",
+      "prompt": "빈칸에 숫자를 적으시오.",
+      "answer": "100",
+      "explanation": "JPEG 품질 옵션은 0~100이며 100이 최대 품질이다. 손실 압축 자체가 사라진다는 뜻은 아니다.",
+      "steps": [
+        "JPEG_QUALITY의 범위를 확인한다.",
+        "최댓값 100을 지정한다."
+      ],
+      "hint": "PNG의 0~9와 구분한다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 8,
+        "label": "PDF 8~9쪽 / 연습문제 13 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 13"
+      ],
+      "difficulty": 1,
+      "code": "cv2.imwrite(\"test.jpg\",image,[cv2.IMWRITE_JPEG_QUALITY, ____])"
+    },
+    {
+      "id": "p-q40",
+      "track": "practice",
+      "topic": "영상 저장",
+      "type": "choice",
+      "title": "PNG 압축의 화질",
+      "prompt": "동일한 uint8 행렬을 PNG 압축 수준0과9로 정상 저장했다. 맞는 설명은?",
+      "answer": "둘 다 무손실이어서 복원 화소 품질은 같다.",
+      "explanation": "PNG 압축 수준은 화질 점수가 아니다. 0과 9는 모두 무손실이며, 주로 압축에 드는 시간과 파일 크기가 달라진다.",
+      "steps": [
+        "PNG는 무손실 압축이다.",
+        "0~9는 압축 수준이다.",
+        "복원한 원본 화소의 품질은 같다."
+      ],
+      "hint": "JPEG 품질과 다르게 해석한다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 8,
+        "label": "PDF 8~9쪽 / 연습문제 13 검증 변형"
+      },
+      "tags": [
+        "변형",
+        "연습문제 13",
+        "오류 점검"
+      ],
+      "difficulty": 2,
+      "choices": [
+        "0은 저화질이고 9는 고화질이다.",
+        "둘 다 무손실이어서 복원 화소 품질은 같다.",
+        "9는 자동으로 JPEG가 된다.",
+        "0은 저장할 수 없다."
+      ]
+    },
+    {
+      "id": "p-q41",
+      "track": "practice",
+      "topic": "영상 저장",
+      "type": "output",
+      "title": "8비트를 16비트로 확장",
+      "prompt": "print 결과는?",
+      "answer": "65535",
+      "explanation": "255×257=65535다. uint16으로 먼저 변환했으므로 곱셈 결과를 그 자료형에 담을 수 있다.",
+      "steps": [
+        "uint16 최댓값은 65535다.",
+        "255에 257을 곱한다."
+      ],
+      "hint": "65535/255=257이다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 50,
+        "label": "슬라이드 50"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "image8=np.array([[255]],np.uint8)\nimage16=image8.astype(np.uint16)*257\nprint(image16[0,0])"
+    },
+    {
+      "id": "p-q42",
+      "track": "practice",
+      "topic": "비디오 입력",
+      "type": "blank",
+      "title": "PC 카메라 열기",
+      "prompt": "일반적인 첫 PC 카메라를 여는 장치 인덱스는?",
+      "answer": "0",
+      "explanation": "파일 경로가 아닌 정수 0은 일반적으로 첫 카메라 장치를 뜻한다. 실제 장치가 없거나 접근할 수 없으면 개방에 실패할 수 있다.",
+      "steps": [
+        "입력이 PC 카메라인지 확인한다.",
+        "첫 장치 인덱스 0을 사용한다."
+      ],
+      "hint": "동영상 파일 문자열과 다르다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 9,
+        "label": "PDF 9~10쪽 / 연습문제 16 정정"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 16",
+        "오류 점검"
+      ],
+      "difficulty": 1,
+      "code": "cap=cv2.VideoCapture(____)"
+    },
+    {
+      "id": "p-q43",
+      "track": "practice",
+      "topic": "비디오 입력",
+      "type": "blank",
+      "title": "프레임 한 장 읽기",
+      "prompt": "빈칸에 메서드 이름을 적으시오.",
+      "answer": "read",
+      "explanation": "read는 ret와 frame 두 값을 반환한다. get은 프레임 영상이 아닌 속성을 조회하는 함수다.",
+      "steps": [
+        "프레임 데이터 한 장을 읽어야 한다.",
+        "read를 호출한다.",
+        "ret를 검사한 뒤 frame을 사용한다."
+      ],
+      "hint": "반환값은 성공 여부와 행렬이다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 57,
+        "label": "슬라이드 57"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "ret,frame=cap.____()\nif not ret:\n    break",
+      "accepted": [
+        "read()",
+        "cap.read",
+        "cap.read()"
+      ]
+    },
+    {
+      "id": "p-q44",
+      "track": "practice",
+      "topic": "비디오 입력",
+      "type": "choice",
+      "title": "ret=False 처리",
+      "prompt": "프레임 읽기 결과 ret=False일 때 가장 먼저 할 일은?",
+      "answer": "해당 frame 처리를 멈추고 실패/종료를 처리한다.",
+      "explanation": "읽기 실패 시 유효한 frame이 없을 수 있다. ROI나 imshow에 넘기기 전에 해당 프레임 처리를 중단한다.",
+      "steps": [
+        "ret가 읽기 성공 여부임을 확인한다.",
+        "False이면 프레임 연산을 수행하지 않는다."
+      ],
+      "hint": "실패한 frame의 shape를 읽지 않는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 61,
+        "label": "슬라이드 61"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "무조건 frame의 ROI를 잘라낸다.",
+        "해당 frame 처리를 멈추고 실패/종료를 처리한다.",
+        "frame을 JPEG 품질 100으로 바꾼다.",
+        "매번 새 카메라를 10개 연다."
+      ]
+    },
+    {
+      "id": "p-q45",
+      "track": "practice",
+      "topic": "비디오 속성",
+      "type": "blank",
+      "title": "프레임 너비 조회",
+      "prompt": "빈칸에 속성 상수를 적으시오.",
+      "answer": "cv2.CAP_PROP_FRAME_WIDTH",
+      "explanation": "프레임 너비의 속성 상수는 CAP_PROP_FRAME_WIDTH이고 높이는 CAP_PROP_FRAME_HEIGHT다.",
+      "steps": [
+        "요구한 속성이 너비인지 확인한다.",
+        "WIDTH 상수를 get에 전달한다."
+      ],
+      "hint": "높이는 HEIGHT다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 55,
+        "label": "슬라이드 55"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "width=int(cap.get(____))",
+      "accepted": [
+        "CAP_PROP_FRAME_WIDTH"
+      ]
+    },
+    {
+      "id": "p-q46",
+      "track": "practice",
+      "topic": "비디오 속성",
+      "type": "output",
+      "title": "FPS를 ms로",
+      "prompt": "fps=25일 때 delay 출력은?",
+      "answer": "40",
+      "explanation": "1초는 1000ms이므로 초당 25장을 표시하는 이상적인 프레임 간격은 1000/25=40ms다.",
+      "steps": [
+        "초당 프레임 수가 25다.",
+        "1000ms를 25로 나눈다."
+      ],
+      "hint": "분자는 1000밀리초다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 60,
+        "label": "슬라이드 60"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "fps=25\ndelay=int(1000/fps)\nprint(delay)"
+    },
+    {
+      "id": "p-q47",
+      "track": "practice",
+      "topic": "비디오 저장",
+      "type": "blank",
+      "title": "VideoWriter의 영상 크기",
+      "prompt": "frame.shape=(480,640,3)이다. 빈칸 튜플은?",
+      "answer": "(640, 480)",
+      "explanation": "VideoWriter는 (너비,높이) 순서로 프레임 크기를 받는다. shape의 첫 두 차원 (높이,너비)와 순서가 다르다.",
+      "steps": [
+        "shape에서 높이 480, 너비 640을 읽는다.",
+        "(width,height)=(640,480)을 만든다."
+      ],
+      "hint": "zeros의 shape 순서와 다르다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 65,
+        "label": "슬라이드 65"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "writer=cv2.VideoWriter(\"out.avi\",fourcc,30,____)",
+      "accepted": [
+        "(640,480)"
+      ]
+    },
+    {
+      "id": "p-q48",
+      "track": "practice",
+      "topic": "비디오 저장",
+      "type": "blank",
+      "title": "프레임을 동영상에 쓰기",
+      "prompt": "빈칸에 메서드를 적으시오.",
+      "answer": "write",
+      "explanation": "VideoWriter.write는 프레임 한 장을 동영상에 기록한다. imwrite는 정지영상 파일을 저장하는 함수다.",
+      "steps": [
+        "대상이 VideoWriter 객체임을 확인한다.",
+        "write(frame)을 호출한다."
+      ],
+      "hint": "정지영상 저장 imwrite와 구분한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 66,
+        "label": "슬라이드 66"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "writer.____(frame)",
+      "accepted": [
+        "write()",
+        "writer.write"
+      ]
+    },
+    {
+      "id": "p-q49",
+      "track": "practice",
+      "topic": "비디오 저장",
+      "type": "output",
+      "title": "저장 FPS 두 배",
+      "prompt": "300장을 모두 기록했고 저장 FPS가60이다. 완성 영상의 재생시간은 몇 초인가?",
+      "answer": "5",
+      "explanation": "재생시간=기록 프레임 수/FPS이므로 300/60=5초다. 같은 300장을 30fps로 저장하면 10초가 된다.",
+      "steps": [
+        "기록한 프레임 수는 300이다.",
+        "저장 FPS는 60이다.",
+        "300÷60=5초다."
+      ],
+      "hint": "waitKey는 이 계산에 들어가지 않는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 72,
+        "label": "슬라이드 72"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "output_fps=60\n# writer.write(frame)을 총 300회 성공했다고 가정"
+    },
+    {
+      "id": "p-q50",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "blank",
+      "title": "관심 영역 슬라이스",
+      "prompt": "(x,y)=(200,100), 가로100·세로200이다. 빈칸에 슬라이스 전체를 쓰시오.",
+      "answer": "100:300, 200:300",
+      "explanation": "행은 100~299로 200개, 열은 200~299로 100개다. NumPy 슬라이스 끝 인덱스는 포함되지 않는다.",
+      "steps": [
+        "y:y+h=100:300을 만든다.",
+        "x:x+w=200:300을 만든다.",
+        "행 범위를 먼저, 열 범위를 다음에 쓴다."
+      ],
+      "hint": "행 범위를 먼저 쓴다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 10,
+        "label": "PDF 9~10쪽 / 연습문제 16 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 16"
+      ],
+      "difficulty": 2,
+      "code": "roi=frame[____]",
+      "accepted": [
+        "100:300,200:300",
+        "100:100+200,200:200+100"
+      ]
+    },
+    {
+      "id": "p-q51",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "output",
+      "title": "관심 영역 shape",
+      "prompt": "frame은480행640열 BGR 영상이다. 출력은?",
+      "answer": "(200, 100, 3)",
+      "explanation": "각 축의 크기는 끝 인덱스에서 시작 인덱스를 뺀 값이다. 행 200, 열 100이며 전체 채널 3개를 유지한다.",
+      "steps": [
+        "행: 300-100=200이다.",
+        "열: 300-200=100이다.",
+        "채널 수 3을 마지막에 둔다."
+      ],
+      "hint": "좌표범위길이를뺄셈한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "roi=frame[100:300,200:300]\nprint(roi.shape)",
+      "accepted": [
+        "(200,100,3)"
+      ]
+    },
+    {
+      "id": "p-q52",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "blank",
+      "title": "녹색 성분 선택",
+      "prompt": "빈칸에 채널 인덱스를 적으시오.",
+      "answer": "1",
+      "explanation": "BGR 채널은 인덱스 0이 B, 1이 G, 2가 R이다. 녹색을 바꾸려면 1을 선택한다.",
+      "steps": [
+        "채널 인덱스를 0부터 센다.",
+        "G는 가운데 인덱스 1이다."
+      ],
+      "hint": "파이썬인덱스는0부터다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 10,
+        "label": "PDF 10쪽 / 연습문제 16 원문 기반"
+      },
+      "tags": [
+        "원문 기반",
+        "연습문제 16"
+      ],
+      "difficulty": 1,
+      "code": "roi[:,:,____]=cv2.add(roi[:,:,1],50)"
+    },
+    {
+      "id": "p-q53",
+      "track": "practice",
+      "topic": "포화 연산",
+      "type": "output",
+      "title": "OpenCV 덧셈의 상한",
+      "prompt": "cv2.add 결과를 적으시오.",
+      "answer": "255",
+      "explanation": "uint8의 최댓값 255를 넘으면 cv2.add는 255에서 포화된다. 230+50=280을 그대로 담지 않는다.",
+      "steps": [
+        "산술합 280을 구한다.",
+        "uint8 상한 255를 적용한다."
+      ],
+      "hint": "OpenCV의 포화 덧셈이다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "a=np.array([[230]],np.uint8)\nprint(cv2.add(a,50)[0,0])"
+    },
+    {
+      "id": "p-q54",
+      "track": "practice",
+      "topic": "포화 연산",
+      "type": "output",
+      "title": "NumPy와 포화 덧셈 비교",
+      "prompt": "두 출력을 위에서부터 적으시오.",
+      "answer": "24\n255",
+      "explanation": "두 uint8 배열의 일반 덧셈은 280 mod 256=24로 순환한다. cv2.add는 상한 255에서 포화한다. Python 스칼라의 범위 검사에 따른 버전 차이를 피하도록 같은 자료형 배열끼리 비교했다.",
+      "steps": [
+        "산술합은 230+50=280이다.",
+        "NumPy의 uint8 순환 결과는 24다.",
+        "OpenCV 포화 결과는 255다."
+      ],
+      "hint": "두 연산의 범위 초과 처리가 다르다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 3,
+      "code": "a=np.array([[230]],np.uint8)\nb=np.array([[50]],np.uint8)\nprint((a+b)[0,0])\nprint(cv2.add(a,b)[0,0])"
+    },
+    {
+      "id": "p-q55",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "output",
+      "title": "view로 원본 변경",
+      "prompt": "마지막 print의 출력은?",
+      "answer": "80",
+      "explanation": "기본 슬라이스는 원본 데이터를 공유하는 view다. ROI의 [0,0]은 frame의 [1,2]에 대응하므로 원본도 80으로 바뀐다.",
+      "steps": [
+        "ROI의 시작은 행 1, 열 2다.",
+        "roi[0,0]은 frame[1,2]와 연결된다.",
+        "수정값 80이 원본에 반영된다."
+      ],
+      "hint": "copy가 없는 기본 슬라이스다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "frame=np.zeros((5,6),np.uint8)\nroi=frame[1:4,2:5]\nroi[0,0]=80\nprint(frame[1,2])"
+    },
+    {
+      "id": "p-q56",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "output",
+      "title": "copy를 만들면",
+      "prompt": "마지막 print의 출력은?",
+      "answer": "0",
+      "explanation": "copy()는 독립된 데이터를 만든다. 복사한 roi를 바꿔도 원래 frame의 화소는 0으로 남는다.",
+      "steps": [
+        "원본의 초기값은 0이다.",
+        "copy는 별도의 배열이다.",
+        "원본 값 0이 유지된다."
+      ],
+      "hint": "이전 문제와 copy 유무를 비교한다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 2,
+      "code": "frame=np.zeros((5,6),np.uint8)\nroi=frame[1:4,2:5].copy()\nroi[0,0]=80\nprint(frame[1,2])"
+    },
+    {
+      "id": "p-q57",
+      "track": "practice",
+      "topic": "채널 분리",
+      "type": "blank",
+      "title": "BGR 다시 결합",
+      "prompt": "원래 BGR 순서로 결합하도록 리스트를 적으시오.",
+      "answer": "[blue, green, red]",
+      "explanation": "merge는 전달된 순서대로 채널을 결합한다. B, G, R을 그대로 넣어야 원래 BGR 순서를 유지한다.",
+      "steps": [
+        "split 결과의 순서 B,G,R을 확인한다.",
+        "동일한 순서의 리스트로 결합한다."
+      ],
+      "hint": "함수는 채널 색을 자동 추측하지 않는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "blue,green,red=cv2.split(frame)\nframe=cv2.merge(____)",
+      "accepted": [
+        "[blue,green,red]",
+        "(blue,green,red)"
+      ]
+    },
+    {
+      "id": "p-q58",
+      "track": "practice",
+      "topic": "채널 분리",
+      "type": "output",
+      "title": "프레임200의 분기",
+      "prompt": "frame_cnt=200이면 선택되는 채널 이름은?",
+      "answer": "green",
+      "explanation": "첫 조건 100<=200<200은 거짓이다. 둘째 조건 200<=200<300이 참이므로 green에 100을 더한다.",
+      "steps": [
+        "구간의 위쪽 끝은 미포함이다.",
+        "200은 두 번째 구간에 속한다."
+      ],
+      "hint": "199와 200 사이에서 조건이 바뀐다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "원문 기반",
+        "결과 예측"
+      ],
+      "difficulty": 2,
+      "code": "if 100<=frame_cnt<200:\n    cv2.add(blue,100,blue)\nelif 200<=frame_cnt<300:\n    cv2.add(green,100,green)\nelif 300<=frame_cnt<400:\n    cv2.add(red,100,red)",
+      "accepted": [
+        "초록",
+        "녹색",
+        "G",
+        "초록색"
+      ]
+    },
+    {
+      "id": "p-q59",
+      "track": "practice",
+      "topic": "Matplotlib",
+      "type": "blank",
+      "title": "OpenCV 영상을 올바른 색으로",
+      "prompt": "빈칸의 변환 상수를 적으시오.",
+      "answer": "cv2.COLOR_BGR2RGB",
+      "explanation": "OpenCV의 BGR을 Matplotlib에서 해석하는 RGB로 변환한다. cmap을 바꾸는 것만으로는 3채널 순서가 수정되지 않는다.",
+      "steps": [
+        "입력 순서는 BGR이다.",
+        "출력 순서는 RGB다.",
+        "COLOR_BGR2RGB를 선택한다."
+      ],
+      "hint": "시작과 도착 색 순서를 읽는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 81,
+        "label": "슬라이드 81"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "rgb=cv2.cvtColor(image,____)\nplt.imshow(rgb)",
+      "accepted": [
+        "COLOR_BGR2RGB"
+      ]
+    },
+    {
+      "id": "p-q60",
+      "track": "practice",
+      "topic": "Matplotlib",
+      "type": "choice",
+      "title": "subplot 위치",
+      "prompt": "plt.subplot(2,3,4)는 어느 칸인가?",
+      "answer": "둘째 행 첫째 열",
+      "explanation": "2행 3열 배치에서 1~3번이 첫째 행이고 4~6번이 둘째 행이다. 4번은 둘째 행의 첫 칸이다.",
+      "steps": [
+        "한 행에 3칸이다.",
+        "1부터 왼쪽→오른쪽 순서로 센다.",
+        "4번은 다음 행의 첫 칸이다."
+      ],
+      "hint": "인덱스는1부터다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 79,
+        "label": "슬라이드 79"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "첫째 행 첫째 열",
+        "첫째 행 셋째 열",
+        "둘째 행 첫째 열",
+        "둘째 행 셋째 열"
+      ]
+    },
+    {
+      "id": "p-q61",
+      "track": "practice",
+      "topic": "Matplotlib",
+      "type": "blank",
+      "title": "명암도 색상표",
+      "prompt": "명암도를 회색조로 보이게 하려면 문자열 빈칸은?",
+      "answer": "gray",
+      "explanation": "단일채널 배열의 표시 색상표를 gray로 설정한다. 기본 색상표는 회색조가 아닐 수 있다.",
+      "steps": [
+        "cmap은 색상표 옵션이다.",
+        "회색조 색상표 이름 gray를 쓴다."
+      ],
+      "hint": "따옴표 안의 문자열만 쓴다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 81,
+        "label": "슬라이드 81"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "code": "plt.imshow(gray_img,cmap=\"____\")",
+      "accepted": [
+        "'gray'",
+        "\"gray\""
+      ]
+    },
+    {
+      "id": "p-q62",
+      "track": "practice",
+      "topic": "Matplotlib",
+      "type": "choice",
+      "title": "그래프 형식 문자열",
+      "prompt": "plot(x,y,\"go-\",linewidth=3)의 모양은?",
+      "answer": "초록색·원 마커·실선",
+      "explanation": "g는 green, o는 원 마커, -는 실선이다. linewidth=3은 선 두께다.",
+      "steps": [
+        "g는 초록색이다.",
+        "o는 원 마커다.",
+        "-는 실선이다."
+      ],
+      "hint": "색·마커·선 형태를 나누어 읽는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 85,
+        "label": "슬라이드 85"
+      },
+      "tags": [
+        "변형",
+        "4장"
+      ],
+      "difficulty": 1,
+      "choices": [
+        "파란색·원 마커·점선",
+        "초록색·원 마커·실선",
+        "빨간색·네모 마커·실선",
+        "검정색·마커 없음·파선"
+      ]
+    },
+    {
+      "id": "p-q63",
+      "track": "practice",
+      "topic": "원문 오류 점검",
+      "type": "choice",
+      "title": "오타가 있는 원문 코드",
+      "prompt": "원문의 image[:] = (255,255,2555)와 cv2.line(iamge,...)를 그대로 실행한 결과를 어떻게 답해야 하는가?",
+      "answer": "오류가 있어 정상 그림 결과를 단정할 수 없다.",
+      "explanation": "2555는 uint8 범위를 벗어나며 iamge는 정의한 image와 다른 이름이다. iㅡㅁge처럼 잘못된 이름도 있다. 오류 수정 조건 없이 완성된 그림을 정답이라고 단정할 수 없다.",
+      "steps": [
+        "변수명 철자를 확인한다.",
+        "자료형의 값 범위를 확인한다.",
+        "원문 그대로 정상 실행할 수 있는지 판단한다."
+      ],
+      "hint": "의도와 실제 실행을 구분한다.",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 2,
+        "label": "PDF 2~3쪽 / 연습문제 5 오류 검증"
+      },
+      "tags": [
+        "원문 기반",
+        "오류 점검"
+      ],
+      "difficulty": 2,
+      "choices": [
+        "항상 흰 배경에 모든 도형이 완성된다.",
+        "오류가 있어 정상 그림 결과를 단정할 수 없다.",
+        "2555는 언제나 255로 자동 포화한다.",
+        "오타는 OpenCV가 자동 수정한다."
+      ]
+    },
+    {
+      "id": "p-q64",
+      "track": "practice",
+      "topic": "ROI",
+      "type": "blank",
+      "title": "정확한 ROI의 마지막 화소",
+      "prompt": "ROI가 frame[100:300,200:300]이다. 테두리의 오른쪽 아래 끝점을 정확히 마지막 화소에 맞추려면?",
+      "answer": "(299, 299)",
+      "explanation": "행과 열 슬라이스의 끝 300은 미포함이다. 마지막 x=299, 마지막 y=299이므로 오른쪽 아래 끝점은 (299,299)다.",
+      "steps": [
+        "마지막 x=300-1이다.",
+        "마지막 y=300-1이다.",
+        "좌표 (x,y)를 만든다."
+      ],
+      "hint": "슬라이스 끝은 포함되지 않는다.",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 74,
+        "label": "슬라이드 74"
+      },
+      "tags": [
+        "변형",
+        "연습문제 16"
+      ],
+      "difficulty": 3,
+      "code": "cv2.rectangle(frame,(200,100),____,(0,0,255),3)",
+      "accepted": [
+        "(299,299)"
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "number": 1,
+      "title": "콜백 함수의 정의",
+      "prompt": "콜백 함수란 무엇인가?",
+      "solutionCode": "# 개념 답안\n# 특정 이벤트가 발생하면 시스템이 미리 등록된 함수를 호출하는 방식이다.\ndef onMouse(event, x, y, flags, param):\n    if event == cv2.EVENT_LBUTTONDOWN:\n        print(x, y)\n\n# 창을 만든 뒤 함수 자체를 등록한다.\n# cv2.namedWindow(\"W\")\n# cv2.setMouseCallback(\"W\", onMouse)\n",
+      "walkthrough": [
+        "개발자는 함수를 정의하고 어떤 사건을 처리할지 작성한다.",
+        "setMouseCallback이나 createTrackbar로 함수를 등록한다.",
+        "마우스 누름·트랙바 이동이 발생하면 시스템이 등록한 함수를 호출한다.",
+        "답안의 핵심은 \"등록된 함수\", \"이벤트 발생\", \"시스템이 호출\" 세 가지다."
+      ],
+      "pitfalls": [
+        "함수를 등록할 때 onMouse()로 호출하지 않는다.",
+        "waitKey를 콜백 등록 함수라고 설명하지 않는다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 1,
+        "label": "PDF 1쪽 / 연습문제 1"
+      }
+    },
+    {
+      "number": 2,
+      "title": "WINDOW_NORMAL과 WINDOW_AUTOSIZE",
+      "prompt": "namedWindow의 flags 중 WINDOW_NORMAL과 WINDOW_AUTOSIZE의 차이를 설명하시오.",
+      "solutionCode": "import cv2\nimport numpy as np\n\nimage = np.full((300, 400), 100, np.uint8)\ncv2.namedWindow(\"Normal\", cv2.WINDOW_NORMAL)\ncv2.namedWindow(\"Autosize\", cv2.WINDOW_AUTOSIZE)\ncv2.imshow(\"Normal\", image)\ncv2.imshow(\"Autosize\", image)\ncv2.resizeWindow(\"Normal\", 600, 500)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "NORMAL은 창의 표시 크기를 사용자가 변경할 수 있게 한다.",
+        "AUTOSIZE는 원래 영상의 표시 크기에 맞춰 창을 설정하여 임의의 크기 변경을 허용하지 않는다.",
+        "위 예제의 원본 행렬은 두 창 모두 300행·400열이며 NORMAL의 표시 크기를 바꿔도 image.shape는 (300,400)이다.",
+        "창의 실제 테두리 크기·종횡비 동작은 GUI 백엔드에 영향을 받을 수 있으므로 시험에서는 두 옵션의 역할을 중심으로 답한다."
+      ],
+      "pitfalls": [
+        "창 크기 변경과 영상 배열의 resize를 혼동하지 않는다.",
+        "resizeWindow의 인수는 너비,높이 순서다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 1,
+        "label": "PDF 1쪽 / 연습문제 2"
+      }
+    },
+    {
+      "number": 5,
+      "title": "코드 실행 결과와 원문 오타·shift",
+      "prompt": "원문에는 회색 창 예제와 도형 예제가 연속해 실려 있다. 회색 창 결과를 설명하고, 도형 코드는 오류를 구분한 뒤 결과를 분석하시오.",
+      "solutionCode": "import numpy as np\nimport cv2\n\n# A. PDF 1~2쪽의 회색 창 코드\nimage = np.zeros((300, 400), np.uint8)\nimage[:] = 100\ntitle = \"Window\"\ncv2.namedWindow(title, cv2.WINDOW_NORMAL)\ncv2.moveWindow(title, 100, 200)\ncv2.imshow(title, image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n\n# B. PDF 2~3쪽: 변수명과 2555 오타만 고친 버전\nimage = np.full((400, 600, 3), 255, np.uint8)\npt1, pt2 = (50, 100), (200, 300)\ncv2.line(image, pt1, pt2, (0, 255, 0), 5)\n# 마지막 1은 shift이며, 실제 두 꼭짓점은 (100,150),(150,200)이다.\ncv2.rectangle(image, pt2, (300, 400), (0, 0, 255), -1, cv2.LINE_4, 1)\ncv2.imshow(\"Line & Rectangle\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "A는 300행 400열, 가로 400·세로 300의 1채널 영상이며 모든 화소가 100이라 균일한 회색이다.",
+        "창 이름은 Window다. WINDOW_NORMAL이므로 표시 크기를 변경할 수 있고, moveWindow의 (100,200)은 화면상 창의 위치다. 키를 누르면 기다림이 끝나고 창을 닫는다.",
+        "B의 원문에는 2555, iamge, iㅡㅁge 같은 오류가 있어 그대로는 정상 그림을 단정할 수 없다. 위 코드는 철자와 배경값만 수정했다.",
+        "초록 직선은 (50,100)에서 (200,300)까지 두께 5로 그린다. 빨간 사각형의 두께 -1은 내부 채움이다.",
+        "사각형의 마지막 1은 shift=1이다. 좌표를 2로 나눈 (100,150)에서 (150,200)까지 그린다. PDF 답안의 (200,300)~(300,400) 설명은 shift를 빠뜨렸다.",
+        "의도가 (200,300)~(300,400)의 사각형이라면 마지막 shift를 0으로 바꿔야 한다. 이때 y=400은 높이 400 영상 밖이므로 아래쪽은 영상 경계에서 잘린다."
+      ],
+      "pitfalls": [
+        "\"두께 1이므로 채움\"은 틀리다. 채움은 -1이 결정한다.",
+        "의도대로 고친 코드와 실제 원문 실행을 구분해서 답한다.",
+        "2555가 언제나 255로 변환된다고 단정하지 않는다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 1,
+        "label": "PDF 1~3쪽 / 연습문제 5 (원문 오류를 검증한 풀이)"
+      }
+    },
+    {
+      "number": 6,
+      "title": "300×400 영상과 500×600 창",
+      "prompt": "300행400열의 행렬을 회색 바탕100으로 생성하고 500행600열의 창에 표시하시오.",
+      "solutionCode": "import numpy as np\nimport cv2\n\nimage = np.full((300, 400), 100, np.uint8)\ncv2.namedWindow(\"Window\", cv2.WINDOW_NORMAL)\ncv2.imshow(\"Window\", image)\ncv2.resizeWindow(\"Window\", 600, 500)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "행렬의 (높이,너비)는 (300,400)이며 uint8 단일채널이다.",
+        "np.full로 모든 화소를 100으로 만든다. zeros로 생성한 뒤 image[:]=100을 대입해도 같다.",
+        "NORMAL을 지정하여 창 크기 변경을 허용한다.",
+        "500행 600열은 높이 500·너비 600이므로 resizeWindow의 인수는 600,500이다.",
+        "원본 shape는 (300,400)이며 표시 크기만 바뀐다."
+      ],
+      "pitfalls": [
+        "resizeWindow(\"Window\",500,600)처럼 행·열 순서를 그대로 쓰지 않는다.",
+        "AUTOSIZE로 만든 창의 크기가 자유롭게 바뀐다고 기대하지 않는다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 4,
+        "label": "PDF 4쪽 / 연습문제 6"
+      }
+    },
+    {
+      "number": 9,
+      "title": "검정 배경의 빨간 사각형",
+      "prompt": "600행400열 영상 안의(100,100)에 가로200×세로300크기의 빨간 사각형을 그리시오. 원문 답안은 내부 채움으로 구현한다.",
+      "solutionCode": "import numpy as np\nimport cv2\n\nimage = np.zeros((600, 400, 3), np.uint8)\nx, y, w, h = 100, 100, 200, 300\n# 강의의 좌표 차이 관례: (100,100)부터 (300,400)까지\ncv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), -1)\ncv2.imshow(\"Rectangle\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "600행 400열은 높이 600, 너비 400이므로 배열 shape=(600,400,3)이다.",
+        "zeros로 생성한 BGR (0,0,0)의 배경은 검정이다.",
+        "왼쪽 위 점 (100,100)에 가로 200·세로 300을 더하면 반대 꼭짓점은 (300,400)이다.",
+        "빨강은 BGR (0,0,255)이며 thickness=-1로 내부를 채운다.",
+        "강의의 200×300은 두 점의 좌표 차이를 가리키는 관례다. 두 점 형식의 경계를 모두 포함하면 채워진 화소는 201×301개다. 정확히 200×300화소를 채우려면 끝점을 (299,399)로 하거나 image[100:400,100:300]=(0,0,255)를 쓴다."
+      ],
+      "pitfalls": [
+        "영상 shape와 도형 좌표의 순서를 바꾸지 않는다.",
+        "문제에 채움 여부가 없으면 선 두께를 명시하여 자신의 구현 조건을 분명히 한다.",
+        "좌표 차이로 표현한 크기와 실제 화소 개수를 구분한다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 5,
+        "label": "PDF 5~6쪽 / 연습문제 9"
+      }
+    },
+    {
+      "number": 10,
+      "title": "마우스 오른쪽은 원·왼쪽은 사각형",
+      "prompt": "오른쪽 누름이면 클릭 좌표를 중심으로 반지름20화소의 원, 왼쪽 누름이면 크기30×30사각형을 그리시오. 여기서는 클릭을 사각형 왼쪽 위점으로 정한다.",
+      "solutionCode": "import numpy as np\nimport cv2\n\nimage = np.zeros((500, 500, 3), np.uint8)\ntitle = \"Mouse Event\"\n\ndef onMouse(event, x, y, flags, param):\n    if event == cv2.EVENT_RBUTTONDOWN:\n        cv2.circle(image, (x, y), 20, (0, 255, 0), 2)\n    elif event == cv2.EVENT_LBUTTONDOWN:\n        # 강의의 좌표 차이 관례로 30x30\n        cv2.rectangle(image, (x, y), (x + 30, y + 30), (0, 0, 255), 2)\n    cv2.imshow(title, image)\n\ncv2.namedWindow(title)\ncv2.setMouseCallback(title, onMouse)\ncv2.imshow(title, image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "콜백은 event,x,y,flags,param을 받는다. event로 좌우 버튼 누름을 구분한다.",
+        "RBUTTONDOWN이면 circle의 중심 (x,y)와 반지름 20을 사용한다. 지름은 40이다.",
+        "LBUTTONDOWN이면 클릭을 사각형의 왼쪽 위로 정하고 반대 점을 (x+30,y+30)으로 계산한다.",
+        "문제는 색과 두께를 특정하지 않아 원은 초록, 사각형은 빨강, 두께는 2로 정했다.",
+        "창을 만든 뒤 setMouseCallback(title,onMouse)로 등록한다. 도형을 그린 뒤 imshow로 표시를 갱신한다.",
+        "같은 image에 계속 그리므로 이전 도형이 남는다. 영상 밖으로 나간 도형은 경계에서 잘린다."
+      ],
+      "pitfalls": [
+        "onMouse()를 등록하지 않는다.",
+        "버튼 UP과 DOWN을 혼동하지 않는다.",
+        "사각형이 클릭 중심 기준이라는 추가 조건이 있으면 (x-15,y-15)부터 계산해야 한다.",
+        "정확한 30×30화소와 좌표 차이 30은 경계 포함 여부가 다르다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 6,
+        "label": "PDF 6~7쪽 / 연습문제 10"
+      }
+    },
+    {
+      "number": 13,
+      "title": "컬러 영상을 JPEG·PNG로 저장",
+      "prompt": "컬러 영상파일을 읽어 test.jpg와 test.png로 각각 저장하시오. JPEG는 최대 품질, PNG는 무손실 저장으로 해석한다.",
+      "solutionCode": "import cv2\n\nimage = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif image is None:\n    raise RuntimeError(\"영상 파일 읽기 실패\")\n\njpeg_ok = cv2.imwrite(\"test.jpg\", image, [cv2.IMWRITE_JPEG_QUALITY, 100])\npng_ok = cv2.imwrite(\"test.png\", image, [cv2.IMWRITE_PNG_COMPRESSION, 0])\nif not (jpeg_ok and png_ok):\n    raise RuntimeError(\"영상 파일 저장 실패\")\nprint(\"저장 완료: test.jpg, test.png\")\n",
+      "walkthrough": [
+        "IMREAD_COLOR로 BGR 컬러 행렬을 읽는다. 실패하면 None이므로 먼저 검사한다.",
+        "imwrite의 파일 확장자로 JPEG와 PNG를 구분한다.",
+        "JPEG의 품질 범위 0~100 중 100을 지정한다. JPEG는 손실 압축이므로 화소가 완전히 같다는 보장은 없다.",
+        "PNG는 무손실이다. 원문이 사용한 압축 수준 0은 가능한 답안이며, 수준 9도 같은 복원 품질이다. 높은 압축 수준은 보통 더 많은 처리 시간을 들여 파일 크기를 줄인다.",
+        "imwrite의 반환 bool을 확인하면 저장 실패를 성공으로 알리는 일을 피할 수 있다.",
+        "입력이 이미 JPEG라면 입력을 처음 만들 때 생긴 손실은 이 코드로 복구되지 않는다."
+      ],
+      "pitfalls": [
+        "PNG 압축 0과 9를 저화질·고화질로 구분하지 않는다.",
+        "IMWRITE_PNG_COMPRESSION에 100을 넣지 않는다.",
+        "입력 경로와 저장 경로, 쓰기 권한이 정상이어야 한다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 8,
+        "label": "PDF 8~9쪽 / 연습문제 13 (PNG 개념 보완)"
+      }
+    },
+    {
+      "number": 16,
+      "title": "PC 카메라 ROI의 G+50·빨간 테두리",
+      "prompt": "PC 카메라 프레임에서 (200,100)부터 가로 100×세로 200의 ROI를 정하고, G 성분을 50 올린 뒤 두께 3의 빨간 테두리를 표시하시오.",
+      "solutionCode": "import cv2\n\ncap = cv2.VideoCapture(0)  # PC 카메라: 파일 경로와 구분\nif not cap.isOpened():\n    raise RuntimeError(\"카메라 연결 실패\")\n\nx, y, w, h = 200, 100, 100, 200\ntry:\n    while True:\n        ret, frame = cap.read()\n        if not ret:\n            break\n        if frame.shape[0] < y + h or frame.shape[1] < x + w:\n            raise RuntimeError(\"프레임이 ROI보다 작습니다\")\n\n        roi = frame[y:y + h, x:x + w]\n        roi[:, :, 1] = cv2.add(roi[:, :, 1], 50)\n        # 슬라이스의 마지막 화소를 정확히 ROI 경계로 사용\n        cv2.rectangle(frame, (x, y), (x + w - 1, y + h - 1), (0, 0, 255), 3)\n        cv2.imshow(\"Camera\", frame)\n        if cv2.waitKey(1) == 27:  # ESC\n            break\nfinally:\n    cap.release()\n    cv2.destroyAllWindows()\n",
+      "walkthrough": [
+        "문제는 PC 카메라를 요구하므로 VideoCapture(0)을 쓴다. PDF 코드의 \"images/video_file.avi\"는 파일 입력이어서 요구와 다르다.",
+        "매번 ret를 검사하여 유효한 프레임인지 확인한 뒤 처리한다. 카메라 읽기 실패를 파일 처음으로 되돌리며 무조건 반복하지 않는다.",
+        "(x,y,w,h)=(200,100,100,200)이므로 ROI는 frame[100:300,200:300]이며 shape=(200,100,3)이다.",
+        "BGR에서 녹색은 인덱스 1이다. cv2.add로 50을 더하면 230→255처럼 상한에서 포화된다.",
+        "ROI는 기본 슬라이스 view여서 채널 대입이 원본 frame에도 반영된다.",
+        "증가 처리 후 빨강 (0,0,255)의 테두리를 그린다. 원문은 (x+w,y+h) 관례를 쓰고, 위 풀이는 ROI의 마지막 화소인 (x+w-1,y+h-1)을 쓴다. 두께 3의 선 자체는 경계 주변에 걸쳐 그려질 수 있다.",
+        "ESC를 누르거나 오류가 발생하면 finally에서 카메라와 창을 정리한다."
+      ],
+      "pitfalls": [
+        "roi[:,:,0]은 파랑이며 녹색이 아니다.",
+        "일반 uint8 NumPy 덧셈의 순환과 cv2.add의 포화를 구분한다.",
+        "처리 전에 빨간 테두리를 그리면 테두리의 G 성분도 증가할 수 있다.",
+        "이 Python 코드는 카메라와 GUI가 있는 로컬 환경에서 실행한다. 웹사이트의 연습 화면이 Python 카메라 코드를 직접 실행하는 것은 아니다."
+      ],
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 9,
+        "label": "PDF 9~10쪽 / 연습문제 16 (입력·경계·실패 처리 정정)"
+      }
+    }
+  ]
+}
