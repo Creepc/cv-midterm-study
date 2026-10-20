@@ -1836,19 +1836,35 @@
       "codeExplanation": [
         {
           "lines": "1~4행",
-          "explanation": "read_color.jpg를 BGR 3채널 영상으로 읽고 None인지 확인한다. image에는 파일 이름이 아니라 실제 화소 배열이 저장된다."
+          "explanation": "OpenCV를 불러오고 read_color.jpg를 BGR 3채널 배열로 읽어 image에 저장한다. 읽기 실패로 None이 나오면 예외를 발생시켜 저장을 중단한다."
         },
         {
-          "lines": "6~7행",
-          "explanation": "저장 옵션은 옵션 번호와 값이 번갈아 들어가는 쌍이다. JPEG_QUALITY의 10은 낮은 화질을 지정하며 JPEG 품질 범위는 0~100이다. PNG_COMPRESSION의 9는 가장 높은 압축 레벨로, PNG는 무손실이므로 레벨을 올려도 화소의 화질을 낮추는 옵션은 아니다. 튜플과 리스트 모두 이 예제의 옵션 묶음으로 사용한다."
+          "lines": "6행",
+          "explanation": "JPEG 화질을 10으로 정하는 옵션 묶음이다. 화질 범위 0~100 중 낮은 값이므로 손실이 큰 낮은 화질 설정이다."
         },
         {
-          "lines": "9~13행",
-          "explanation": "imwrite(파일 이름, 배열, 선택 옵션)는 확장자에 맞는 영상 형식으로 저장한다. write_test1.jpg는 옵션을 생략하여 기본 JPEG 품질 95, write_test2.jpg는 품질 10, write_test3.png는 PNG 압축 레벨 9, write_test4.bmp는 BMP 형식이다. 같은 배열을 저장하더라도 인코딩 형식과 손실 압축 여부에 따라 파일 크기와 다시 읽은 화소값이 달라질 수 있다."
+          "lines": "7행",
+          "explanation": "PNG 압축 수준을 최대값 9로 정한다. PNG는 무손실이므로 높은 압축 수준을 사용해도 복원한 픽셀 값은 유지된다."
+        },
+        {
+          "lines": "9~10행",
+          "explanation": "확장자 .jpg에 맞춰 write_test1.jpg를 저장한다. 추가 옵션을 주지 않았으므로 JPEG 기본 화질 95를 사용한다."
+        },
+        {
+          "lines": "11행",
+          "explanation": "6행의 params_jpg를 전달하므로 write_test2.jpg에 JPEG 화질 10을 적용한다. image는 그대로 두고 저장 옵션을 바꾼다."
+        },
+        {
+          "lines": "12행",
+          "explanation": "7행의 params_png를 전달해 write_test3.png를 압축 수준 9로 저장한다. 같은 픽셀 데이터를 PNG 무손실 형식으로 저장한다."
+        },
+        {
+          "lines": "13행",
+          "explanation": "확장자 .bmp에 맞춰 같은 image 배열을 write_test4.bmp라는 BMP 파일로 저장한다."
         },
         {
           "lines": "14행",
-          "explanation": "저장 완료라는 문구를 출력한다. 이 코드는 imwrite가 반환하는 성공·실패 값을 검사하지 않고 print를 실행하므로 문구 자체가 네 저장 작업의 성공을 검증해 주는 것은 아니다."
+          "explanation": "네 저장 함수 호출 뒤에 저장 완료를 출력한다. imwrite의 성공·실패 반환값은 검사하지 않으므로 이 문구만으로 저장 성공을 판단할 수는 없다."
         }
       ],
       "codeLabel": "수업 원본 코드 · CH04 예제 15",

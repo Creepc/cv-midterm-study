@@ -1,0 +1,394 @@
+/* Read the original Python beside its explanation. Load after style.css. */
+.question-layout.code-study-layout,
+.reading-layout.code-study-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.code-study-layout > article,
+.code-study-layout > .article {
+  min-width: 0;
+}
+
+.question-layout.code-study-layout > aside,
+.reading-layout.code-study-layout > aside {
+  position: static;
+  top: auto;
+  order: 2;
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.code-study-layout > aside .panel {
+  padding: 16px 20px;
+  min-width: 0;
+}
+
+.question-layout.code-study-layout > .question-side,
+.code-study-layout > aside .question-side {
+  display: block;
+}
+
+.code-study-layout > aside h3 {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.code-study-layout > aside .vertical-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.code-study-layout > aside .small-note,
+.code-study-layout > aside .tip {
+  display: block;
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.code-study-layout > aside .q-progress {
+  margin-top: 12px;
+}
+
+.annotated-code {
+  --annotation-border: #dce7d7;
+  --annotation-dark: #172d30;
+  --annotation-dark-head: #1e373a;
+  --annotation-paper: #f2f7ee;
+  container-name: annotated-code;
+  container-type: inline-size;
+  min-width: 0;
+  max-width: 100%;
+  margin: 25px 0;
+  overflow: hidden;
+  border: 1px solid var(--annotation-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.annotated-code > h3 {
+  margin: 0;
+  padding: 17px 20px 5px;
+  color: var(--ink, #183234);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -.3px;
+}
+
+.annotation-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  padding: 17px 20px 5px;
+}
+
+.annotation-heading > h3 {
+  flex: 1 1 180px;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink, #183234);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -.3px;
+}
+
+.annotation-heading > .copy-btn {
+  flex: none;
+  min-height: 32px;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: 1px solid #cedfc4;
+  border-radius: 6px;
+  background: #edf5e7;
+  color: #376b54;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.annotation-heading > .copy-btn:hover {
+  border-color: #93b180;
+  background: #e1efd7;
+  color: #254e3d;
+}
+
+.annotation-heading > .copy-btn:focus-visible {
+  outline: 3px solid #7aaf9b;
+  outline-offset: 2px;
+}
+
+.annotated-code > .annotation-intro {
+  margin: 0;
+  padding: 0 20px 16px;
+  color: #627963;
+  font-size: 13px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.annotated-code-list {
+  min-width: 0;
+  border-top: 1px solid var(--annotation-border);
+}
+
+.annotated-code-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  min-width: 0;
+  border-bottom: 1px solid var(--annotation-border);
+}
+
+.annotated-code-row:last-child {
+  border-bottom: 0;
+}
+
+.annotation-code {
+  min-width: 0;
+  max-width: 100%;
+  background: var(--annotation-dark);
+  color: #e0ece5;
+}
+
+.annotation-code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 37px;
+  padding: 4px 13px;
+  border-bottom: 1px solid #36504e;
+  background: var(--annotation-dark-head);
+  color: #b2c9bb;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.annotation-code-head > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.annotation-code-head .copy-btn {
+  flex: none;
+  min-height: 28px;
+  padding: 3px 8px;
+  border: 1px solid #527168;
+  border-radius: 5px;
+  background: transparent;
+  color: #d8eadb;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.annotation-code-head .copy-btn:hover {
+  border-color: #99bc9e;
+  background: #315249;
+}
+
+.annotation-code-head .copy-btn:focus-visible {
+  outline: 2px solid #c8e6bd;
+  outline-offset: 2px;
+}
+
+.annotation-code pre {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 15px 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  color: inherit;
+  font: 12.5px/1.95 Consolas, 'Courier New', monospace;
+  tab-size: 4;
+  white-space: pre;
+  scrollbar-width: thin;
+  scrollbar-color: #76958a var(--annotation-dark);
+}
+
+.annotation-code pre > code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* Source spans remain inline: the literal newlines already separate the rows. */
+.annotation-code .annotation-source-line {
+  display: inline;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.annotation-code .code-ln {
+  display: inline-block;
+  width: 2.7em;
+  margin-right: 13px;
+  padding-right: 11px;
+  border-right: 1px solid #37504b;
+  color: #9ab2a6;
+  font-size: 11px;
+  text-align: right;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.annotation-code .kw {
+  color: #c8e6ad;
+}
+
+.annotation-code .str {
+  color: #edd0a2;
+}
+
+.annotation-code .comment {
+  color: #a2bca9;
+}
+
+.annotation-note {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr);
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+  padding: 16px 18px;
+  border-left: 1px solid var(--annotation-border);
+  background: var(--annotation-paper);
+  color: #33543c;
+}
+
+.annotation-marker {
+  color: #70945f;
+  font: 700 17px/1.6 Consolas, 'Courier New', monospace;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.annotation-note-body {
+  min-width: 0;
+}
+
+.annotation-text + .annotation-text {
+  margin-top: 15px;
+}
+
+.annotation-note-body strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #376b54;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.annotation-note-body .prose {
+  color: #34533d;
+  font-size: 13px;
+  line-height: 1.95;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.annotation-note-body .prose code {
+  background: #e3eedb;
+  color: #2f654b;
+  font-size: 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.annotated-code-row.annotation-unexplained {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container annotated-code (max-width: 699px) {
+  .annotation-heading {
+    padding: 14px 16px 5px;
+  }
+
+  .annotated-code-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .annotation-note {
+    padding: 14px 16px;
+    border-top: 1px solid var(--annotation-border);
+    border-left: 0;
+  }
+
+  .annotation-note-body strong {
+    margin-bottom: 5px;
+  }
+}
+
+/* A narrow viewport fallback for engines without container-query support. */
+@supports not (container-type: inline-size) {
+  @media (max-width: 1050px) {
+    .annotated-code-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .annotation-note {
+      border-top: 1px solid var(--annotation-border);
+      border-left: 0;
+    }
+  }
+}
+
+@media print {
+  .annotated-code {
+    overflow: visible;
+    border-color: #b9c8b2;
+  }
+
+  .annotated-code-row {
+    grid-template-columns: minmax(0, 1fr);
+    break-inside: avoid;
+  }
+
+  .annotation-code-head .copy-btn,
+  .annotation-heading > .copy-btn {
+    display: none;
+  }
+
+  .annotation-code,
+  .annotation-code-head {
+    background: #f2f5ef;
+    color: #183234;
+  }
+
+  .annotation-code pre,
+  .annotation-code pre > code,
+  .annotation-code .annotation-source-line {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .annotation-code .kw,
+  .annotation-code .str,
+  .annotation-code .comment {
+    color: #294f3e;
+  }
+
+  .annotation-note {
+    border-top: 1px solid var(--annotation-border);
+    border-left: 0;
+  }
+}
