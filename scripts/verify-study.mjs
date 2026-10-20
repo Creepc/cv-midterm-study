@@ -53,6 +53,27 @@ test('audit covers the final questions and every source',()=>{
 const context=vm.createContext({});vm.runInContext(await readFile(new URL('../study-views.js',import.meta.url),'utf8'),context);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const view=context.CV_STUDY.create({data,progress:()=>({records:{},read:[],bookmarks:[],exerciseRead:[]}),esc:escape,rich:escape,list:a=>a.map(escape).join('\n'),code:escape,source:s=>escape(s.file),heading:(_,title)=>`<h1>${title}</h1>`,empty:escape});
+
+test('exercise PDF filter retains callback and window-option originals',()=>{
+  const selected=view.filterQuestions({source:'exercise4'});
+  assert.deepEqual(Array.from(selected.slice(0,2),q=>q.id),['p-exercise-01','p-exercise-02']);
+  for(const number of [1,2,5,6,9,10,13,16])assert.ok(selected.some(q=>q.exerciseNumbers?.includes(number)),'missing designated exercise '+number);
+  for(const selection of [{source:'exercise4',type:'short'},{source:'exercise4',tag:'필수'},{source:'exercise4',track:'practice'}]){
+    const ids=Array.from(view.filterQuestions(selection),q=>q.id);
+    assert.ok(ids.includes('p-exercise-01')&&ids.includes('p-exercise-02'));
+  }
+});
+
+test('exercise shortcuts include the original concept questions',()=>{
+  for(const number of [1,2]){
+    const selected=view.exerciseQuestions(number);
+    assert.equal(selected[0].id,`p-exercise-0${number}`);
+    assert.equal(selected[0].prompt,data.exercises.find(e=>e.number===number).prompt);
+    assert.ok(selected.length>1,'keep related code practice');
+    assert.ok(selected.every(q=>q.exerciseNumbers.includes(number)));
+  }
+  assert.ok(!view.filterQuestions({tag:'원본코드'}).some(q=>q.exercisePrimary),'code-only filter remains code-only');
+});
 test('weekly overview renders all items without mixing original and variant labels',()=>{
   const html=view.weekly();assert.equal((html.match(/class="weekly-item"/g)||[]).length,18);
   for(const w of data.weeks){assert.ok(html.includes(`#practice/week-${w.id}`));const one=view.weekly(w.id);assert.equal((one.match(/class="weekly-item"/g)||[]).length,w.items.length);}

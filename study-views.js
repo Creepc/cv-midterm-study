@@ -116,7 +116,16 @@
       root.querySelector('[data-encoding-result]').innerHTML=`<div class="encoding-message"><strong>이번 표본값은 ${esc(input.value)}이에요.</strong><p>종이에 ① 한 칸의 폭 ② 칸 번호 ③ 이진수 코드를 적어 보세요. 준비되면 ‘계산 과정 보기’를 눌러 비교하세요.</p></div>`;
     }
     function weeklyQuestions(id){const w=weeks().find(w=>w.id===id);return w?w.items.map(i=>question(i.primaryQuestionId)).filter(Boolean):[];}
-    return {home,weekly,materials,sources,relatedConcepts,weeklyQuestions,renderGuide,extraDetails,threeBit,quantize,updateEncoding,randomEncoding};
+    function filterQuestions(selection={}){
+      const filters={track:'all',type:'all',tag:'all',topic:'all',source:'all',...selection};
+      return D.questions.filter(q=>(filters.track==='all'||q.track===filters.track)
+        &&(filters.type==='all'||q.type===filters.type)
+        &&(filters.tag==='all'||filters.tag==='필수'&&(q.exerciseNumbers?.length||q.tags?.some(t=>/^연습문제/.test(t)))||filters.tag==='원문'&&q.tags?.some(t=>/^원문/.test(t))||q.tags?.includes(filters.tag))
+        &&(filters.topic==='all'||q.topic===filters.topic)
+        &&(filters.source==='all'||q.source?.file===material(filters.source)?.file));
+    }
+    function exerciseQuestions(number){return filterQuestions({track:'practice'}).filter(q=>q.exerciseNumbers?.includes(Number(number)));}
+    return {home,weekly,materials,sources,relatedConcepts,weeklyQuestions,filterQuestions,exerciseQuestions,renderGuide,extraDetails,threeBit,quantize,updateEncoding,randomEncoding};
   }
   globalThis.CV_STUDY={create};
 })();
