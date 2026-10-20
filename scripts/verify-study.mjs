@@ -69,9 +69,34 @@ test('three-bit guide handles every boundary and the original sample sequence',(
   assert.equal([1.1,1.6,2,1.6,1.1,.3,0,.3].map(n=>view.threeBit(n).bits).join(''),'100110111110100001000001');
   const guide=view.renderGuide('three-bit');
   assert.equal((guide.match(/data-range-index=/g)||[]).length,8);
-  assert.equal((guide.match(/<small>\d번째<\/small>/g)||[]).length,8);
   assert.ok(guide.includes('4의 자리')&&guide.includes('2의 자리')&&guide.includes('1의 자리'));
   assert.equal(view.renderGuide(undefined),'');
+});
+test('changed samples, ranges and bit counts follow the same calculation',()=>{
+  for(const [value,min,max,bits,index,code,from,to] of [[1.4,0,2,3,5,'101',1.25,1.5],[.9,0,2,3,3,'011',.75,1],[-.3,-1,1,3,2,'010',-.5,-.25],[15,10,18,2,2,'10',14,16],[.375,0,1,3,3,'011',.375,.5]]){
+    const r=view.quantize(value,{min,max,bits});
+    assert.equal(r.index,index);assert.equal(r.bits,code);assert.equal(r.from,from);assert.equal(r.to,to);
+    assert.equal(r.binary.reduce((sum,s)=>sum+s.bit*s.weight,0),index);
+  }
+  for(let bits=1;bits<=6;bits++){
+    const r=view.quantize(2,{bits});assert.equal(r.bits,'1'.repeat(bits));assert.equal(r.index,2**bits-1);
+  }
+  const html=view.renderGuide('three-bit',{bits:2,value:1.4});
+  assert.equal((html.match(/data-range-index=/g)||[]).length,4);assert.ok(html.includes('2비트'));
+  for(const config of [{min:2,max:2},{min:3,max:2},{bits:0},{bits:7},{bits:2.5}])assert.equal(view.quantize(1,config),null);
+});
+test('decimal boundaries are classified exactly without rounding up nearby samples',()=>{
+  assert.equal(view.quantize('0.3',{min:'0',max:'0.8',bits:3}).index,3);
+  assert.equal(view.quantize('0.29999999999999999',{min:'0',max:'0.8',bits:3}).index,2);
+  assert.equal(view.quantize('0.30000000000000001',{min:'0',max:'0.8',bits:3}).index,3);
+  assert.equal(view.quantize('3e-1',{min:'0',max:'8e-1',bits:3}).index,3);
+  assert.equal(view.quantize('0.25').atBoundary,true);
+  assert.equal(view.quantize('0.24999999999999999').index,0);
+  assert.equal(view.quantize('1.4').positionText,'5.6');
+  const almostMax=view.quantize('0.79999999999999999',{min:'0',max:'0.8',bits:3});
+  assert.equal(almostMax.atMax,false);assert.equal(almostMax.index,7);
+  assert.equal(view.quantize('0.8',{min:'0',max:'0.8',bits:3}).atMax,true);
+  assert.equal(view.quantize(null),null);
 });
 test('home, separate lecture folders and audit render',()=>{
   assert.equal((view.home().match(/class="week-overview"/g)||[]).length,4);

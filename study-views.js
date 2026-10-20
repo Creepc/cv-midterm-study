@@ -21,7 +21,7 @@
       return `${heading('PRIORITY 01 / WEEKLY ESSENTIALS','주별 핵심 개념','학습진단 원문에 필요한 개념만 먼저 정리했습니다. 각 항목의 요약은 바로 보이고, 자세한 내용은 펼칠 수 있습니다.')}
       <div class="study-tabs" aria-label="학습 주차"><a class="${active?'':'active'}" href="#concepts">전체 ${itemCount()}항목</a>${weeks().map(w=>`<a class="${active?.id===w.id?'active':''}" href="${weekLink(w)}">${w.week}주차 <small>${w.items.length}</small></a>`).join('')}<a class="secondary-tab" href="#materials">강의자료 전체 ↗</a></div>
       <div class="weekly-toolbar"><p>요약부터 읽고 → 설명을 펼쳐 확인 → 원문을 풀어 보세요.</p><div><button class="btn ghost small" data-week-expand="yes">설명 모두 펼치기</button><button class="btn ghost small" data-week-expand="no">요약만 보기</button></div></div>
-      ${visible.map(w=>`<section class="weekly-section" id="${w.id}"><div class="weekly-section-head"><div><span class="eyebrow">WEEK ${String(w.week).padStart(2,'0')}</span><h2>${esc(w.title.replace(/^\d+주차\s*[·:]\s*/,''))}</h2><p>${esc(w.summary)}</p></div><a class="btn secondary small" href="#practice/week-${w.id}">${w.week}주차 원문 ${originalIds(w).length}문항 풀기 →</a></div><div class="weekly-items">${w.items.map(i=>`<details class="weekly-item" id="${i.id}"><summary><span class="item-number">${String(i.number).padStart(2,'0')}</span><div class="weekly-item-summary"><h3>${esc(i.title)}</h3><div>${rich(i.definition)}</div></div><span class="item-toggle" aria-hidden="true"></span></summary><div class="weekly-item-content"><h4>쉽게 이해하기</h4>${list(i.keyPoints)}${renderGuide(i.learningGuide)}${i.example&&!i.learningGuide?`<div class="worked-example"><h4>예시로 따라가기</h4><div class="prose">${rich(i.example)}</div></div>`:''}${i.pitfalls?.length?`<div class="weekly-pitfalls"><h4>헷갈리지 않기</h4>${list(i.pitfalls)}</div>`:''}${extraDetails(i.details)}<div class="weekly-connections">${[i.primaryQuestionId].filter(question).map(id=>`<a class="btn small" href="#practice/${id}">원문 ${i.number}번 풀기 →</a>`).join('')}${i.questionIds.some(id=>question(id)&&!question(id).tags.includes('원문'))?`<a class="btn secondary small" href="#practice/item-${i.id}">연결 변형 문제 →</a>`:''}${i.conceptIds.filter(concept).map(id=>`<a class="text-link" href="#concept/${id}">${esc(concept(id).title)} 자세히 ↗</a>`).join('')}</div>${source(i.source)}</div></details>`).join('')}</div><details class="weekly-checklist"><summary>${w.week}주차 공부 후 스스로 점검하기</summary>${list(w.checklist)}</details></section>`).join('')}`;
+      ${visible.map(w=>`<section class="weekly-section" id="${w.id}"><div class="weekly-section-head"><div><span class="eyebrow">WEEK ${String(w.week).padStart(2,'0')}</span><h2>${esc(w.title.replace(/^\d+주차\s*[·:]\s*/,''))}</h2><p>${esc(w.summary)}</p></div><a class="btn secondary small" href="#practice/week-${w.id}">${w.week}주차 원문 ${originalIds(w).length}문항 풀기 →</a></div><div class="weekly-items">${w.items.map(i=>`<details class="weekly-item" id="${i.id}"><summary><span class="item-number">${String(i.number).padStart(2,'0')}</span><div class="weekly-item-summary"><h3>${esc(i.title)}</h3><div>${rich(i.definition)}</div></div><span class="item-toggle" aria-hidden="true"></span></summary><div class="weekly-item-content"><h4>쉽게 이해하기</h4>${list(i.keyPoints)}${renderGuide(i.learningGuide,i.guideConfig)}${i.example&&!i.learningGuide?`<div class="worked-example"><h4>예시로 따라가기</h4><div class="prose">${rich(i.example)}</div></div>`:''}${i.pitfalls?.length?`<div class="weekly-pitfalls"><h4>헷갈리지 않기</h4>${list(i.pitfalls)}</div>`:''}${extraDetails(i.details)}<div class="weekly-connections">${i.learningGuide?'<a class="btn secondary small" href="#lab/quantization">숫자를 바꿔 계산 연습 →</a>':''}${[i.primaryQuestionId].filter(question).map(id=>`<a class="btn small" href="#practice/${id}">원문 ${i.number}번 풀기 →</a>`).join('')}${i.questionIds.some(id=>question(id)&&!question(id).tags.includes('원문'))?`<a class="btn secondary small" href="#practice/item-${i.id}">연결 변형 문제 →</a>`:''}${i.conceptIds.filter(concept).map(id=>`<a class="text-link" href="#concept/${id}">${esc(concept(id).title)} 자세히 ↗</a>`).join('')}</div>${source(i.source)}</div></details>`).join('')}</div><details class="weekly-checklist"><summary>${w.week}주차 공부 후 스스로 점검하기</summary>${list(w.checklist)}</details></section>`).join('')}`;
     }
     function noteRow(c){const s=progress();return `<a class="material-note" href="#concept/${c.id}"><span class="note-read ${s.read.includes(c.id)?'done':''}" aria-label="${s.read.includes(c.id)?'읽음':'미학습'}">${s.read.includes(c.id)?'✓':'○'}</span><div><h4>${esc(c.title)} ${s.bookmarks.includes(c.id)?'<span class="bookmark-star">★</span>':''}</h4><p>${esc(c.summary)}</p></div><b>→</b></a>`;}
     function materials(selected=''){
@@ -47,21 +47,76 @@
     function auditView(){const a=D.audit;if(!a)return empty('검토 기록을 준비 중입니다.','원본 자료 목록에서 학습 내용을 볼 수 있습니다.');return `<div class="audit-summary"><span class="tag">${esc(a.reviewedAt)} 검토</span><h2>원본과 개념·문항·해설을 대조했습니다.</h2><p>${rich(a.summary)}</p><div class="audit-numbers"><span><strong>${a.sources.length}</strong>개 원본</span><span><strong>${a.questionChecks.reviewed}</strong>문항 대조</span><span><strong>${a.findings.length}</strong>건 정정·설명 보완</span></div></div><div class="audit-findings">${a.findings.map(f=>`<details class="audit-finding"><summary><span class="tag ${f.status==='source-error'?'orange':'gray'}">${f.status==='corrected'?'수정':f.status==='source-error'?'원본 오류':'설명 보완'}</span><strong>${esc(f.title)}</strong><span class="audit-location">${esc(f.location)}</span></summary><div><p class="prose">${rich(f.detail)}</p><div class="worked-example"><h4>확인·보완 내용</h4><div class="prose">${rich(f.correction)}</div></div><div class="flex mt">${(f.questionIds||[]).filter(question).map(id=>`<a class="text-link" href="#practice/${id}">${esc(question(id).title)} →</a>`).join('')}</div></div></details>`).join('')}</div><details class="audit-method"><summary>자료별 검토 범위와 검증 방법</summary>${a.sources.map(s=>`<div class="audit-source"><h3>${esc(material(s.sourceId)?.title||s.sourceId)}</h3><p class="prose">${rich(s.coverage)}</p>${list(s.checks)}${s.limitations.length?`<p class="small-note">${s.limitations.map(esc).join('<br>')}</p>`:''}</div>`).join('')}${list(a.questionChecks.notes)}</details>`;}
     function relatedConcepts(qid){const weeklyIds=weeks().flatMap(w=>w.items.filter(i=>i.questionIds.includes(qid)).flatMap(i=>i.conceptIds));const concepts=D.concepts.filter(c=>weeklyIds.includes(c.id)||c.relatedQuestionIds?.includes(qid)).slice(0,4);return concepts.length?`<div class="feedback-concepts"><h3>이 개념으로 다시 확인하기</h3><div>${concepts.map(c=>`<a href="#concept/${c.id}">${esc(c.title)} ↗</a>`).join('')}</div></div>`:'';}
     function extraDetails(details){return (details||[]).map(d=>`<details class="extra-explanation"><summary>${esc(d.title)}</summary><div class="prose">${rich(d.body)}</div></details>`).join('');}
-    function threeBit(value){
-      const n=Number(value);if(String(value).trim()===''||!Number.isFinite(n)||n<0||n>2)return null;
-      const index=n===2?7:Math.floor(n/.25);
-      return {value:n,index,bits:index.toString(2).padStart(3,'0'),from:index*.25,to:(index+1)*.25};
+    const fmt=n=>Number(n.toPrecision(11)).toString();
+    function decimalParts(value){
+      const match=String(value).trim().match(/^([+-]?)(\d*)(?:\.(\d*))?(?:e([+-]?\d+))?$/i);
+      if(!match||!(match[2]||match[3])||(match[2]+(match[3]||'')).length>80)return null;
+      const exponent=Number(match[4]||0)-(match[3]||'').length;
+      if(Math.abs(exponent)>350)return null;
+      return {integer:BigInt((match[1]==='-'?'-':'')+(match[2]||'0')+(match[3]||'')),exponent};
     }
-    const rangeText=r=>`${r.from.toFixed(2)} 이상 ~ ${r.to.toFixed(2)} ${r.index===7?'이하':'미만'}`;
-    function bitTrace(r){const bits=[...r.bits];return `<div class="encoding-trace"><div><span>① 칸 찾기</span><strong>숫자 ${esc(r.value)}</strong><p>${rangeText(r)}인 칸에 들어가요.</p></div><div><span>② 번호 확인</span><strong>${r.index}번 칸</strong><p>칸 번호는 0부터 세요.</p></div><div><span>③ 세 자리로 쓰기</span><strong class="binary-answer">${r.bits}</strong><p>${bits[0]}×4 + ${bits[1]}×2 + ${bits[2]}×1 = ${r.index}</p></div></div><div class="bit-places" aria-label="왼쪽부터 4, 2, 1의 자리"><span>필요한 자리는 <b>1</b>, 필요 없는 자리는 <b>0</b></span><div>${[4,2,1].map((weight,i)=>`<div class="bit-place ${bits[i]==='1'?'used':''}"><small>${weight}의 자리</small><strong>${bits[i]}</strong></div>`).join('')}</div><p>${r.index} 만들기: ${r.index?[4,2,1].filter((_,i)=>bits[i]==='1').join(' + ')+'만 쓰면 돼요.':'모든 자리를 0으로 두면 돼요.'} → <b>${r.bits}</b></p></div>`;}
-    function renderGuide(kind){
+    function quotientText(numerator,denominator){
+      let remainder=numerator%denominator,out=String(numerator/denominator);
+      if(!remainder)return out;
+      out+='.';
+      for(let i=0;i<10&&remainder;i++){remainder*=10n;out+=String(remainder/denominator);remainder%=denominator;}
+      return out+(remainder?'…':'');
+    }
+    function quantize(value,{min=0,max=2,bits=3}={}){
+      if([value,min,max,bits].some(v=>v===null||String(v).trim()===''))return null;
+      const n=Number(value),lo=Number(min),hi=Number(max),b=Number(bits);
+      if(![n,lo,hi,b].every(Number.isFinite)||hi<=lo||n<lo||n>hi||!Number.isInteger(b)||b<1||b>6)return null;
+      const parts=[value,min,max].map(decimalParts);if(parts.some(p=>!p))return null;
+      const exponent=Math.min(...parts.map(p=>p.exponent));
+      const [x,a,z]=parts.map(p=>p.integer*10n**BigInt(p.exponent-exponent));
+      if(z<=a||x<a||x>z)return null;
+      const levels=2**b,width=(hi-lo)/levels;
+      if(!Number.isFinite(width)||width<=0)return null;
+      const numerator=(x-a)*BigInt(levels),denominator=z-a;
+      const index=Math.min(levels-1,Number(numerator/denominator)),atBoundary=numerator%denominator===0n;
+      const positionText=quotientText(numerator,denominator);
+      let remaining=index;
+      const binary=Array.from({length:b},(_,i)=>{
+        const weight=2**(b-i-1),before=remaining,bit=before>=weight?1:0;
+        if(bit)remaining-=weight;
+        return {weight,before,bit,remaining};
+      });
+      return {value:n,valueText:String(value).trim(),atMax:x===z,min:lo,max:hi,bitCount:b,levels,width,index,atBoundary,positionText,bits:binary.map(s=>s.bit).join(''),from:lo+index*width,to:lo+(index+1)*width,binary};
+    }
+    const threeBit=value=>quantize(value);
+    const rangeText=r=>`${fmt(r.from)} 이상 ~ ${fmt(r.to)} ${r.index===r.levels-1?'이하':'미만'}`;
+    function calculation(r){
+      const f=fmt,edgeCount=r.levels+1;
+      const edges=edgeCount<=17?Array.from({length:edgeCount},(_,i)=>f(r.min+i*r.width)).join(' → '):`${f(r.min)} → ${f(r.min+r.width)} → … → ${f(r.from)} → ${f(r.to)} → … → ${f(r.max)}`;
+      return `<div class="encoding-reasoning">
+        <section class="encoding-step"><h4>1. 왜 한 칸의 폭이 ${f(r.width)}일까요?</h4><p>문제의 시작은 <b>${f(r.min)}</b>, 끝은 <b>${f(r.max)}</b>예요. 전체 길이는 <b>${f(r.max)} − (${f(r.min)}) = ${f(r.max-r.min)}</b>이에요.</p><p>${r.bitCount}비트는 0 또는 1을 적는 자리가 ${r.bitCount}개라는 뜻이에요. ${Array(r.bitCount).fill('2').join(' × ')} = <b>${r.levels}가지</b>를 구분할 수 있어요.</p><div class="encoding-equation">전체 길이 ${f(r.max-r.min)} ÷ 칸 수 ${r.levels} = <strong>한 칸 ${f(r.width)}</strong></div></section>
+        <section class="encoding-step"><h4>2. 경계는 ${f(r.min)}에서 ${f(r.width)}씩 더해서 만들어요</h4><p>첫 칸의 시작은 ${f(r.min)}이에요. 한 칸의 폭만큼 한 번 더하면 다음 경계, 또 더하면 그다음 경계가 돼요.</p><div class="encoding-boundaries">${edges}</div><p>왼쪽부터 <b>0번, 1번, 2번…</b>으로 세요. ${r.atMax?`지금은 전체 범위의 맨 끝값 ${esc(r.valueText)}이에요. 문제의 약속에 따라 <b>마지막 ${r.index}번 칸</b>에 넣어요.`:`숫자 <b>${esc(r.valueText)}</b>에 도달하기 전에 칸 ${r.index}개를 지났으므로 <b>${r.index}번 칸</b>이에요.`}</p><div class="encoding-equation"><strong>${f(r.from)} ≤ ${esc(r.valueText)} ${r.atMax?'≤':'<'} ${f(r.to)}</strong><small>${rangeText(r)}인 칸. 표본값: ${esc(r.valueText)}</small></div></section>
+        <section class="encoding-step"><h4>3. 경계를 다 쓰기 번거로우면 나눗셈으로 찾아요</h4><p>시작점에서 얼마나 떨어졌는지 구하고, 한 칸의 폭으로 나눠요.</p><div class="encoding-equation">(${esc(r.valueText)} − (${f(r.min)})) ÷ ${f(r.width)} = <strong>${r.positionText}</strong></div>${r.atMax?`<p>지금은 <b>맨 끝값 ${f(r.max)}</b>이에요. 계산은 ${r.levels}이지만 칸 번호는 0~${r.levels-1}까지만 있어요. 이 문제의 약속대로 <b>마지막 ${r.levels-1}번 칸</b>에 넣어요.</p>`:`<p>폭 ${f(r.width)}인 칸 ${r.index}개를 완전히 지났어요.${!r.atBoundary?' 남은 소수 부분은 그 칸 안에서 더 간 거리이므로 버려요.':' 경계에 딱 도착했으므로 그 경계에서 시작하는 오른쪽 칸에 넣어요.'} 따라서 칸 번호는 <b>${r.index}</b>예요. 반올림하지 않아요.</p>`}<p>검산: 칸의 시작 = ${f(r.min)} + ${r.index}×${f(r.width)} = <b>${f(r.from)}</b>. 다음 경계 = ${f(r.from)} + ${f(r.width)} = <b>${f(r.to)}</b>.</p></section>
+        <section class="encoding-step"><h4>4. ${r.index}번을 왜 ${r.bits}으로 쓸까요?</h4><p>평소 십진수의 자릿값은 오른쪽부터 1, 10, 100처럼 10배씩 커져요. <b>이진수는 오른쪽부터 1, 2, 4, 8처럼 2배씩</b> 커져요. ${r.bitCount}자리라면 왼쪽부터 <b>${r.binary.map(s=>s.weight).join(' · ')}</b>이에요.</p><p>왼쪽의 큰 자리부터 확인해요. <b>뺄 수 있으면 1을 쓰고 빼기, 뺄 수 없으면 0을 쓰고 그대로</b> 다음 자리로 가요.</p><div class="encoding-table-wrap"><table class="encoding-table binary-calculation"><caption>칸 번호 ${r.index}의 이진수 계산</caption><thead><tr><th scope="col">자리의 값</th><th scope="col">남은 수로 뺄 수 있나요?</th><th scope="col">쓸 숫자</th></tr></thead><tbody>${r.binary.map(s=>`<tr><td>${s.weight}의 자리</td><td>${s.bit?`${s.before} ≥ ${s.weight} → ${s.before}−${s.weight}=${s.remaining}, 뺄 수 있어요`:`${s.before} < ${s.weight} → 못 빼요. ${s.remaining} 그대로`}</td><td><code>${s.bit}</code></td></tr>`).join('')}</tbody></table></div><div class="encoding-equation">왼쪽부터 쓰면 <strong>${r.bits}</strong><small>검산: ${r.binary.map(s=>`${s.bit}×${s.weight}`).join(' + ')} = ${r.index}</small></div><p>이 코드는 <b>${r.index}번 칸의 번호</b>를 나타내요. 앞에 있는 0도 ${r.bitCount}자리를 맞추기 위해 그대로 써요.</p></section>
+        <details class="encoding-full-answer"><summary>직접 계산한 전체 칸 표 보기</summary><div class="encoding-table-wrap"><table class="encoding-table"><caption>${f(r.min)}~${f(r.max)}, ${r.bitCount}비트의 ${r.levels}칸</caption><thead><tr><th scope="col">숫자가 이 범위면</th><th scope="col">칸 번호</th><th scope="col">코드</th></tr></thead><tbody>${Array.from({length:r.levels},(_,index)=>`<tr data-range-index="${index}" class="${index===r.index?'selected-range':''}"><td>${rangeText({...r,index,from:r.min+index*r.width,to:r.min+(index+1)*r.width})}</td><td>${index}번</td><td><code>${index.toString(2).padStart(r.bitCount,'0')}</code></td></tr>`).join('')}</tbody></table></div></details>
+      </div>`;
+    }
+    function renderGuide(kind,config={}){
       if(kind!=='three-bit')return '';
-      const initial=threeBit(1.1),samples=[1.1,1.6,2,1.6,1.1,.3,0,.3];
-      return `<section class="encoding-guide"><div class="encoding-guide-head"><span class="tag">표를 보며 따라가기</span><h3>숫자 → 칸 번호 → 세 자리 코드</h3><p>먼저 1.1로 따라가 볼게요. 아래에서 다른 숫자도 골라 볼 수 있어요.</p></div><div class="encoding-table-wrap"><table class="encoding-table"><caption>0~2를 똑같은 크기의 8칸으로 나눈 표</caption><thead><tr><th scope="col">숫자가 이 범위면</th><th scope="col">칸 번호</th><th scope="col">쓰는 코드</th></tr></thead><tbody>${Array.from({length:8},(_,index)=>{const r={index,from:index*.25,to:(index+1)*.25,bits:index.toString(2).padStart(3,'0')};return `<tr data-range-index="${index}" class="${index===4?'selected-range':''}"><td>${rangeText(r)}</td><td>${index}번</td><td><code>${r.bits}</code></td></tr>`;}).join('')}</tbody></table></div><div class="encoding-try"><label>다른 숫자도 골라 보세요 <select data-encoding-sample aria-label="부호화할 숫자">${[1.1,1.6,2,.3,0,.25,1.25].map(n=>`<option value="${n}" ${n===1.1?'selected':''}>${n===2?'2.0':n}</option>`).join('')}</select></label><div data-encoding-result aria-live="polite">${bitTrace(initial)}</div></div><details class="encoding-full-answer"><summary>원문 숫자 8개를 하나씩 풀어 보기</summary><div class="encoding-table-wrap"><table class="encoding-table sample-table"><caption>처음 주어진 순서대로 칸 번호와 코드를 찾은 결과</caption><thead><tr><th scope="col">원래 숫자</th><th scope="col">칸 번호</th><th scope="col">3자리 코드</th></tr></thead><tbody>${samples.map((n,i)=>{const r=threeBit(n);return `<tr><td><small>${i+1}번째</small> ${n===2?'2.0':n}</td><td>${r.index}번</td><td><code>${r.bits}</code></td></tr>`;}).join('')}</tbody></table></div><div class="encoding-answer"><small>순서대로 적으면</small><code>${samples.map(n=>threeBit(n).bits).join(' ')}</code><p>숫자 하나에 3자리씩, 8개이므로 총 24비트예요.</p></div></details></section>`;
+      const r=quantize(config.value??1.6,config)||threeBit(1.6);
+      return `<section class="encoding-guide"><div class="encoding-guide-head"><span class="tag">숫자가 바뀌어도 푸는 법</span><h3>경계와 이진수를 직접 계산해 봐요</h3><p>칸의 범위와 코드를 계산으로 만들어 볼게요. 표본값을 바꾸면 같은 순서로 풀이가 나와요.</p></div><div class="encoding-controls"><label>바꿀 표본값<input type="number" step="any" data-encoding-sample aria-label="부호화할 숫자" value="${r.value}"></label><button class="btn small" data-encoding-calculate>계산 과정 보기</button><button class="btn secondary small" data-encoding-random>새 숫자로 혼자 풀기</button></div><details class="encoding-conditions"><summary>문제의 범위나 비트 수도 바꾸기</summary><div><label>범위의 시작<input type="number" step="any" data-encoding-min value="${r.min}"></label><label>범위의 끝<input type="number" step="any" data-encoding-max value="${r.max}"></label><label>비트 수<select data-encoding-bits aria-label="비트 수">${Array.from({length:6},(_,i)=>`<option value="${i+1}" ${i+1===r.bitCount?'selected':''}>${i+1}비트</option>`).join('')}</select></label></div><p>강의와 같은 조건: 같은 크기의 구간, 경계값은 오른쪽 칸, 맨 끝값은 마지막 칸에 포함해요.</p></details><div data-encoding-result aria-live="polite">${calculation(r)}</div></section>`;
     }
-    function updateEncoding(root,value){const r=threeBit(value);if(!root||!r)return;root.querySelectorAll('[data-range-index]').forEach(row=>row.classList.toggle('selected-range',Number(row.dataset.rangeIndex)===r.index));root.querySelector('[data-encoding-result]').innerHTML=bitTrace(r);}
+    function updateEncoding(root){
+      if(!root)return;
+      const r=quantize(root.querySelector('[data-encoding-sample]').value,{min:root.querySelector('[data-encoding-min]').value,max:root.querySelector('[data-encoding-max]').value,bits:root.querySelector('[data-encoding-bits]').value});
+      root.querySelector('[data-encoding-result]').innerHTML=r?calculation(r):'<p class="encoding-message" role="alert">범위의 끝은 시작보다 커야 해요. 그 범위 안의 표본값과 1~6비트를 입력하세요.</p>';
+    }
+    function randomEncoding(root){
+      const lo=Number(root.querySelector('[data-encoding-min]').value),hi=Number(root.querySelector('[data-encoding-max]').value);
+      if(!Number.isFinite(lo)||!Number.isFinite(hi)||hi<=lo){updateEncoding(root);return;}
+      const input=root.querySelector('[data-encoding-sample]'),previous=Number(input.value);
+      let value=Number((lo+(hi-lo)*(1+Math.floor(Math.random()*199))/200).toPrecision(10));
+      if(value===previous)value=value<hi?Math.min(hi,value+(hi-lo)/200):lo;
+      input.value=fmt(value);
+      root.querySelector('[data-encoding-result]').innerHTML=`<div class="encoding-message"><strong>이번 표본값은 ${esc(input.value)}이에요.</strong><p>종이에 ① 한 칸의 폭 ② 칸 번호 ③ 이진수 코드를 적어 보세요. 준비되면 ‘계산 과정 보기’를 눌러 비교하세요.</p></div>`;
+    }
     function weeklyQuestions(id){const w=weeks().find(w=>w.id===id);return w?w.items.map(i=>question(i.primaryQuestionId)).filter(Boolean):[];}
-    return {home,weekly,materials,sources,relatedConcepts,weeklyQuestions,renderGuide,extraDetails,threeBit,updateEncoding};
+    return {home,weekly,materials,sources,relatedConcepts,weeklyQuestions,renderGuide,extraDetails,threeBit,quantize,updateEncoding,randomEncoding};
   }
   globalThis.CV_STUDY={create};
 })();
