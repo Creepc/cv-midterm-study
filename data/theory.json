@@ -1038,6 +1038,10 @@
         {
           "title": "입력 100을 실제 코드처럼 바꾸기",
           "body": "min50,max150에서 100은 최솟값으로부터 50만큼 떨어져 있다. 전체 폭 100의 절반이므로 새 범위 255의 절반 127.5가 된다. 강의의 np.uint8 저장값은 127이다. min=max80이면 else로 들어가 원래 80을 저장한다."
+        },
+        {
+          "title": "7주차 교재 코드와 구별",
+          "body": "이 강의 함수는 실제 최소·최대 화소값을 사용한다. 추가로 제공된 교재 6.3.5는 64계급의 양끝 계급 경계를 사용하므로 결과가 다를 수 있다. [[50,100,150]]은 강의 함수에서 [[0,127,255]], 교재 코드에서 [[5,132,255]]다."
         }
       ],
       "keyPoints": [
@@ -1061,6 +1065,43 @@
         "th-q-stretch-code",
         "th-q-stretch-stored",
         "th-q-compare"
+      ],
+      "additionalCodeBlocks": [
+        {
+          "title": "강의 p.19의 스트레칭 함수와 별도 입력",
+          "code": "import numpy as np\n\n# 강의 3장 p.19의 함수. 단일 채널 영상을 가정한다.\ndef histogram_stretching(image):\n    image1 = np.zeros(image.shape[:2], image.dtype)\n    min_val = np.min(image)\n    max_val = np.max(image)\n    for i in range(image.shape[0]):\n        for j in range(image.shape[1]):\n            pixel = int(image[i,j])\n            if max_val > min_val:\n                value = ((pixel-int(min_val))*255\n                         /(int(max_val)-int(min_val)))\n            else:\n                value = pixel\n            image1[i,j] = np.uint8(value)\n    return image1\n\n# 강의 공식을 확인하기 위한 별도 소형 예제\nsample = np.array([[50,100,150]], dtype=np.uint8)\nprint(histogram_stretching(sample))  # [[0 127 255]]",
+          "codeExplanation": [
+            {
+              "lines": "1~4행",
+              "explanation": "NumPy를 불러오고 histogram_stretching 함수를 정의한다. 함수에는 한 칸에 밝기 하나가 있는 단일 채널 배열을 넣는다."
+            },
+            {
+              "lines": "5~7행",
+              "explanation": "출력 image1을 입력과 같은 높이·폭 및 dtype으로 만들고, 입력의 최솟값 min_val과 최댓값 max_val을 구한다. 새 배열은 0으로 시작하지만 뒤에서 각 칸을 계산한 값으로 채운다."
+            },
+            {
+              "lines": "8~10행",
+              "explanation": "i행·j열을 차례로 돌며 현재 픽셀을 읽는다. int로 바꾼 pixel은 정수 범위에서 뺄셈과 곱셈을 계산하는 데 사용한다."
+            },
+            {
+              "lines": "11~13행",
+              "explanation": "최댓값이 최솟값보다 클 때 (pixel−min)/(max−min)×255를 계산한다. 최소값은 0, 최대값은 255로 간다. 예를 들어 100은(100−50)/(150−50)×255=127.5다."
+            },
+            {
+              "lines": "14~17행",
+              "explanation": "입력이 모두 같은 값이면 나눗셈 대신 원래 pixel을 쓴다. 계산값은 np.uint8로 저장하고 완성한 배열을 반환한다. 범위 안 양수 127.5를 저장하면 소수부가 제거되어 127이다."
+            },
+            {
+              "lines": "19~21행",
+              "explanation": "이 sample은 방법을 따라 계산하도록 넣은 별도 변형 입력이다. [[50,100,150]]의 min은 50,max는 150이므로 결과는 [[0,127,255]]로 출력된다."
+            }
+          ],
+          "source": {
+            "file": "이론_3장. 이미지 강화 기법 (2-1)_수정본_2026.10.14.pptx",
+            "page": 19,
+            "label": "강의 p.19 함수 / 별도 연습 입력"
+          }
+        }
       ]
     },
     {
@@ -1475,6 +1516,264 @@
         "th-q-cdf-code",
         "th-q-lut-code"
       ]
+    },
+    {
+      "id": "th-c-book-hue",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "lectureSourceId": "theory3",
+      "title": "교재 6.3.4 · 색상 히스토그램",
+      "summary": "H채널을 0~180 범위의 18계급으로 세고, 계급마다 대응하는 색을 칠해 색상 분포를 그린다. 막대 높이는 화면 높이에 맞춰 정규화한다.",
+      "modelAnswer": "사진을 HSV로 바꾼 뒤 색상 번호 H만 센다. 색상 번호 0~179를 18칸으로 나누므로 한 칸에는 10개 번호가 들어간다. 각 칸에 해당하는 화소가 몇 개인지 세고, 그 개수를 막대 높이로 바꿔 해당 색으로 칠한다. 마지막에 위아래를 뒤집어 막대가 아래에서 위로 자라는 모양으로 보여 준다.",
+      "sections": [
+        {
+          "title": "색상 팔레트와 빈도",
+          "body": "OpenCV의 8비트 HSV에서 H는 0~179다. 이 코드는 S=V=255인 팔레트를 만들고 BGR로 바꿔 각 막대의 색으로 쓴다. [0] 채널은 밝기 V가 아니라 색상 H다."
+        },
+        {
+          "title": "너비 360을 18계급으로 나누기",
+          "body": "gap=360/18=20이다. i=2이면 x=round(2×20)=40, w=round(20)=20이다. (x,0,w,int(h))는 두 꼭짓점이 아니라 시작점·너비·높이의 Rect 튜플이다."
+        },
+        {
+          "title": "hist가 바뀌는 정규화",
+          "body": "normalize(hist,hist,0,200,NORM_MINMAX)는 최솟값을 0, 최댓값을 200에 맞춘다. 두 번째 인수도 hist이므로 이후 hist에는 원래 화소 개수 대신 표시 높이가 남는다. 확률의 합을 1로 만드는 정규화가 아니다."
+        },
+        {
+          "title": "화면 방향",
+          "body": "사각형은 y=0부터 아래쪽으로 그린다. 마지막 flip(hist_img,0)이 위아래를 뒤집어 막대를 화면 아래에서 위로 보이게 한다."
+        }
+      ],
+      "keyPoints": [
+        "H 범위=[0,180), 계급 수=18",
+        "gap=360/18=20",
+        "normalize의 출력도 hist라 원본 배열이 갱신된다."
+      ],
+      "pitfalls": [
+        "[18]은 히스토그램 계급 수이고 화면의 색 채널 수는 3이다.",
+        "hist가 Nx1이면 h는 원소 1개 배열이고 flat이면 스칼라다. 원문의 int(h)는 NumPy 버전에 따라 동작 차이가 날 수 있다."
+      ],
+      "relatedQuestionIds": [
+        "th-q-book-hue-range",
+        "th-q-book-hue-layout",
+        "th-q-book-hue-normalize"
+      ],
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "originalCode": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,180])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+      "codeExplanation": [
+        {
+          "lines": "1~7행",
+          "explanation": "계급 수에 맞춘 HSV 팔레트를 만든다. H는 round(i*180/rows), S와 V는 255다. rows×1×3 배열을 uint8로 바꾼다."
+        },
+        {
+          "lines": "8~14행",
+          "explanation": "주석 처리한 반복문은 팔레트를 만드는 대안이다. 실제 실행은 14행에서 HSV를 BGR로 바꿔 반환한다."
+        },
+        {
+          "lines": "16~19행",
+          "explanation": "흰 히스토그램 화면을 만들고 hist의 값을 화면 높이 0~shape[0]에 맞춰 정규화한다. 출력 인수도 hist여서 원래 빈도 배열 자체가 바뀐다."
+        },
+        {
+          "lines": "21~27행",
+          "explanation": "gap=화면 너비/계급 수다. 막대의 x와 w를 반올림하고 팔레트색으로 사각형을 채운다. flip(...,0)은 위에서 아래로 그린 막대를 뒤집어 아래에서 올라오게 한다."
+        },
+        {
+          "lines": "29~34행",
+          "explanation": "사진을 HSV로 바꾼 뒤 H채널 [0]의 0~180 범위를 18계급으로 센다. 화면은 높이 200·너비 360·3채널이다."
+        },
+        {
+          "lines": "36~38행",
+          "explanation": "원본 사진과 색상 히스토그램을 두 창에 표시하고 키를 기다린다."
+        }
+      ],
+      "resultDescription": "원본 컬러 사진과 높이 200·너비 360의 컬러 히스토그램이 보인다. 막대의 위치는 H계급, 색은 팔레트, 높이는 정규화한 빈도다. 실제 높이는 입력 사진에 따라 달라진다.",
+      "referenceLabel": "6.3.4 · 색상 히스토그램 그리기"
+    },
+    {
+      "id": "th-c-book-stretch",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "lectureSourceId": "theory3",
+      "title": "교재 6.3.5 · 64계급 스트레칭",
+      "summary": "64계급에서 찾은 양끝 계급의 아래 경계를 low·high로 삼고, 그 범위를 0~255로 늘리는 LUT를 만든다. 계급 경계와 실제 최소·최대 화소는 다를 수 있다.",
+      "modelAnswer": "계급은 밝기값을 묶은 칸이다. 이 코드는 0~255를 4개씩 묶어 64칸을 만든다. 값이 들어 있는 첫 칸과 마지막 칸을 찾고, 두 칸의 시작값을 low와 high로 정한다. 이 범위를 0~255로 펼치는 표를 만들어 모든 화소에 적용한다. 예를 들어 50이 들어간 칸은 [48,52)이므로 low는 50이 아니라 48이다.",
+      "sections": [
+        {
+          "title": "양끝 계급을 찾는 순서",
+          "body": "bias=0이면 idx=0,1,2,...이고 bias=63이면 idx=63,62,61,...이다. hist[idx]>0인 첫 계급 번호를 돌려준다. hist가 Nx1이면 조건은 원소 1개 배열, flat이면 스칼라로 평가된다."
+        },
+        {
+          "title": "별도 검산 입력 [50,100,150]의 경계",
+          "body": "한 계급 너비는 256/64=4다. 50은 12번 계급 [48,52), 150은 37번 계급 [148,152)에 들어간다. 따라서 low=12×4=48, high=37×4=148이다. 50과 150을 그대로 대입하는 코드가 아니다."
+        },
+        {
+          "title": "같은 입력의 변환값",
+          "body": "분모는 148-48=100이다. 50은 5.1, 100은 132.6이 되어 uint8 변환 후 5와 132가 된다. 150은 high를 넘으므로 LUT에서 255로 제한된다. dst는 [5,132,255]다."
+        },
+        {
+          "title": "원본과 결과 비교",
+          "body": "변환 전후의 히스토그램을 각각 계산한다. 입력의 밝기 범위가 좁으면 보통 화면의 어두운 부분과 밝은 부분 차이가 커진다. 입력마다 low·high가 달라 결과도 달라진다."
+        }
+      ],
+      "keyPoints": [
+        "64계급의 너비=4",
+        "low·high는 계급 번호×4",
+        "LUT 결과를 uint8로 바꾸면 소수부는 버려진다."
+      ],
+      "pitfalls": [
+        "강의에서 실제 min=50,max=150을 사용한 변환과 이 64계급 코드를 섞으면 답이 달라진다.",
+        "모든 화소가 같은 계급에 들어가 low==high이면 원본의 분모가 0이 된다. 이 코드는 별도 처리가 없다."
+      ],
+      "relatedQuestionIds": [
+        "th-q-book-stretch-bins",
+        "th-q-book-stretch-bounds",
+        "th-q-book-stretch-output"
+      ],
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "originalCode": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [64], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "Common.histogram의 draw_histo를 가져온다. bias=0이면 앞에서, bias=63이면 뒤에서 시작하여 빈도가 양수인 첫 계급을 찾는다."
+        },
+        {
+          "lines": "10~18행",
+          "explanation": "명암도 영상을 64계급으로 센다. 한 계급 너비는 256/64=4다. 찾은 계급 번호에 4를 곱한 low·high는 그 계급의 아래 경계다."
+        },
+        {
+          "lines": "20~25행",
+          "explanation": "0~255의 룩업 테이블에 (값-low)/(high-low)*255를 적용한다. low 미만은 0, high 초과는 255로 제한한다. uint8로 바꿀 때 양수의 소수부는 버려진다."
+        },
+        {
+          "lines": "26~30행",
+          "explanation": "주석의 이중 반복문은 모든 화소를 직접 바꾸는 대안이다. 현재 실행되는 변환은 25행의 LUT다."
+        },
+        {
+          "lines": "32~34행",
+          "explanation": "변환 결과의 히스토그램을 다시 계산하고 원본·결과 그래프를 같은 크기로 그린다."
+        },
+        {
+          "lines": "36~40행",
+          "explanation": "high와 low를 출력하고 원본·결과 영상 및 히스토그램을 네 창에 표시한다."
+        }
+      ],
+      "resultDescription": "계산 확인용 별도 입력 [[50,100,150]]에서는 low=48, high=148, dst=[[5,132,255]]다. 원본 프로그램은 교재 사진과 변환 결과, 각각의 히스토그램을 보여 준다. 실제 사진 파일이 달라지면 low·high와 결과도 달라진다.",
+      "referenceLabel": "6.3.5 · 히스토그램 스트레칭"
+    },
+    {
+      "id": "th-c-book-equalize",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "lectureSourceId": "theory3",
+      "title": "교재 6.3.6 · 직접 구현과 OpenCV 평활화",
+      "summary": "직접 구현은 누적 빈도/전체 화소 수×255를 각 화소에 대응시킨 뒤 uint8로 바꾼다. OpenCV equalizeHist와 강의의 L=8·round 계산은 변환 조건이 달라 같은 값이라고 가정하면 안 된다.",
+      "modelAnswer": "먼저 각 밝기의 개수를 센다. 어두운 값부터 개수를 누적하고 전체 화소 수로 나누면, 현재 밝기 이하가 영상에서 차지하는 비율이 된다. 직접 구현 dst1은 이 비율에 255를 곱해 새 밝기로 쓰고 소수부를 버린다. dst2는 OpenCV 함수를 쓴 결과이므로 두 영상과 히스토그램을 비교한다.",
+      "sections": [
+        {
+          "title": "빈도에서 누적 확률까지",
+          "body": "계산 확인용 별도 입력 [[0,0],[1,3]]의 전체 화소 수는 4다. 밝기 0,1,2,3의 빈도는 2,1,0,1이고 누적 빈도는 2,3,3,4다. 16행은 이를 4로 나눈 뒤 255를 곱한다."
+        },
+        {
+          "title": "uint8 변환은 반올림이 아니다",
+          "body": "누적값은 127.5,191.25,191.25,255다. 원본의 0은 127,1은 191,3은 255로 바뀌어 dst1 밝기는 [[127,127],[191,255]]다. 이 코드는 round를 호출하지 않는다."
+        },
+        {
+          "title": "세 방법의 차이",
+          "body": "교재 dst1은 위의 직접 CDF식이다. dst2는 OpenCV의 최소 유효 누적값을 반영하는 평활화다. 주석의 normalize도 최솟값을 빼므로 직접 나누기와 항상 같지는 않다. 강의 L=8·round는 출력 단계 수와 반올림 규칙부터 다르다."
+        },
+        {
+          "title": "배열 모양은 실제 hist로 확인",
+          "body": "hist가 (256,1)이면 accum_hist[val]은 길이 1인 배열이라 dst1은 (H,W,1)이 된다. hist가 flat (256,)이면 dst1은 (H,W)다. 두 경우 모두 여기서 묻는 각 위치의 밝기 순서는 같다."
+        }
+      ],
+      "keyPoints": [
+        "전체 화소 수=sum(hist)",
+        "직접 구현=누적 확률×255 후 uint8 변환",
+        "직접 구현·OpenCV·L=8 round의 조건을 각각 확인한다."
+      ],
+      "pitfalls": [
+        "astype(uint8)는 이 범위의 양수 소수부를 버린다. 127.5를 128로 반올림하지 않는다.",
+        "평활화 뒤 모든 계급의 빈도가 정확히 같아지는 것은 아니다."
+      ],
+      "relatedQuestionIds": [
+        "th-q-book-equalize-total",
+        "th-q-book-equalize-output",
+        "th-q-book-equalize-compare"
+      ],
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "originalCode": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / sum(hist)) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "명암도 영상을 읽고 256계급 히스토그램을 계산한다. 범위의 끝 256은 미포함이므로 밝기 255까지 센다."
+        },
+        {
+          "lines": "10~14행",
+          "explanation": "첫 빈도부터 누적해 이전 누적값에 현재 빈도를 더한다. i번째 값은 0부터 i까지의 화소 수다. 누적 배열은 hist와 같은 모양으로 준비한다."
+        },
+        {
+          "lines": "16~18행",
+          "explanation": "누적 화소 수를 전체 화소 수 sum(hist)로 나누고 255를 곱한다. 각 원본 밝기 val을 accum_hist[val]로 바꾼 뒤 uint8로 저장해 소수부를 버린다. hist가 (256,1)이면 결과는 (H,W,1), hist가 (256,)이면 (H,W)다. 위치별 밝기 계산은 같다."
+        },
+        {
+          "lines": "20~23행",
+          "explanation": "주석의 cumsum·normalize·LUT는 다른 구현 방법을 보여준다. normalize는 최솟값을 빼는 방식이라 주 실행식과 항상 같은 결과를 보장하지 않는다."
+        },
+        {
+          "lines": "25~30행",
+          "explanation": "OpenCV equalizeHist로 dst2를 만들고 직접 구현 dst1·OpenCV dst2·원본의 히스토그램을 준비한다."
+        },
+        {
+          "lines": "32~35행",
+          "explanation": "각 영상과 히스토그램을 짝지어 여섯 창으로 표시하고 키를 기다린다."
+        }
+      ],
+      "resultDescription": "계산 확인용 별도 입력 [[0,0],[1,3]]에서는 직접 구현 dst1의 밝기가 [[127,127],[191,255]], OpenCV dst2는 [[0,0],[128,255]]다. 원본 프로그램은 교재 사진·직접 구현·OpenCV 결과와 각 히스토그램을 여섯 창에 보여 준다.",
+      "referenceLabel": "6.3.6 · 히스토그램 평활화"
     }
   ],
   "questions": [
@@ -1999,9 +2298,9 @@
       "topic": "히스토그램",
       "type": "output",
       "title": "7주차1번 · 원문 히스토그램",
-      "prompt": "아래 입력의 히스토그램을 그려라. 원문처럼 최소0·최대6으로 간주한다. 밝기0~6 순서의 빈도수를 답하라.",
+      "prompt": "교재 예제 6.3.4를 실행하고 색상 히스토그램의 계산 과정을 이해하라. 이어 아래 4×4 영상의 밝기 히스토그램을 그려라. 답란에는 별도 행렬의 밝기 0~6 빈도 7개를 순서대로 써라.",
       "answer": "1,2,4,0,3,1,5",
-      "explanation": "정답: `1,2,4,0,3,1,5`\n\n밝기 0~6의 빈도는 [1,2,4,0,3,1,5]다. 밝기 2는 둘째 행 1개, 셋째 행 2개, 넷째 행 1개라 모두 4개다. 밝기 6은 첫 행 2개와 나머지 세 행에서 각각 1개라 5개다. 밝기 3은 없어서 0으로 남긴다. 합 1+2+4+0+3+1+5=16이 전체 픽셀 수와 같은지 검산한다.",
+      "explanation": "정답: `1,2,4,0,3,1,5`\n\n밝기 0~6의 빈도는 [1,2,4,0,3,1,5]다. 밝기 2는 둘째 행 1개, 셋째 행 2개, 넷째 행 1개라 모두 4개다. 밝기 6은 첫 행 2개와 나머지 세 행에서 각각 1개라 5개다. 밝기 3은 없어서 0으로 남긴다. 합 1+2+4+0+3+1+5=16이 전체 픽셀 수와 같은지 검산한다.\n\n교재 6.3.4 실습은 BGR 영상을 HSV로 바꾼 뒤 H채널을 18계급·[0,180) 범위로 센다. 이 문제의 별도 행렬은 밝기 0~6을 각각 세는 7칸 표다. 계급 설정을 서로 바꾸어 적용하지 않는다. 아래 교재 코드와 주석을 펼쳐 색상 실습 과정을 확인할 수 있다.",
       "steps": [
         "밝기 0~6의 칸을 만든다.",
         "픽셀마다 해당 칸을 1 증가한다.",
@@ -2043,7 +2342,51 @@
         }
       ],
       "codeLabel": "학습진단 원문 입력 행렬",
-      "codeOrigin": "diagnostic-original"
+      "codeOrigin": "diagnostic-original",
+      "referenceConceptIds": [
+        "th-c-book-hue"
+      ],
+      "additionalCodeBlocks": [
+        {
+          "title": "교재 예제 6.3.4 전체 코드와 주석 · hue_histogram.py",
+          "code": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,180])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+          "source": {
+            "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+            "page": [
+              1,
+              2
+            ],
+            "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+          },
+          "codeExplanation": [
+            {
+              "lines": "1~7행",
+              "explanation": "계급 수에 맞춘 HSV 팔레트를 만든다. H는 round(i*180/rows), S와 V는 255다. rows×1×3 배열을 uint8로 바꾼다."
+            },
+            {
+              "lines": "8~14행",
+              "explanation": "주석 처리한 반복문은 팔레트를 만드는 대안이다. 실제 실행은 14행에서 HSV를 BGR로 바꿔 반환한다."
+            },
+            {
+              "lines": "16~19행",
+              "explanation": "흰 히스토그램 화면을 만들고 hist의 값을 화면 높이 0~shape[0]에 맞춰 정규화한다. 출력 인수도 hist여서 원래 빈도 배열 자체가 바뀐다."
+            },
+            {
+              "lines": "21~27행",
+              "explanation": "gap=화면 너비/계급 수다. 막대의 x와 w를 반올림하고 팔레트색으로 사각형을 채운다. flip(...,0)은 위에서 아래로 그린 막대를 뒤집어 아래에서 올라오게 한다."
+            },
+            {
+              "lines": "29~34행",
+              "explanation": "사진을 HSV로 바꾼 뒤 H채널 [0]의 0~180 범위를 18계급으로 센다. 화면은 높이 200·너비 360·3채널이다."
+            },
+            {
+              "lines": "36~38행",
+              "explanation": "원본 사진과 색상 히스토그램을 두 창에 표시하고 키를 기다린다."
+            }
+          ]
+        }
+      ],
+      "contentRevision": 3
     },
     {
       "id": "th-q-w7-2",
@@ -2051,16 +2394,17 @@
       "topic": "히스토그램 스트레칭",
       "type": "short",
       "title": "7주차2번 · 스트레칭 실습",
-      "prompt": "교재 예제6.3.5의 히스토그램 스트레칭 코드를 실습하라. 스트레칭을 계산하는 과정을 설명하라.",
-      "answer": "min과max를 찾고 각 픽셀을(r-min)/(max-min)×255로 변환한다. min=max의 예외를 처리한다.",
-      "explanation": "정답: `min과max를 찾고 각 픽셀을(r-min)/(max-min)×255로 변환한다. min=max의 예외를 처리한다.`\n\n변환식은 s=(r-min)/(max-min)×255다. 최소값을 0, 최대값을 255로 옮긴다. 별도 변형 입력 [[50,100,150]]에서 min50,max150이므로 100은 (100-50)/100×255=127.5다. 함수는 np.uint8로 저장해 127이 되므로 결과는 [[0,127,255]]다. max=min이면 else에서 원래 pixel을 저장하므로 [[80,80]]은 그대로 남는다.",
+      "prompt": "교재 예제 6.3.5의 히스토그램 스트레칭 코드를 실습하고 계산 과정을 설명하라. 64개 계급에서 low·high를 찾는 과정과 LUT가 하는 일을 함께 설명해 보자.",
+      "answer": "64계급 히스토그램의 양끝 비영 계급을 찾고, 계급 번호에 4를 곱해 low·high를 구한다. (r-low)/(high-low)×255의 LUT를 만들고 범위를 제한한 뒤 uint8로 바꿔 cv2.LUT로 적용한다.",
+      "explanation": "먼저 0~256 범위를 64개 계급으로 나누므로 한 계급의 폭은 4다. 앞에서부터, 뒤에서부터 빈도가 0보다 큰 첫 계급을 찾는다. 각 계급 번호에 4를 곱한 값이 low와 high다. 0~255의 모든 밝기를 (r-low)/(high-low)×255로 바꾸는 표를 만들고, low 미만은 0, high 초과는 255로 제한한다. 표를 uint8로 바꾼 뒤 cv2.LUT가 원본의 각 화소를 새 값으로 바꾼다.\n\n별도 검산 입력 [[50,100,150]]에서는 첫 계급이 12번, 마지막 계급이 37번이다. 따라서 low=48, high=148이다. 50은 5.1→5, 100은 132.6→132가 되고 150은 상단 제한에 따라 255가 되어 [[5,132,255]]다. 이 작은 배열은 계산 연습용 조건이며 교재 사진의 실제 결과는 아니다.\n\n강의 p.19의 실제 최솟값·최댓값을 쓰는 함수와 계산을 구분한다. 교재 코드에는 low==high를 처리하는 분기가 없으므로 모든 값이 한 계급에만 모인 경우에는 별도 처리가 필요하다.",
       "steps": [
-        "min,max를 계산한다.",
-        "각 픽셀에 선형식을 적용한다.",
-        "상수 영상에서 분모 0을 피한다.",
-        "int 변환과 np.uint8 저장을구별하고수식 127.5가저장 127이됨을확인한다."
+        "64계급과 범위 [0,256)에서 계급 폭 4를 구한다.",
+        "양쪽에서 첫 비영 계급을 찾고 각각 4를 곱해 low·high를 구한다.",
+        "밝기 0~255를 바꾸는 LUT를 만들고 아래·위 범위를 제한한다.",
+        "LUT를 uint8로 변환한 뒤 cv2.LUT로 영상에 적용한다.",
+        "원본·결과 영상과 각 히스토그램을 비교한다."
       ],
-      "hint": "min은 0, max는 255로 옮긴다.",
+      "hint": "search_value_idx는 화소값이 아니라 빈도가 있는 계급 번호를 반환한다. 그 번호에 계급 폭 4를 곱한다.",
       "source": {
         "file": "학습진단문제/7주차학습진단문제.pdf",
         "page": 1,
@@ -2072,35 +2416,46 @@
         "핵심"
       ],
       "difficulty": 2,
-      "code": "import numpy as np\n\n# 강의 3장 p.19의 함수. 단일 채널 영상을 가정한다.\ndef histogram_stretching(image):\n    image1 = np.zeros(image.shape[:2], image.dtype)\n    min_val = np.min(image)\n    max_val = np.max(image)\n    for i in range(image.shape[0]):\n        for j in range(image.shape[1]):\n            pixel = int(image[i,j])\n            if max_val > min_val:\n                value = ((pixel-int(min_val))*255\n                         /(int(max_val)-int(min_val)))\n            else:\n                value = pixel\n            image1[i,j] = np.uint8(value)\n    return image1\n\n# 강의 공식을 확인하기 위한 별도 소형 예제\nsample = np.array([[50,100,150]], dtype=np.uint8)\nprint(histogram_stretching(sample))  # [[0 127 255]]",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [64], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
       "codeExplanation": [
         {
-          "lines": "1~4행",
-          "explanation": "NumPy를 불러오고 histogram_stretching 함수를 정의한다. 함수에는 한 칸에 밝기 하나가 있는 단일 채널 배열을 넣는다."
+          "lines": "1~8행",
+          "explanation": "draw_histo는 Common.histogram에서 가져온 별도 함수다. search_value_idx는0보다 큰 빈도를 가진 첫 계급을 찾는다. bias=0이면0부터 오름차순, bias=63이면63부터 내림차순으로 검사한다. 못 찾으면-1을 반환한다."
         },
         {
-          "lines": "5~7행",
-          "explanation": "출력 image1을 입력과 같은 높이·폭 및 dtype으로 만들고, 입력의 최솟값 min_val과 최댓값 max_val을 구한다. 새 배열은 0으로 시작하지만 뒤에서 각 칸을 계산한 값으로 채운다."
+          "lines": "10~18행",
+          "explanation": "명암도 영상을 읽고0~256 범위를64계급으로 나눈다. 한 계급 너비는256/64=4다. 앞과 뒤에서 찾은 계급 번호에4를 곱해 low와 high를 만든다. 이 값은 계급의 왼쪽 경계이며 입력 화소의 정확한 최소·최대와는 다를 수 있다."
         },
         {
-          "lines": "8~10행",
-          "explanation": "i행·j열을 차례로 돌며 현재 픽셀을 읽는다. int로 바꾼 pixel은 정수 범위에서 뺄셈과 곱셈을 계산하는 데 사용한다."
+          "lines": "20~25행",
+          "explanation": "0~255 각각을 새 밝기로 바꾸는 룩업 테이블을 만든다. low를0,high를255로 보내는 선형식 (값-low)/(high-low)*255를 적용한다. low 미만은0,high 초과는255로 제한한 뒤 uint8 테이블로 변환하여 LUT를 적용한다."
         },
         {
-          "lines": "11~13행",
-          "explanation": "최댓값이 최솟값보다 클 때 (pixel−min)/(max−min)×255를 계산한다. 최소값은 0, 최대값은 255로 간다. 예를 들어 100은(100−50)/(150−50)×255=127.5다."
+          "lines": "26~30행",
+          "explanation": "주석 처리된 이중 반복문은 LUT 호출 대신 모든 화소에 새 값을 직접 대입하는 대안이다. 현재 프로그램은25행의 cv2.LUT만 실행한다."
         },
         {
-          "lines": "14~17행",
-          "explanation": "입력이 모두 같은 값이면 나눗셈 대신 원래 pixel을 쓴다. 계산값은 np.uint8로 저장하고 완성한 배열을 반환한다. 범위 안 양수 127.5를 저장하면 소수부가 제거되어 127이다."
+          "lines": "32~34행",
+          "explanation": "변환된 dst의 히스토그램을 새로 계산한다. 원본과 결과의 히스토그램을 같은 높이200·너비360으로 그려 밝기 분포가 늘어난 정도를 비교한다."
         },
         {
-          "lines": "19~21행",
-          "explanation": "이 sample은 방법을 따라 계산하도록 넣은 별도 변형 입력이다. [[50,100,150]]의 min은 50,max는 150이므로 결과는 [[0,127,255]]로 출력된다."
+          "lines": "36~40행",
+          "explanation": "high와 low를 콘솔에 출력하고 원본 영상·원본 히스토그램·변환 영상·변환 히스토그램을 네 창에 표시한다. waitKey(0)은 키 입력을 기다린다."
         }
       ],
-      "codeLabel": "강의 스트레칭 함수 + 별도 변형 입력",
-      "codeOrigin": "lecture-fragment-with-variation"
+      "codeLabel": "교재 원본 코드 · 예제 6.3.5",
+      "codeOrigin": "textbook-original",
+      "originalCodeId": "book-6-3-5",
+      "sourceCodeTitle": "교재 예제 6.3.5 · histogram_stretching.py",
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "contentRevision": 3
     },
     {
       "id": "th-q-w7-3",
@@ -2108,9 +2463,9 @@
       "topic": "히스토그램 평활화",
       "type": "output",
       "title": "7주차3번 · 원문 결과영상",
-      "prompt": "입력에 히스토그램 평활화를 적용한 결과영상 값을 행 순서로 작성하라. 강의 p.28~29처럼 L=8, T(k)=round(7×CDF(k))를 쓴다.",
+      "prompt": "교재 예제 6.3.6을 실행해 평활화 과정을 이해하고, 아래 행렬의 평활화 결과를 강의 규칙으로 계산하라. 답란에는 강의 p.28~29의 L=8, T(k)=round(7×CDF(k))로 구한 행렬값을 행 순서로 써라.",
       "answer": "0 5 5 3 / 3 5 7 5 / 3 5 7 5 / 3 7 3 7",
-      "explanation": "정답: `0 5 5 3 / 3 5 7 5 / 3 5 7 5 / 3 7 3 7`\n\n결과는 [[0,5,5,3],[3,5,7,5],[3,5,7,5],[3,7,3,7]]이다. 빈도 [1,5,6,3,0,0,0,1]을 누적하면 [1,6,12,15,15,15,15,16]이다. 전체 16으로 나눠 7을 곱하면 [0.4375,2.625,5.25,6.5625,6.5625,6.5625,6.5625,7]이고 반올림한 T는 [0,3,5,7,7,7,7,7]이다. 예를 들어 밝기 2는 12/16×7=5.25→5이므로 원래 2인 칸을 모두 5로 바꾼다. 중간 확률은 그대로 두고 마지막에만 반올림한다.",
+      "explanation": "정답: `0 5 5 3 / 3 5 7 5 / 3 5 7 5 / 3 7 3 7`\n\n결과는 [[0,5,5,3],[3,5,7,5],[3,5,7,5],[3,7,3,7]]이다. 빈도 [1,5,6,3,0,0,0,1]을 누적하면 [1,6,12,15,15,15,15,16]이다. 전체 16으로 나눠 7을 곱하면 [0.4375,2.625,5.25,6.5625,6.5625,6.5625,6.5625,7]이고 반올림한 T는 [0,3,5,7,7,7,7,7]이다. 예를 들어 밝기 2는 12/16×7=5.25→5이므로 원래 2인 칸을 모두 5로 바꾼다. 중간 확률은 그대로 두고 마지막에만 반올림한다.\n\n교재 6.3.6의 실습은 별도 조건이다. 직접 구현 dst1은 누적확률에 255를 곱한 뒤 uint8로 소수부를 버리고, dst2는 OpenCV equalizeHist를 호출한다. 이 행렬 문제의 7배·반올림 답을 교재의 255배 결과로 바꾸지 않는다. 아래 교재 코드에서 두 구현을 비교해 보자.",
       "steps": [
         "N16,L8을 확인한다.",
         "빈도와 누적빈도를 구한다.",
@@ -2155,7 +2510,51 @@
         }
       ],
       "codeLabel": "학습진단 원문 입력 행렬",
-      "codeOrigin": "diagnostic-original"
+      "codeOrigin": "diagnostic-original",
+      "referenceConceptIds": [
+        "th-c-book-equalize"
+      ],
+      "additionalCodeBlocks": [
+        {
+          "title": "교재 예제 6.3.6 전체 코드와 주석 · histogram_equalize.py",
+          "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / sum(hist)) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+          "source": {
+            "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+            "page": [
+              5,
+              6
+            ],
+            "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+          },
+          "codeExplanation": [
+            {
+              "lines": "1~8행",
+              "explanation": "명암도 영상을 읽고 256계급 히스토그램을 계산한다. 범위의 끝 256은 미포함이므로 밝기 255까지 센다."
+            },
+            {
+              "lines": "10~14행",
+              "explanation": "첫 빈도부터 누적해 이전 누적값에 현재 빈도를 더한다. i번째 값은 0부터 i까지의 화소 수다. 누적 배열은 hist와 같은 모양으로 준비한다."
+            },
+            {
+              "lines": "16~18행",
+              "explanation": "누적 화소 수를 전체 화소 수 sum(hist)로 나누고 255를 곱한다. 각 원본 밝기 val을 accum_hist[val]로 바꾼 뒤 uint8로 저장해 소수부를 버린다. hist가 (256,1)이면 결과는 (H,W,1), hist가 (256,)이면 (H,W)다. 위치별 밝기 계산은 같다."
+            },
+            {
+              "lines": "20~23행",
+              "explanation": "주석의 cumsum·normalize·LUT는 다른 구현 방법을 보여준다. normalize는 최솟값을 빼는 방식이라 주 실행식과 항상 같은 결과를 보장하지 않는다."
+            },
+            {
+              "lines": "25~30행",
+              "explanation": "OpenCV equalizeHist로 dst2를 만들고 직접 구현 dst1·OpenCV dst2·원본의 히스토그램을 준비한다."
+            },
+            {
+              "lines": "32~35행",
+              "explanation": "각 영상과 히스토그램을 짝지어 여섯 창으로 표시하고 키를 기다린다."
+            }
+          ]
+        }
+      ],
+      "contentRevision": 3
     },
     {
       "id": "th-q-sampling",
@@ -4210,7 +4609,7 @@
         "추가 연습"
       ],
       "difficulty": 2,
-      "code": "sample=np.array([[50,100,150]],dtype=np.uint8)\nprint(histogram_stretching(sample))",
+      "code": "import numpy as np\n\n# 강의 3장 p.19의 함수. 단일 채널 영상을 가정한다.\ndef histogram_stretching(image):\n    image1 = np.zeros(image.shape[:2], image.dtype)\n    min_val = np.min(image)\n    max_val = np.max(image)\n    for i in range(image.shape[0]):\n        for j in range(image.shape[1]):\n            pixel = int(image[i,j])\n            if max_val > min_val:\n                value = ((pixel-int(min_val))*255\n                         /(int(max_val)-int(min_val)))\n            else:\n                value = pixel\n            image1[i,j] = np.uint8(value)\n    return image1\n\n# 강의 공식을 확인하기 위한 별도 소형 예제\nsample = np.array([[50,100,150]], dtype=np.uint8)\nprint(histogram_stretching(sample))  # [[0 127 255]]",
       "accepted": [
         "[0,127,255]",
         "[[0,127,255]]",
@@ -4218,16 +4617,663 @@
       ],
       "codeExplanation": [
         {
-          "lines": "1행",
-          "explanation": "강의 함수에 넣을 별도 변형 입력 [[50,100,150]]을 만든다. 최솟값 50,최댓값 150인 uint8 배열이다."
+          "lines": "1~4행",
+          "explanation": "NumPy를 불러오고 histogram_stretching 함수를 정의한다. 함수에는 한 칸에 밝기 하나가 있는 단일 채널 배열을 넣는다."
         },
         {
-          "lines": "2행",
-          "explanation": "각 값을(값−50)/(150−50)×255로 바꾼 뒤 uint8로 저장한다.0,127.5,255에서 가운데 소수부가 제거되어 출력은 [[0,127,255]]다. 사용한 함수 정의는 7주차 2번 실습에 제시되어 있다."
+          "lines": "5~7행",
+          "explanation": "출력 image1을 입력과 같은 높이·폭 및 dtype으로 만들고, 입력의 최솟값 min_val과 최댓값 max_val을 구한다. 새 배열은 0으로 시작하지만 뒤에서 각 칸을 계산한 값으로 채운다."
+        },
+        {
+          "lines": "8~10행",
+          "explanation": "i행·j열을 차례로 돌며 현재 픽셀을 읽는다. int로 바꾼 pixel은 정수 범위에서 뺄셈과 곱셈을 계산하는 데 사용한다."
+        },
+        {
+          "lines": "11~13행",
+          "explanation": "최댓값이 최솟값보다 클 때 (pixel−min)/(max−min)×255를 계산한다. 최소값은 0, 최대값은 255로 간다. 예를 들어 100은(100−50)/(150−50)×255=127.5다."
+        },
+        {
+          "lines": "14~17행",
+          "explanation": "입력이 모두 같은 값이면 나눗셈 대신 원래 pixel을 쓴다. 계산값은 np.uint8로 저장하고 완성한 배열을 반환한다. 범위 안 양수 127.5를 저장하면 소수부가 제거되어 127이다."
+        },
+        {
+          "lines": "19~21행",
+          "explanation": "이 sample은 방법을 따라 계산하도록 넣은 별도 변형 입력이다. [[50,100,150]]의 min은 50,max는 150이므로 결과는 [[0,127,255]]로 출력된다."
         }
       ],
-      "codeLabel": "강의 함수에 넣는 별도 변형 입력",
-      "codeOrigin": "practice-variation"
+      "codeLabel": "강의 p.19 함수 전체 + 별도 변형 입력",
+      "codeOrigin": "lecture-fragment-with-variation"
+    },
+    {
+      "id": "th-q-book-hue-range",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "색상 히스토그램 그리기",
+      "type": "blank",
+      "title": "H채널 범위의 상한",
+      "prompt": "33행의 H채널 범위에서 끝값 하나를 가렸다. OpenCV 8비트 HSV의 H값을 모두 세도록 빈칸을 채워라.",
+      "code": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,____])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+      "answer": "180",
+      "explanation": "H는 0~179이므로 범위를 [0,180)으로 잡는다. 18은 계급 수이며 범위의 끝값이 아니다.",
+      "steps": [
+        "H채널의 값 범위를 확인한다.",
+        "끝값은 미포함이므로 180을 쓴다."
+      ],
+      "hint": "H의 범위는 BGR의 0~255와 다르다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 1,
+      "originalCodeId": "book-6-3-4",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~7행",
+          "explanation": "계급 수에 맞춘 HSV 팔레트를 만든다. H는 round(i*180/rows), S와 V는 255다. rows×1×3 배열을 uint8로 바꾼다."
+        },
+        {
+          "lines": "8~14행",
+          "explanation": "주석 처리한 반복문은 팔레트를 만드는 대안이다. 실제 실행은 14행에서 HSV를 BGR로 바꿔 반환한다."
+        },
+        {
+          "lines": "16~19행",
+          "explanation": "흰 히스토그램 화면을 만들고 hist의 값을 화면 높이 0~shape[0]에 맞춰 정규화한다. 출력 인수도 hist여서 원래 빈도 배열 자체가 바뀐다."
+        },
+        {
+          "lines": "21~27행",
+          "explanation": "gap=화면 너비/계급 수다. 막대의 x와 w를 반올림하고 팔레트색으로 사각형을 채운다. flip(...,0)은 위에서 아래로 그린 막대를 뒤집어 아래에서 올라오게 한다."
+        },
+        {
+          "lines": "29~34행",
+          "explanation": "사진을 HSV로 바꾼 뒤 H채널 [0]의 0~180 범위를 18계급으로 센다. 화면은 높이 200·너비 360·3채널이다."
+        },
+        {
+          "lines": "36~38행",
+          "explanation": "원본 사진과 색상 히스토그램을 두 창에 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.4 · 색상 히스토그램 그리기",
+      "codeLabel": "교재 원본 코드 · 예제6.3.4",
+      "blankLine": 33,
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      }
+    },
+    {
+      "id": "th-q-book-hue-layout",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "색상 히스토그램 그리기",
+      "type": "output",
+      "title": "18계급 막대의 gap·x·w",
+      "prompt": "33~34행 그대로 계급 수는 18, 화면 너비는 360이다. draw_hist_hue의 21~23행에서 gap, i=2일 때 x, w를 순서대로 써라.",
+      "code": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,180])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+      "answer": "20, 40, 20",
+      "explanation": "gap=360/18=20이다. i=2의 x=round(2×20)=40, w=round(20)=20이다.",
+      "steps": [
+        "화면 너비를 계급 수로 나눈다.",
+        "i=2를 x 계산에 넣는다.",
+        "w는 gap을 반올림한다."
+      ],
+      "hint": "배열 shape의 두 번째 값이 화면 너비다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 2,
+      "originalCodeId": "book-6-3-4",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~7행",
+          "explanation": "계급 수에 맞춘 HSV 팔레트를 만든다. H는 round(i*180/rows), S와 V는 255다. rows×1×3 배열을 uint8로 바꾼다."
+        },
+        {
+          "lines": "8~14행",
+          "explanation": "주석 처리한 반복문은 팔레트를 만드는 대안이다. 실제 실행은 14행에서 HSV를 BGR로 바꿔 반환한다."
+        },
+        {
+          "lines": "16~19행",
+          "explanation": "흰 히스토그램 화면을 만들고 hist의 값을 화면 높이 0~shape[0]에 맞춰 정규화한다. 출력 인수도 hist여서 원래 빈도 배열 자체가 바뀐다."
+        },
+        {
+          "lines": "21~27행",
+          "explanation": "gap=화면 너비/계급 수다. 막대의 x와 w를 반올림하고 팔레트색으로 사각형을 채운다. flip(...,0)은 위에서 아래로 그린 막대를 뒤집어 아래에서 올라오게 한다."
+        },
+        {
+          "lines": "29~34행",
+          "explanation": "사진을 HSV로 바꾼 뒤 H채널 [0]의 0~180 범위를 18계급으로 센다. 화면은 높이 200·너비 360·3채널이다."
+        },
+        {
+          "lines": "36~38행",
+          "explanation": "원본 사진과 색상 히스토그램을 두 창에 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.4 · 색상 히스토그램 그리기",
+      "codeLabel": "교재 원본 코드 · 예제6.3.4",
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      }
+    },
+    {
+      "id": "th-q-book-hue-normalize",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "색상 히스토그램 그리기",
+      "type": "choice",
+      "title": "normalize가 바꾸는 배열",
+      "prompt": "34행의 shape=(200,360,3)으로 함수가 호출되었다. 19행 cv2.normalize(hist,hist,0,shape[0],NORM_MINMAX)의 효과로 맞는 것을 골라라.",
+      "code": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,180])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+      "answer": "hist 자체를 표시 높이 0~200 범위로 정규화한다.",
+      "explanation": "shape[0]=200은 화면 높이다. 두 번째 인수도 hist이므로 원래 빈도 배열 자체가 정규화된 높이로 갱신된다.",
+      "steps": [
+        "shape[0]이 높이 200임을 읽는다.",
+        "출력 배열 인수가 hist인지 확인한다."
+      ],
+      "hint": "normalize의 첫 인수와 두 번째 인수의 역할을 봐라.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 1,
+      "originalCodeId": "book-6-3-4",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~7행",
+          "explanation": "계급 수에 맞춘 HSV 팔레트를 만든다. H는 round(i*180/rows), S와 V는 255다. rows×1×3 배열을 uint8로 바꾼다."
+        },
+        {
+          "lines": "8~14행",
+          "explanation": "주석 처리한 반복문은 팔레트를 만드는 대안이다. 실제 실행은 14행에서 HSV를 BGR로 바꿔 반환한다."
+        },
+        {
+          "lines": "16~19행",
+          "explanation": "흰 히스토그램 화면을 만들고 hist의 값을 화면 높이 0~shape[0]에 맞춰 정규화한다. 출력 인수도 hist여서 원래 빈도 배열 자체가 바뀐다."
+        },
+        {
+          "lines": "21~27행",
+          "explanation": "gap=화면 너비/계급 수다. 막대의 x와 w를 반올림하고 팔레트색으로 사각형을 채운다. flip(...,0)은 위에서 아래로 그린 막대를 뒤집어 아래에서 올라오게 한다."
+        },
+        {
+          "lines": "29~34행",
+          "explanation": "사진을 HSV로 바꾼 뒤 H채널 [0]의 0~180 범위를 18계급으로 센다. 화면은 높이 200·너비 360·3채널이다."
+        },
+        {
+          "lines": "36~38행",
+          "explanation": "원본 사진과 색상 히스토그램을 두 창에 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.4 · 색상 히스토그램 그리기",
+      "codeLabel": "교재 원본 코드 · 예제6.3.4",
+      "choices": [
+        "hist 자체를 표시 높이 0~200 범위로 정규화한다.",
+        "빈도 합을 1로 만들고 원래 hist는 보존한다.",
+        "모든 계급의 빈도를 정확히 200으로 만든다.",
+        "hist의 계급 수를 360개로 바꾼다."
+      ],
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      }
+    },
+    {
+      "id": "th-q-book-stretch-bins",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 스트레칭",
+      "type": "blank",
+      "title": "히스토그램의 계급 수",
+      "prompt": "13행 bsize에서 계급 수 하나를 가렸다. 교재 원본처럼 한 계급이 밝기 4단계를 담당하도록 빈칸을 채워라.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [____], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
+      "answer": "64",
+      "explanation": "0~256 범위를 64계급으로 나누면 한 계급 너비는 256/64=4다.",
+      "steps": [
+        "전체 범위 길이는 256이다.",
+        "계급 너비 4로 나누어 64를 얻는다."
+      ],
+      "hint": "bsize는 범위의 끝값이 아니라 계급 개수다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 1,
+      "originalCodeId": "book-6-3-5",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "Common.histogram의 draw_histo를 가져온다. bias=0이면 앞에서, bias=63이면 뒤에서 시작하여 빈도가 양수인 첫 계급을 찾는다."
+        },
+        {
+          "lines": "10~18행",
+          "explanation": "명암도 영상을 64계급으로 센다. 한 계급 너비는 256/64=4다. 찾은 계급 번호에 4를 곱한 low·high는 그 계급의 아래 경계다."
+        },
+        {
+          "lines": "20~25행",
+          "explanation": "0~255의 룩업 테이블에 (값-low)/(high-low)*255를 적용한다. low 미만은 0, high 초과는 255로 제한한다. uint8로 바꿀 때 양수의 소수부는 버려진다."
+        },
+        {
+          "lines": "26~30행",
+          "explanation": "주석의 이중 반복문은 모든 화소를 직접 바꾸는 대안이다. 현재 실행되는 변환은 25행의 LUT다."
+        },
+        {
+          "lines": "32~34행",
+          "explanation": "변환 결과의 히스토그램을 다시 계산하고 원본·결과 그래프를 같은 크기로 그린다."
+        },
+        {
+          "lines": "36~40행",
+          "explanation": "high와 low를 출력하고 원본·결과 영상 및 히스토그램을 네 창에 표시한다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.5 · 히스토그램 스트레칭",
+      "codeLabel": "교재 원본 코드 · 예제6.3.5",
+      "blankLine": 13,
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      }
+    },
+    {
+      "id": "th-q-book-stretch-bounds",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 스트레칭",
+      "type": "output",
+      "title": "[50,100,150]의 low·high",
+      "prompt": "10행의 파일 읽기가 성공하여 image=np.uint8([[50,100,150]])인 상황이다. 다른 코드는 그대로다. 17~18행에서 계산한 low와 high를 순서대로 써라.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [64], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
+      "answer": "48, 148",
+      "explanation": "계급 너비는 4다. 50이 들어간 12번 계급의 아래 경계는 48, 150이 들어간 37번 계급의 아래 경계는 148이다.",
+      "steps": [
+        "50//4=12, 150//4=37이다.",
+        "코드처럼 각 계급 번호에 4를 곱한다."
+      ],
+      "hint": "코드는 실제 min/max가 아니라 계급 번호를 찾는다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 2,
+      "originalCodeId": "book-6-3-5",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "Common.histogram의 draw_histo를 가져온다. bias=0이면 앞에서, bias=63이면 뒤에서 시작하여 빈도가 양수인 첫 계급을 찾는다."
+        },
+        {
+          "lines": "10~18행",
+          "explanation": "명암도 영상을 64계급으로 센다. 한 계급 너비는 256/64=4다. 찾은 계급 번호에 4를 곱한 low·high는 그 계급의 아래 경계다."
+        },
+        {
+          "lines": "20~25행",
+          "explanation": "0~255의 룩업 테이블에 (값-low)/(high-low)*255를 적용한다. low 미만은 0, high 초과는 255로 제한한다. uint8로 바꿀 때 양수의 소수부는 버려진다."
+        },
+        {
+          "lines": "26~30행",
+          "explanation": "주석의 이중 반복문은 모든 화소를 직접 바꾸는 대안이다. 현재 실행되는 변환은 25행의 LUT다."
+        },
+        {
+          "lines": "32~34행",
+          "explanation": "변환 결과의 히스토그램을 다시 계산하고 원본·결과 그래프를 같은 크기로 그린다."
+        },
+        {
+          "lines": "36~40행",
+          "explanation": "high와 low를 출력하고 원본·결과 영상 및 히스토그램을 네 창에 표시한다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.5 · 히스토그램 스트레칭",
+      "codeLabel": "교재 원본 코드 · 예제6.3.5",
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      }
+    },
+    {
+      "id": "th-q-book-stretch-output",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 스트레칭",
+      "type": "output",
+      "title": "같은 입력의 LUT 결과",
+      "prompt": "10행에서 정상적으로 읽힌 image는 np.uint8([[50,100,150]])다. 원본의 25행 실행 직후 dst의 세 밝기를 왼쪽부터 순서대로 써라.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [64], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
+      "answer": "5, 132, 255",
+      "explanation": "low=48,high=148이다. 50과 100은 각각 5.1,132.6이 되고 uint8에서 5,132로 잘린다. 150은 high를 넘으므로 LUT에서 255로 제한된다.",
+      "steps": [
+        "분모 high-low=100을 구한다.",
+        "각 화소에 (값-48)/100×255를 적용한다.",
+        "범위 제한과 uint8의 소수부 버림을 적용한다."
+      ],
+      "hint": "low=50,high=150을 넣는 강의 예제와 섞지 마라.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 2,
+      "originalCodeId": "book-6-3-5",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "Common.histogram의 draw_histo를 가져온다. bias=0이면 앞에서, bias=63이면 뒤에서 시작하여 빈도가 양수인 첫 계급을 찾는다."
+        },
+        {
+          "lines": "10~18행",
+          "explanation": "명암도 영상을 64계급으로 센다. 한 계급 너비는 256/64=4다. 찾은 계급 번호에 4를 곱한 low·high는 그 계급의 아래 경계다."
+        },
+        {
+          "lines": "20~25행",
+          "explanation": "0~255의 룩업 테이블에 (값-low)/(high-low)*255를 적용한다. low 미만은 0, high 초과는 255로 제한한다. uint8로 바꿀 때 양수의 소수부는 버려진다."
+        },
+        {
+          "lines": "26~30행",
+          "explanation": "주석의 이중 반복문은 모든 화소를 직접 바꾸는 대안이다. 현재 실행되는 변환은 25행의 LUT다."
+        },
+        {
+          "lines": "32~34행",
+          "explanation": "변환 결과의 히스토그램을 다시 계산하고 원본·결과 그래프를 같은 크기로 그린다."
+        },
+        {
+          "lines": "36~40행",
+          "explanation": "high와 low를 출력하고 원본·결과 영상 및 히스토그램을 네 창에 표시한다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.5 · 히스토그램 스트레칭",
+      "codeLabel": "교재 원본 코드 · 예제6.3.5",
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      }
+    },
+    {
+      "id": "th-q-book-equalize-total",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 평활화",
+      "type": "blank",
+      "title": "누적 빈도를 나누는 전체 화소 수",
+      "prompt": "16행의 분모를 가렸다. 모든 히스토그램 빈도의 합으로 누적 확률을 만들도록 원본의 식을 채워라.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / ____) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+      "answer": "sum(hist)",
+      "explanation": "히스토그램 빈도의 합은 전체 화소 수다. 누적 빈도를 이 수로 나눈 뒤 255를 곱한다.",
+      "steps": [
+        "전체 화소 수는 모든 계급의 빈도를 합한 값이다.",
+        "원본의 Python 합계 함수를 사용한다."
+      ],
+      "hint": "hist가 Nx1이면 합도 원소 1개 배열일 수 있지만 전체 화소 수라는 의미는 같다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 1,
+      "originalCodeId": "book-6-3-6",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "명암도 영상을 읽고 256계급 히스토그램을 계산한다. 범위의 끝 256은 미포함이므로 밝기 255까지 센다."
+        },
+        {
+          "lines": "10~14행",
+          "explanation": "첫 빈도부터 누적해 이전 누적값에 현재 빈도를 더한다. i번째 값은 0부터 i까지의 화소 수다. 누적 배열은 hist와 같은 모양으로 준비한다."
+        },
+        {
+          "lines": "16~18행",
+          "explanation": "누적 화소 수를 전체 화소 수 sum(hist)로 나누고 255를 곱한다. 각 원본 밝기 val을 accum_hist[val]로 바꾼 뒤 uint8로 저장해 소수부를 버린다. hist가 (256,1)이면 결과는 (H,W,1), hist가 (256,)이면 (H,W)다. 위치별 밝기 계산은 같다."
+        },
+        {
+          "lines": "20~23행",
+          "explanation": "주석의 cumsum·normalize·LUT는 다른 구현 방법을 보여준다. normalize는 최솟값을 빼는 방식이라 주 실행식과 항상 같은 결과를 보장하지 않는다."
+        },
+        {
+          "lines": "25~30행",
+          "explanation": "OpenCV equalizeHist로 dst2를 만들고 직접 구현 dst1·OpenCV dst2·원본의 히스토그램을 준비한다."
+        },
+        {
+          "lines": "32~35행",
+          "explanation": "각 영상과 히스토그램을 짝지어 여섯 창으로 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.6 · 히스토그램 평활화",
+      "codeLabel": "교재 원본 코드 · 예제6.3.6",
+      "blankLine": 16,
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      }
+    },
+    {
+      "id": "th-q-book-equalize-output",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 평활화",
+      "type": "output",
+      "title": "직접 구현의 uint8 밝기",
+      "prompt": "4행에서 정상적으로 읽힌 image는 np.uint8([[0,0],[1,3]])다. 18행 실행 직후 dst1의 밝기를 첫 행 왼쪽부터 읽고 다음 행으로 넘어가는 순서로 써라. 배열의 마지막 1채널 축 유무는 묻지 않는다.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / sum(hist)) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+      "answer": "127, 127, 191, 255",
+      "explanation": "전체 4화소이며 0과 1과 3의 누적 빈도는 2,3,4다. 255배한 누적 확률은 127.5,191.25,255이고 uint8가 소수부를 버려 0→127,1→191,3→255가 된다.",
+      "steps": [
+        "밝기별 빈도는 0:2,1:1,2:0,3:1이다.",
+        "누적 빈도를 4로 나누고 255를 곱한다.",
+        "원본 배치에 대응한 뒤 uint8로 바꾼다."
+      ],
+      "hint": "이 코드는 round를 쓰지 않는다.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 2,
+      "originalCodeId": "book-6-3-6",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "명암도 영상을 읽고 256계급 히스토그램을 계산한다. 범위의 끝 256은 미포함이므로 밝기 255까지 센다."
+        },
+        {
+          "lines": "10~14행",
+          "explanation": "첫 빈도부터 누적해 이전 누적값에 현재 빈도를 더한다. i번째 값은 0부터 i까지의 화소 수다. 누적 배열은 hist와 같은 모양으로 준비한다."
+        },
+        {
+          "lines": "16~18행",
+          "explanation": "누적 화소 수를 전체 화소 수 sum(hist)로 나누고 255를 곱한다. 각 원본 밝기 val을 accum_hist[val]로 바꾼 뒤 uint8로 저장해 소수부를 버린다. hist가 (256,1)이면 결과는 (H,W,1), hist가 (256,)이면 (H,W)다. 위치별 밝기 계산은 같다."
+        },
+        {
+          "lines": "20~23행",
+          "explanation": "주석의 cumsum·normalize·LUT는 다른 구현 방법을 보여준다. normalize는 최솟값을 빼는 방식이라 주 실행식과 항상 같은 결과를 보장하지 않는다."
+        },
+        {
+          "lines": "25~30행",
+          "explanation": "OpenCV equalizeHist로 dst2를 만들고 직접 구현 dst1·OpenCV dst2·원본의 히스토그램을 준비한다."
+        },
+        {
+          "lines": "32~35행",
+          "explanation": "각 영상과 히스토그램을 짝지어 여섯 창으로 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.6 · 히스토그램 평활화",
+      "codeLabel": "교재 원본 코드 · 예제6.3.6",
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      }
+    },
+    {
+      "id": "th-q-book-equalize-compare",
+      "track": "theory",
+      "chapter": "교재 · 7주차",
+      "topic": "히스토그램 평활화",
+      "type": "choice",
+      "title": "직접 CDF·OpenCV·강의 round 비교",
+      "prompt": "교재의 실행되는 dst1·dst2와 강의의 L=8·round 평활화 문제를 비교한 설명으로 맞는 것을 골라라.",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / sum(hist)) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+      "answer": "교재 dst1은 255배 후 uint8 절사, dst2는 OpenCV 평활화이며 강의 L=8·round와 조건이 다르다.",
+      "explanation": "직접 dst1은 CDF×255 뒤 uint8로 바꾼다. OpenCV는 최소 유효 누적값을 반영하며, 강의 L=8 문제는 0~7 단계와 round를 사용한다. 주석의 normalize도 주 실행식과 항상 같지는 않다.",
+      "steps": [
+        "실행되는 직접 구현과 주석 대안을 나눈다.",
+        "uint8 변환과 round의 차이를 확인한다.",
+        "출력 단계 수 256과 8의 차이를 확인한다."
+      ],
+      "hint": "같은 평활화라는 이름만 보고 수치 답을 옮기지 마라.",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "tags": [
+        "교재코드",
+        "변형"
+      ],
+      "difficulty": 2,
+      "originalCodeId": "book-6-3-6",
+      "contentRevision": 1,
+      "codeExplanation": [
+        {
+          "lines": "1~8행",
+          "explanation": "명암도 영상을 읽고 256계급 히스토그램을 계산한다. 범위의 끝 256은 미포함이므로 밝기 255까지 센다."
+        },
+        {
+          "lines": "10~14행",
+          "explanation": "첫 빈도부터 누적해 이전 누적값에 현재 빈도를 더한다. i번째 값은 0부터 i까지의 화소 수다. 누적 배열은 hist와 같은 모양으로 준비한다."
+        },
+        {
+          "lines": "16~18행",
+          "explanation": "누적 화소 수를 전체 화소 수 sum(hist)로 나누고 255를 곱한다. 각 원본 밝기 val을 accum_hist[val]로 바꾼 뒤 uint8로 저장해 소수부를 버린다. hist가 (256,1)이면 결과는 (H,W,1), hist가 (256,)이면 (H,W)다. 위치별 밝기 계산은 같다."
+        },
+        {
+          "lines": "20~23행",
+          "explanation": "주석의 cumsum·normalize·LUT는 다른 구현 방법을 보여준다. normalize는 최솟값을 빼는 방식이라 주 실행식과 항상 같은 결과를 보장하지 않는다."
+        },
+        {
+          "lines": "25~30행",
+          "explanation": "OpenCV equalizeHist로 dst2를 만들고 직접 구현 dst1·OpenCV dst2·원본의 히스토그램을 준비한다."
+        },
+        {
+          "lines": "32~35행",
+          "explanation": "각 영상과 히스토그램을 짝지어 여섯 창으로 표시하고 키를 기다린다."
+        }
+      ],
+      "sourceCodeTitle": "예제 6.3.6 · 히스토그램 평활화",
+      "codeLabel": "교재 원본 코드 · 예제6.3.6",
+      "choices": [
+        "교재 dst1은 255배 후 uint8 절사, dst2는 OpenCV 평활화이며 강의 L=8·round와 조건이 다르다.",
+        "교재의 uint8 변환은 127.5를 항상 128로 반올림한다.",
+        "교재 dst1·dst2·강의 L=8 결과는 모든 영상에서 같은 숫자다.",
+        "평활화 후 256계급의 빈도는 반드시 모두 같아진다."
+      ],
+      "codeSource": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      }
     }
   ]
 }

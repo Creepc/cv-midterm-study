@@ -40,8 +40,8 @@ test('all lecture concepts have explicit relevant question links',()=>{
     assert.equal(lecture?.kind,'lecture','every note has a lecture folder: '+c.id);
   }
 });
-test('audit covers the final questions and all nine sources',()=>{
-  assert.equal(audit.reviewedAt,'2026-10-20');text(audit.summary);
+test('audit covers the final questions and every source',()=>{
+  assert.match(audit.reviewedAt,/^\d{4}-\d{2}-\d{2}$/);text(audit.summary);
   assert.deepEqual(audit.sources.map(s=>s.sourceId).sort(),sources.map(s=>s.id).sort());
   assert.equal(audit.questionChecks.reviewed,data.questions.length);
   assert.ok(audit.questionChecks.executed>=39&&audit.questionChecks.executed<=data.questions.length);

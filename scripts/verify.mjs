@@ -26,10 +26,10 @@ function checkSource(source,label){
   assert.ok(pages.length&&pages.every(p=>Number.isSafeInteger(p)&&p>=1&&p<=known.pages),`${label}: page outside ${known.pages}-page source`);
   sourceUse.add(key);
 }
-test('nine complete source records',()=>{
-  assert.equal(sources.length,9);assert.equal(new Set(sources.map(s=>s.id)).size,9);
-  for(const s of sources){text(s.id,'source ID');text(s.file,'source filename');text(s.title,'source title');assert.ok(['lecture','diagnostic','exercise'].includes(s.kind));assert.ok(Number.isSafeInteger(s.pages)&&s.pages>0);assert.ok(Array.isArray(s.coverage)&&s.coverage.length>0);s.coverage.forEach(x=>text(x,'source coverage'));assert.ok(Array.isArray(s.notes));sourceMap.set(sourceKey(s.file),s);}
-  assert.equal(sourceMap.size,9);
+test('original documents and supplemental textbook source records',()=>{
+  assert.equal(sources.filter(s=>s.kind!=='textbook').length,9);assert.equal(new Set(sources.map(s=>s.id)).size,sources.length);
+  for(const s of sources){text(s.id,'source ID');text(s.file,'source filename');text(s.title,'source title');assert.ok(['lecture','diagnostic','exercise','textbook'].includes(s.kind));assert.ok(Number.isSafeInteger(s.pages)&&s.pages>0);assert.ok(Array.isArray(s.coverage)&&s.coverage.length>0);s.coverage.forEach(x=>text(x,'source coverage'));assert.ok(Array.isArray(s.notes));sourceMap.set(sourceKey(s.file),s);}
+  assert.equal(sourceMap.size,sources.length);assert.equal(sources.find(s=>s.id==='textbook-week7').pages,6);
 });
 test('all IDs are unique',()=>{
   const ids=[...data.concepts,...data.questions].map(x=>x.id);ids.forEach(id=>text(id,'ID'));assert.equal(new Set(ids).size,ids.length);

@@ -36,4 +36,16 @@ assert.equal(practice.exercises.find(e=>e.number===2).originalCode,codes.get('ch
 for(const q of theory.questions.filter(q=>q.code))assert.ok(q.codeExplanation?.length,'Theory code explanation: '+q.id);
 assert.equal(theory.questions.find(q=>q.id==='th-q-w3-2').code,codes.get('ch4-ex12').code);
 assert.equal(theory.questions.find(q=>q.id==='th-q-w4-1').code,codes.get('ch4-ex15').code);
-console.log(`Original-code checks passed: ${blanks} blanks reconstruct the source; ${outputs} result questions preserve the source; 49 concepts and all code questions have explanations.`);
+for(const q of theory.questions.filter(q=>q.originalCodeId)){
+  const original=codes.get(q.originalCodeId);assert.ok(original,'Unknown textbook original: '+q.id);
+  assert.equal(q.type==='blank'?q.code.replace('____',q.answer):q.code,original.code,'Textbook code must preserve the complete source: '+q.id);
+  if(q.type==='blank')assert.equal(q.code.split('____').length,2,'One masked span: '+q.id);
+  const reference=q.codeSource||q.source;
+  assert.equal(reference.file,original.source.file);assert.deepEqual(reference.page,original.source.page);
+}
+for(const [id,lines] of [['book-6-3-4',38],['book-6-3-5',40],['book-6-3-6',35]])assert.equal(codes.get(id).code.split('\n').length,lines,'Complete textbook example: '+id);
+assert.equal(theory.questions.find(q=>q.id==='th-q-w7-2').code,codes.get('book-6-3-5').code);
+for(const [qid,book] of [['th-q-w7-1','book-6-3-4'],['th-q-w7-3','book-6-3-6']])assert.equal(theory.questions.find(q=>q.id===qid).additionalCodeBlocks[0].code,codes.get(book).code);
+assert.equal(theory.questions.find(q=>q.id==='th-q-w7-1').answer,'1,2,4,0,3,1,5');
+assert.equal(theory.questions.find(q=>q.id==='th-q-w7-3').answer,'0 5 5 3 / 3 5 7 5 / 3 5 7 5 / 3 7 3 7');
+console.log(`Original-code checks passed: ${blanks} practice blanks reconstruct the source; ${outputs} practice result questions preserve the source; all three textbook examples and unchanged diagnostic matrix answers verified.`);

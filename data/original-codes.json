@@ -373,6 +373,48 @@
         "label": "PDF 9~10쪽"
       },
       "sha256": "0500c42927a8270c4a29c5434b8b5ccdf23332b7ea882e3a67ea8be8a7afd9bf"
+    },
+    {
+      "id": "book-6-3-4",
+      "title": "교재 예제 6.3.4 · hue_histogram.py",
+      "code": "import numpy as np, cv2\n\ndef make_palette(rows):                             # hue 채널 팔레트 행렬 생성 함수\n    ## 리스트 생성 방식\n    hue = [round(i * 180 / rows) for i in range(rows)]  # hue 값 리스트 계산\n    hsv = [[[h, 255, 255]] for h in hue]             # (hue,255,255) 화소값 계산\n    hsv = np.array(hsv, np.uint8)                   # 정수(uint8)형 행렬 변환\n    ## 반복문 방식\n    # hsv = np.full((rows, 1, 3), (255, 255, 255), np.uint8)\n    # for i in range(0, rows):                      # 행수만큼 반복\n    #    hue = round(i / rows * 180 )               # 색상 계산\n    #    hsv[i] = (hue, 255, 255)                   # HSV 컬러 지정\n\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)      # HSV 컬러→BGR 컬러\n\ndef draw_hist_hue(hist, shape=(200, 256, 3)):        # 색상 히스토그램 그리기 함수\n    hsv_palette = make_palette(hist.shape[0])       # 색상 팔레트 생성\n    hist_img = np.full(shape, 255, np.uint8)\n    cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX)  # 영상 높이값으로 정규화\n\n    gap = hist_img.shape[1] / hist.shape[0]         # 한 계급 크기\n    for i, h in enumerate(hist):\n        x, w = int(round(i * gap)), int(round(gap))\n        color = tuple(map(int, hsv_palette[i][0]))  # 정수형 튜플로 변환\n        cv2.rectangle(hist_img, (x, 0, w, int(h)), color, cv2.FILLED)  # 팔레트 색으로 그리기\n\n    return cv2.flip(hist_img, 0)\n\nimage = cv2.imread(\"images/hue_hist.jpg\", cv2.IMREAD_COLOR)  # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nhsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)      # BGR 컬러→HSV 컬러\nhue_hist = cv2.calcHist( [hsv_img], [0], None, [18], [0,180])  # Hue 채널 히스토그램 계산\nhue_hist_img = draw_hist_hue(hue_hist, (200, 360, 3)) # 히스토그램 그래프\n\ncv2.imshow(\"image\", image)\ncv2.imshow(\"hue_hist_img\", hue_hist_img)\ncv2.waitKey(0)",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          1,
+          2
+        ],
+        "label": "제공 이미지 1~2 · 교재 예제 6.3.4"
+      },
+      "sha256": "3e3836ac5a3e34d9b0a3c6f47d1d3db88bf0c9618d36eaed832b8fca9a30b292"
+    },
+    {
+      "id": "book-6-3-5",
+      "title": "교재 예제 6.3.5 · histogram_stretching.py",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 함수 재사용 위한 임포트\n\ndef search_value_idx(hist, bias=0):                 # 값있는 첫 계급 검색 함수\n    for i in range(hist.shape[0]):\n        idx = np.abs(bias - i)                      # 검색 위치(처음 또는 마지막)\n        if hist[idx] > 0: return idx                # 위치 반환\n    return -1                                      # 대상 없으면 반환\n\nimage = cv2.imread(\"images/hist_stretch.jpg\", cv2.IMREAD_GRAYSCALE)\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbsize, ranges = [64], [0,256]                        # 계급 개수 및 화소 범위\nhist = cv2.calcHist([image], [0], None, bsize, ranges)\n\nbin_width = ranges[1]/bsize[0]                      # 한 계급 너비\nlow = search_value_idx(hist, 0) * bin_width         # 최저 화소값\nhigh = search_value_idx(hist, bsize[0] - 1) * bin_width  # 최고 화소값\n\nidx = np.arange(0, 256)                             # 룩업 인덱스(0~255) 생성\nidx = (idx - low)/(high- low) * 255                 # 수식 적용하여 룩업 인덱스 완성\nidx[0:int(low)] = 0                                # 히스토그램 하위 부분\nidx[int(high+1):] = 255                            # 히스토그램 상위 부분\n\ndst = cv2.LUT(image, idx.astype('uint8'))            # 룩업 테이블 사용\n## 룩업 테이블 사용하지 않고 직접 구현\n# dst = np.zeros(image.shape, dtype=image.dtype)\n# for i in range(dst.shape[0]):\n#     for j in range(dst.shape[1]):\n#         dst[i,j] = idx[image[i,j]]\n\nhist_dst = cv2.calcHist([dst], [0], None, bsize, ranges)# 결과 영상 히스토그램 재계산\nhist_img = draw_histo(hist, (200,360))               # 원본 영상 히스토그램 그리기\nhist_dst_img = draw_histo(hist_dst, (200,360))        # 결과 영상 히스토그램 그리기\n\nprint(\"high_vlue =\", high)\nprint(\"low_vlue =\", low)\ncv2.imshow(\"image\", image);    cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst\", dst);        cv2.imshow(\"hist_dst_img\", hist_dst_img)\ncv2.waitKey(0)",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          3,
+          4
+        ],
+        "label": "제공 이미지 3~4 · 교재 예제 6.3.5"
+      },
+      "sha256": "4e9b41c5ffdc43cbcae6edc541c2a26f0e896d0b35b0f769501fa1c7e0f9ee26"
+    },
+    {
+      "id": "book-6-3-6",
+      "title": "교재 예제 6.3.6 · histogram_equalize.py",
+      "code": "import numpy as np, cv2\nfrom Common.histogram import draw_histo              # 히스토그램 그리기 함수 임포트\n\nimage = cv2.imread(\"images/equalize_test.jpg\", cv2.IMREAD_GRAYSCALE) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 오류\")\n\nbins, ranges = [256], [0, 256]\nhist = cv2.calcHist([image], [0], None, bins, ranges) # 히스토그램 계산\n\n## 히스토그램 누적합 계산\naccum_hist = np.zeros(hist.shape[:2], np.float32)\naccum_hist[0] = hist[0]\nfor i in range(1, hist.shape[0]):\n    accum_hist[i] = accum_hist[i - 1] + hist[i]\n\naccum_hist = (accum_hist / sum(hist)) * 255           # 누적합의 정규화\ndst1 = [[accum_hist[val] for val in row] for row in image] # 화소값 할당\ndst1 = np.array(dst1, np.uint8)\n\n##numpy 함수 및 OpenCV 룩업 테이블 사용\n# accum_hist = np.cumsum(hist)                      # 누적합 계산\n# cv2.normalize(accum_hist, accum_hist, 0, 255, cv2.NORM_MINMAX) # 정규화\n# dst1 = cv2.LUT(image, accum_hist.astype(\"uint8\"))   # 룩업 테이블로 화소값 할당\n\ndst2 = cv2.equalizeHist(image)                       # OpenCV 히스토그램 평활화\nhist1 = cv2.calcHist([dst1], [0], None, bins, ranges) # 히스토그램 계산\nhist2 = cv2.calcHist([dst2], [0], None, bins, ranges)\nhist_img = draw_histo(hist)\nhist_img1 = draw_histo(hist1)\nhist_img2 = draw_histo(hist2)\n\ncv2.imshow(\"image\", image);          cv2.imshow(\"hist_img\", hist_img)\ncv2.imshow(\"dst1_User\", dst1);       cv2.imshow(\"User_hist\", hist_img1)\ncv2.imshow(\"dst2_OpenCV\", dst2);     cv2.imshow(\"OpenCV_hist\", hist_img2)\ncv2.waitKey(0)",
+      "source": {
+        "file": "추가 교재 자료/7주차 교재 예제 코드 (제공 이미지 6장)",
+        "page": [
+          5,
+          6
+        ],
+        "label": "제공 이미지 5~6 · 교재 예제 6.3.6"
+      },
+      "sha256": "937d64ecf4a337098fcdcc7714e3f0673e346f5ada9abbcfa2039b5a488e2df7"
     }
   ]
 }
