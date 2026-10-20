@@ -1,0 +1,378 @@
+{
+  "snippets": [
+    {
+      "id": "ch4-ex01",
+      "title": "윈도우 이동 – 01.move_window.py",
+      "code": "import numpy as np                              # 넘파이 라이브러리 임포트\nimport cv2                                      # OpenCV 라이브러리 임포트\n\nimage = np.zeros((200, 400), np.uint8)            # 행렬 생성\nimage[:] = 200                                  # 밝은 회색(200) 바탕 영상 생성\n\ntitle1, title2 = 'Position1', 'Position2'         # 윈도우 이름\ncv2.namedWindow(title1, cv2.WINDOW_AUTOSIZE)      # 윈도우 생성 및 크기 조정 옵션\ncv2.namedWindow(title2)\ncv2.moveWindow(title1, 150, 150)                 # 윈도우 이동 - 위치 지정\ncv2.moveWindow(title2, 400, 50)\n\ncv2.imshow(title1, image)                        # 행렬 원소를 영상으로 표시\ncv2.imshow(title2, image)\ncv2.waitKey(0)                                   # 키 이벤트(key event) 대기\ncv2.destroyAllWindows()                          # 열린 모든 윈도우 파괴\n",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 5,
+        "label": "슬라이드 5 / 예제 01"
+      },
+      "sha256": "b064ffa168eb60a0c99d044cf4e64bb36c6410f232ff24d6669688ba8ab67447"
+    },
+    {
+      "id": "ch4-ex02",
+      "title": "윈도우의 크기 변경 – 02.window_resize.py",
+      "code": "import numpy as np\nimport cv2\n\nimage = np.zeros((200, 300), np.uint8)            # ndarray 행렬 생성\nimage.fill(255)                                 # 모든 원소에 255(흰색) 지정\n\ntitle1, title2 = 'AUTOSIZE', 'NORMAL'             # 윈도우 이름 변수\ncv2.namedWindow(title1, cv2.WINDOW_AUTOSIZE)      # 윈도우 생성 - 크기 변경 불가\ncv2.namedWindow(title2, cv2.WINDOW_NORMAL)        # 크기 변경 가능\n\ncv2.imshow(title1, image)                        # 행렬 원소를 영상으로 표시\ncv2.imshow(title2, image)\ncv2.resizeWindow(title1, 400, 300)               # 윈도우 크기 변경\ncv2.resizeWindow(title2, 400, 300)\ncv2.waitKey(0)                                   # 키 이벤트(key event) 대기\ncv2.destroyAllWindows()                          # 열린 모든 윈도우 제거\n",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 7,
+        "label": "슬라이드 7 / 예제 02"
+      },
+      "sha256": "d0b6dd5c7f97faf8ceeba0c4b8ce6e9dba41f817e9dd83a18fea4273a22ef3fb"
+    },
+    {
+      "id": "ch4-ex03",
+      "title": "키 이벤트 사용 – 03.event_key.py",
+      "code": "import numpy as np\nimport cv2\n\n## switch case문을 사전(dictionary)으로 구현\nswitch_case = {\n    ord('a'): \"a키 입력\",                        # ord() 함수: 문자 → 아스키코드 변환\n    ord('b'): \"b키 입력\",\n    0x41: \"A키 입력\",\n    int('0x42', 16): \"B키 입력\",                 # 0x42(16진수) → 10진수 변환\n    2424832: \"왼쪽 화살표키 입력\",               # 0x250000\n    2490368: \"윗쪽 화살표키 입력\",               # 0x260000\n    2555904: \"오른쪽 화살표키 입력\",             # 0x270000\n    2621440: \"아래쪽 화살표키 입력\"              # 0x280000\n}\n\nimage = np.ones((200, 300), np.float)            # 원소값 1인 행렬 생성\ncv2.namedWindow('Keyboard Event')                # 윈도우 이름\ncv2.imshow(\"Keyboard Event\", image)\n\nwhile True:                                     # 무한 반복\n    key = cv2.waitKeyEx(100)                     # 100ms 동안 키 이벤트 대기\n    if key == 27: break                         # ESC 키 누르면 종료\n\n    try:\n        result = switch_case[key]\n        print(result)\n    except KeyError:\n        result = -1\n\ncv2.destroyAllWindows()                          # 열린 모든 윈도우 제거\n",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 11,
+        "label": "슬라이드 11 / 예제 03"
+      },
+      "sha256": "6bf3408e85ab87a3832295a316d9a1098cb47872165b30d4f566ec53b5ff85e3"
+    },
+    {
+      "id": "ch4-ex04",
+      "title": "마우스 이벤트 사용 – 04.event_mouse.py",
+      "code": "import numpy as np\nimport cv2\n\ndef onMouse(event, x, y, flags, param):           # 콜백 함수 - 이벤트 내용 출력\n    if event == cv2.EVENT_LBUTTONDOWN:\n        print(\"마우스 왼쪽 버튼 누르기\")\n    elif event == cv2.EVENT_RBUTTONDOWN:\n        print(\"마우스 오른쪽 버튼 누르기\")\n    elif event == cv2.EVENT_RBUTTONUP:\n        print(\"마우스 오른쪽 버튼 떼기\")\n    elif event == cv2.EVENT_LBUTTONDBLCLK:\n        print(\"마우스 왼쪽 버튼 더블클릭\")\n\nimage = np.full((200, 300), 255, np.uint8)        # 초기 영상 생성\n\ntitle1, title2 = \"Mouse Event1\", \"Mouse Event2\"   # 윈도우 이름\ncv2.imshow(title1, image)                        # 윈도우 보기\ncv2.imshow(title2, image)\n\ncv2.setMouseCallback(title1, onMouse)            # 마우스 콜백 함수\ncv2.waitKey(0)                                   # 키 이벤트 대기\ncv2.destroyAllWindows()                          # 열린 모든 윈도우 제거",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 14,
+        "label": "슬라이드 14 / 예제 04"
+      },
+      "sha256": "ab7811ea665f409888024f3538f50515f9245e7df71f93af92dfefb5391ed2a0"
+    },
+    {
+      "id": "ch4-ex05",
+      "title": "트랙바 이벤트 사용 – 05.event_trackbar.py",
+      "code": "import numpy as np\nimport cv2\n\ndef onChange(value):                            # 트랙바 콜백 함수\n    global image, title                         # 전역 변수 참조\n\n    add_value = value - int(image[0][0])         # 트랙바 값과 영상 화소값 차분\n    print(\"추가 화소값:\", add_value)\n    image = image + add_value                   # 행렬과 스칼라 덧셈 수행\n    cv2.imshow(title, image)\n\nimage = np.zeros((300, 500), np.uint8)           # 영상 생성\n\ntitle = 'Trackbar Event'\ncv2.imshow(title, image)\n\ncv2.createTrackbar('Brightness', title, image[0][0], 255, onChange)  # 트랙바 콜백 함수 등록\ncv2.waitKey(0)\ncv2.destroyAllWindows()                          # 열린 모든 윈도우 제거",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 18,
+        "label": "슬라이드 18 / 예제 05"
+      },
+      "sha256": "a730dba299f4378de2e5ff121604ee0241ba2fe98ebbb1f72a375f169596e084"
+    },
+    {
+      "id": "ch4-ex06",
+      "title": "마우스 및 트랙바 이벤트 사용 – 06.event_mouse_trackbar.py",
+      "code": "import numpy as np\nimport cv2\n\ndef onChange(value): ...                        # 트랙바 콜백 함수 - 소스 표시 생략\n\ndef onMouse(event, x, y, flags, param):           # 마우스 콜백 함수\n    global image, bar_name                      # 전역 변수 참조\n\n    if event == cv2.EVENT_RBUTTONDOWN:           # 마우스 우버튼\n        if (image[0][0] < 246): image = image + 10\n        cv2.setTrackbarPos(bar_name, title, image[0][0])  # 트랙바 위치 변경\n        cv2.imshow(title, image)\n\n    elif event == cv2.EVENT_LBUTTONDOWN:         # 마우스 좌버튼\n        if (image[0][0] >= 10):\n            image = image - 10\n        cv2.setTrackbarPos(bar_name, title, image[0][0])  # 트랙바 위치 변경\n        cv2.imshow(title, image)\n\nimage = np.zeros((300, 500), np.uint8)\ntitle = \"Trackbar & Mouse Event\"                # 윈도우 이름\nbar_name = 'Brightness'                         # 트랙바 이름\ncv2.imshow(title, image)\n\ncv2.createTrackbar(bar_name, title, image[0][0], 255, onChange)  # 트랙바 콜백 함수\ncv2.setMouseCallback(title, onMouse)             # 마우스 콜백 함수 등록\ncv2.waitKey(0)                                   # 키 입력 대기\ncv2.destroyAllWindows()                          # 모든 윈도우 닫기",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 20,
+        "label": "슬라이드 20 / 심화 예제 06"
+      },
+      "sha256": "4c765a1c69c8455438c0e2b8677fb40d7584467c45f9e8b984d0b3805674ef94"
+    },
+    {
+      "id": "ch4-ex07",
+      "title": "직선 & 사각형 그리기 – 07.draw_line_rect.py",
+      "code": "import numpy as np\nimport cv2\n\nblue, green, red = (255, 0, 0), (0, 255, 0), (0, 0, 255)  # 색상 선언\nimage = np.zeros((400, 600, 3), np.uint8)         # 3채널 컬러 영상 생성\nimage[:] = (255, 255, 255)                       # 3채널 흰색\n\npt1, pt2 = (50, 50), (250, 150)                  # 좌표 선언 - 정수형 튜플\npt3, pt4 = (400, 150), (500, 50)\nroi = (50, 200, 200, 100)                        # 사각형 영역 - 4원소 튜플\n\n## 직선 그리기\ncv2.line(image, pt1, pt2, red)\ncv2.line(image, pt3, pt4, green, 3, cv2.LINE_AA)   # 계단 현상 감소선\n\n## 사각형 그리기\ncv2.rectangle(image, pt1, pt2, blue, 3, cv2.LINE_4)  # 4방향 연결선\ncv2.rectangle(image, roi, red, 3, cv2.LINE_8 )     # 8방향 연결선\ncv2.rectangle(image, (400, 200, 100, 100), green, cv2.FILLED)  # 내부 채움\n\ncv2.imshow(\"Line & Rectangle\", image)            # 윈도우에 영상 표시\ncv2.waitKey(0)\ncv2.destroyAllWindows()                          # 모든 열린 윈도우 닫기",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 23,
+        "label": "슬라이드 23 / 예제 07"
+      },
+      "sha256": "13d3122dde3bf472fea425b1fc4423471f17443a27460d6c0b8bea5f85898577"
+    },
+    {
+      "id": "ch4-ex08",
+      "title": "글자 쓰기 – 08.put_text.py",
+      "code": "import numpy as np\nimport cv2\n\nolive, violet, brown = (128, 128, 0), (221, 160, 221), (42, 42, 165)  # 색상 지정\npt1, pt2 = (50, 230), (50, 310)                  # 문자열 위치 좌표\n\nimage = np.zeros((350, 500, 3), np.uint8)\nimage.fill(255)\n\ncv2.putText(image, 'SIMPLEX', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, brown)\ncv2.putText(image, 'DUPLEX', (50, 130), cv2.FONT_HERSHEY_DUPLEX, 3, olive)\ncv2.putText(image, 'TRIPLEX', pt1, cv2.FONT_HERSHEY_TRIPLEX, 2, violet)\nfontFace = cv2.FONT_HERSHEY_PLAIN | cv2.FONT_ITALIC  # 글꼴체 상수\ncv2.putText(image, 'ITALIC', pt2, fontFace, 4, violet)\n\ncv2.imshow('Put Text', image)                    # 윈도우 이름 지정 및 영상 표시\ncv2.waitKey(0)                                   # 키 이벤트 대기",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 27,
+        "label": "슬라이드 27 / 예제 08"
+      },
+      "sha256": "cf1e4e306a27fbd19fc3bde027a5f9a1bc87bdd0d622c9f26932c309fbeee3ff"
+    },
+    {
+      "id": "ch4-ex09",
+      "title": "원 그리기 – 09.draw_circle.py",
+      "code": "import numpy as np\nimport cv2\n\norange, blue, cyan = (0, 165, 255), (255, 0, 0), (255, 255, 0)\nwhite, black = (255, 255, 255), (0, 0, 0)\nimage = np.full((300, 500, 3), white, np.uint8)   # 컬러 영상 생성 및 초기화\n\ncenter = (image.shape[1]//2, image.shape[0]//2)   # 영상 중심 좌표 - 역순 구성\npt1, pt2 = (300, 50), (100, 220)\nshade = (pt2[0] + 2, pt2[1] + 2)                # 그림자 좌표\n\ncv2.circle(image, center, 100, blue)             # 원 그리기\ncv2.circle(image, pt1, 50, orange, 2)\ncv2.circle(image, pt2, 70, cyan, -1)              # 원 내부 채움\n\nfont = cv2.FONT_HERSHEY_COMPLEX;\ncv2.putText(image, 'center_blue', center, font, 1.0, blue)\ncv2.putText(image, 'pt1_orange', pt1, font, 0.8, orange)\ncv2.putText(image, 'pt2_cyan', shade, font, 1.2, black, 2)  # 그림자 효과\ncv2.putText(image, 'pt2_cyan', pt2, font, 1.2, cyan, 1)\n\ncv2.imshow(\"Draw circles\", image)\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 30,
+        "label": "슬라이드 30 / 예제 09"
+      },
+      "sha256": "eda0022f62f1d4b16b8a4eeae0380ea463b3029de08c93f12f51f5bb65c6a224"
+    },
+    {
+      "id": "ch4-ex10",
+      "title": "타원 및 호 그리기 – 10.draw_ellipse.py",
+      "code": "import numpy as np\nimport cv2\n\norange, blue, white = (0, 165, 255), (255, 0, 0), (255,255,255)  # 색상 지정\nimage = np.full((300, 700, 3), white, np.uint8)   # 3채널 행렬 생성 및 초기화\n\npt1, pt2 = (180, 150), (550, 150)                # 타원 중심점\nsize = (120, 60)                                # 타원 크기 - 반지름 값임\n\ncv2.circle(image, pt1, 1, 0, 2)                  # 타원의 중심점(2화소 원) 표시\ncv2.circle(image, pt2, 1, 0, 2)\n\ncv2.ellipse(image, pt1, size, 0, 0, 360, blue, 1)  # 타원 그리기\ncv2.ellipse(image, pt2, size, 90, 0, 360, blue, 1)\ncv2.ellipse(image, pt1, size, 0, 30, 270, orange, 4)  # 호 그리기\ncv2.ellipse(image, pt2, size, 90, -45, 90, orange, 4)\n\ncv2.imshow(\"문자열\", image)\ncv2.waitKey()                                    # 키입력 대기",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 34,
+        "label": "슬라이드 34 / 예제 10"
+      },
+      "sha256": "9d787d42e7f7b2ac6c76e98dfcc18d4d3795b3fff000f4688838a6e044a4d460"
+    },
+    {
+      "id": "ch4-ex11",
+      "title": "마우스 이벤트 및 그리기 종합 – 11.event_draw.py",
+      "code": "import numpy as np\nimport cv2\n\ndef onMouse(event, x, y, flags, param):\n    global title, pt                            # 전역 변수 참조\n\n    if event == cv2.EVENT_LBUTTONDOWN:\n        if pt[0] < 0: pt = (x, y)               # 시작 좌표 지정\n        else:\n            cv2.rectangle(image, pt, (x, y), (255, 0, 0), 2)  # 파란색 사각형\n            cv2.imshow(title, image)\n            pt = (-1, -1)                      # 시작 좌표 초기화\n\n    elif event == cv2.EVENT_RBUTTONDOWN:\n        if pt[0] < 0: pt = (x, y)\n        else:\n            dx, dy = pt[0] - x, pt[1] - y       # 두 좌표 간 간격\n            radius = int(np.sqrt(dx*dx + dy*dy))\n            cv2.circle(image, pt, radius, (0, 0, 255), 2)  # 빨간색 원\n            cv2.imshow(title, image)\n            pt = (-1, -1)                      # 시작 좌표 초기화\n\nimage = np.full((300, 500, 3), (255, 255, 255), np.uint8)  # 흰색 배경 영상\n\npt = (-1, -1)                                  # 시작 좌표 초기화\ntitle = \"Draw Event\"\ncv2.imshow(title, image)\ncv2.setMouseCallback(title, onMouse)             # 마우스 콜백 함수 등록\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 36,
+        "label": "슬라이드 36 / 심화 예제 11"
+      },
+      "sha256": "33f16d3176b66a5f3702dc2039afbdaa4fe4c38bfa2a63cf2d5ff0a2895fe6f9"
+    },
+    {
+      "id": "ch4-ex12",
+      "title": "영상파일 읽기1 – 12.read_image1.py",
+      "code": "import cv2\n\ndef print_matInfo(name, image):                    # 행렬 정보 출력 함수\n    if image.dtype == 'uint8':    mat_type = 'CV_8U'\n    elif image.dtype == 'int8':   mat_type = 'CV_8S'\n    elif image.dtype == 'uint16': mat_type = 'CV_16U'\n    elif image.dtype == 'int16':  mat_type = 'CV_16S'\n    elif image.dtype == 'float32': mat_type = 'CV_32F'\n    elif image.dtype == 'float64': mat_type = 'CV_64F'\n    nchannel = 3 if image.ndim == 3 else 1\n\n    ## depth, channel 출력\n    print(\"%12s: depth(%s), channels(%s) -> mat_type(%sC%d)\"\n        % (name, image.dtype, nchannel, mat_type, nchannel))\n\ntitle1, title2 = 'gray2gray', 'gray2color'             # 윈도우 이름\ngray2gray = cv2.imread(\"images/read_gray.jpg\", cv2.IMREAD_GRAYSCALE)    # 명암도\ngray2color = cv2.imread(\"images/read_gray.jpg\", cv2.IMREAD_COLOR)        # 컬러 영상\n\n## 예외처리 - 영상파일 읽기 여부 조사\nif gray2gray is None or gray2color is None :\n    raise Exception(\"영상파일 읽기 에러\")\n\nprint(\"행렬 좌표 (100, 100) 화소값\")\nprint(\"%s %s\" % (title1, gray2gray[100, 100]))       # 행렬 내 한 화소값 표시\nprint(\"%s %s\\n\" % (title2, gray2color[100, 100]))\n\nprint_matInfo(title1, gray2gray)                       # 행렬 정보 출력 함수 호출\nprint_matInfo(title2, gray2color)\n\ncv2.imshow(title1, gray2gray)                          # 행렬 정보를 영상으로 띄우기\ncv2.imshow(title2, gray2color)\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 40,
+        "label": "슬라이드40~41 / 예제12"
+      },
+      "sha256": "8d2472d9d3bd0021b6f96fc4ca0a7ee3253361fa276a6cf257f58c0dfda4c827"
+    },
+    {
+      "id": "ch4-ex13",
+      "title": "영상파일 읽기(컬러) – 13.read_image2.py",
+      "code": "import cv2\nfrom Common.utils import print_matInfo              # 행렬 정보 출력 함수 임포트\n\ntitle1, title2 = 'color2gray', 'color2color'\ncolor2gray = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_GRAYSCALE)\ncolor2color = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif color2gray is None or color2color is None:         # 예외처리\n    raise Exception(\"영상파일 읽기 에러\")\n\nprint(\"행렬 좌표(100, 100) 화소값\")\nprint(\"%s %s\" % (title1, color2gray[100, 100]))       # 한 화소값 표시\nprint(\"%s %s\\n\" % (title2, color2color[100, 100]))\n\nprint_matInfo(title1, color2gray)                      # 행렬 정보 출력\nprint_matInfo(title2, color2color)\ncv2.imshow(title1, color2gray)                         # 행렬 정보 영상으로 띄우기\ncv2.imshow(title2, color2color)\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 43,
+        "label": "슬라이드43 / 예제13"
+      },
+      "sha256": "334e28bca66c27fa3781b941f8899d3e400e1d8d072d086e9b09d2e69e2e3e78"
+    },
+    {
+      "id": "ch4-ex14",
+      "title": "영상파일 읽기 – 14.read_image3.py",
+      "code": "import cv2\nfrom Common.utils import print_matInfo                 # 행렬 정보 출력 함수 임포트\n\ntitle1, title2 = '16bit unchanged', '32bit unchanged'   # 윈도우 이름\ncolor2unchanged1 = cv2.imread(\"images/read_16.tif\", cv2.IMREAD_UNCHANGED)\ncolor2unchanged2 = cv2.imread(\"images/read_32.tif\", cv2.IMREAD_UNCHANGED)\nif color2unchanged1 is None or color2unchanged2 is None:  # 영상파일 예외처리\n    raise Exception(\"영상파일 읽기 에러\")\n\nprint(\"16/32비트 영상 행렬 좌표(10, 10) 화소값\")\nprint(title1, '원소 자료형 ', type(color2unchanged1[10][10][0]))  # 원소 자료형\nprint(title1, '화소값(3원소) ', color2unchanged1[10, 10] )      # 한 화소 값 표시\nprint(title2, '원소 자료형 ', type(color2unchanged2[10][10][0]))\nprint(title2, '화소값(3원소) ', color2unchanged2[10, 10] )\nprint()\n\nprint_matInfo(title1, color2unchanged1)                    # 행렬 정보 출력\nprint_matInfo(title2, color2unchanged2)\ncv2.imshow(title1, color2unchanged1)                       # 16비트 정수형 행렬 영상 표시\ncv2.imshow(title2, (color2unchanged2*255).astype(\"uint8\"))   # 정수형 변환 후 표시\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 45,
+        "label": "슬라이드45 / 예제14"
+      },
+      "sha256": "3d3c8ddbb045e5d726fe927bb70fb32a9f4e583adedd59e5fdae6429def0e005"
+    },
+    {
+      "id": "ch4-ex15",
+      "title": "행렬 영상 저장 – 15.write_image1.py",
+      "code": "import cv2\n\nimage = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif image is None: raise Exception(\"영상파일 읽기 에러\")   # 예외처리\n\nparams_jpg = (cv2.IMWRITE_JPEG_QUALITY, 10)               # JPEG 화질 설정\nparams_png = [cv2.IMWRITE_PNG_COMPRESSION, 9]             # PNG 압축 레벨 설정\n\n## 행렬을 영상파일로 저장\ncv2.imwrite(\"images/write_test1.jpg\", image)              # 디폴트는 95\ncv2.imwrite(\"images/write_test2.jpg\", image, params_jpg)  # 지정한 화질로 저장\ncv2.imwrite(\"images/write_test3.png\", image, params_png)\ncv2.imwrite(\"images/write_test4.bmp\", image)              # BMP 파일로 저장\nprint(\"저장 완료\")",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 48,
+        "label": "슬라이드48 / 예제15"
+      },
+      "sha256": "b03e421dcb71b1c4592d60993be15a2fb47ee8d4a5a7c38252acf0162d195564"
+    },
+    {
+      "id": "ch4-ex16",
+      "title": "행렬 영상 저장 – 16.write_image2.py",
+      "code": "import numpy as np\nimport cv2\n\nimage8 = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif image8 is None: raise Exception(\"영상파일 읽기 에러\")   # 영상파일 예외처리\n\nimage16 = np.uint16(image8 * (65535/255))                # 형변환 및 화소 스케일 조정\nimage32 = np.float32(image8 * (1/255))\n\n## 화소값 확인 – 관심 영역((10, 10) 위치에서 2행, 3열) 출력\nprint(\"image8 행렬의 일부\\n %s\\n\" % image8[10:12, 10:13])\nprint(\"image16 행렬의 일부\\n %s\\n\" % image16[10:12, 10:13])\nprint(\"image32 행렬의 일부\\n %s\\n\" % image32[10:12, 10:13])\n\ncv2.imwrite('images/write_test_16.tif', image16)          # 16비트 행렬 저장\ncv2.imwrite('images/write_test_32.tif', image32)          # 32비트 행렬 저장\n\ncv2.imshow('image16', image16)                          # 영상 표시\ncv2.imshow('image32', (image32*255).astype('uint8'))\ncv2.waitKey(0)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 50,
+        "label": "슬라이드50 / 예제16"
+      },
+      "sha256": "866aca857e6c5ace9fb02aa8370f8c06db19d2dad474f3cc291de1c9ac31b786"
+    },
+    {
+      "id": "ch4-ex17",
+      "title": "카메라 프레임 읽기 – 17.read_pccamera.py",
+      "code": "import cv2\n\ndef put_string(frame, text, pt, value, color=(120, 200, 90) ):  # 문자열 출력 함수\n    text += str(value)\n    shade = (pt[0] + 2, pt[1] + 2)\n    font = cv2.FONT_HERSHEY_SIMPLEX\n    cv2.putText(frame, text, shade, font, 0.7, (0, 0, 0), 2)    # 그림자 효과\n    cv2.putText(frame, text, pt   , font, 0.7, color, 2)        # 글자 적기\n\ncapture = cv2.VideoCapture(0)                               # 0번 카메라 연결\nif capture.isOpened() == False:                             # 카메라 연결 예외처리\n    raise Exception(\"카메라 연결 안됨\")\n\n## 카메라 속성 획득 및 출력\nprint(\"너비 %d\" % capture.get(cv2.CAP_PROP_FRAME_WIDTH))\nprint(\"높이 %d\" % capture.get(cv2.CAP_PROP_FRAME_HEIGHT))\nprint(\"노출 %d\" % capture.get(cv2.CAP_PROP_EXPOSURE))\nprint(\"밝기 %d\" % capture.get(cv2.CAP_PROP_BRIGHTNESS))\n\nwhile True                                                 # 무한 반복\n    ret, frame = capture.read()                             # 카메라 영상 받기\n    if not ret: break\n    if cv2.waitKey(30) >= 0: break                          # 종료 조건 – 스페이스바 키\n\n    exposure = capture.get(cv2.CAP_PROP_EXPOSURE)            # 노출 속성 획득\n    put_string(frame, 'EXPOS: ', (10, 40), exposure)\n    title = \"View Frame from Camera\"\n    cv2.imshow(title, frame)                                # 윈도우에 영상 띄우기\ncapture.release()",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 57,
+        "label": "슬라이드57~58 / 예제17"
+      },
+      "sha256": "46b64d578b3011125bdb3eb89f59d47d027821abf45b4dd256b69e47536ad4d1"
+    },
+    {
+      "id": "ch4-ex18",
+      "title": "카메라 속성 설정 – 18.set_camera_attr.py",
+      "code": "import cv2\nfrom Common.utils import put_string                      # 함수 재사용 위한 임포트\n\ndef zoom_bar(value):                                     # 줌 조절 콜백 함수\n    global capture\n    capture.set(cv2.CAP_PROP_ZOOM, value)                 # 줌 설정\n\ndef focus_bar(value):                                    # 초점조절 콜백 함수\n    global capture\n    capture.set(cv2.CAP_PROP_FOCUS, value)\n\ncapture = cv2.VideoCapture(0)                             # 0번 카메라 연결\nif capture.isOpened() == False: raise Exception(\"카메라 연결 안됨\")  # 예외처리\n\ncapture.set(cv2.CAP_PROP_FRAME_WIDTH, 400)                 # 카메라 프레임 너비\ncapture.set(cv2.CAP_PROP_FRAME_HEIGHT, 300)                # 카메라 프레임 높이\ncapture.set(cv2.CAP_PROP_AUTOFOCUS, 0)                     # 자동초점 중지\ncapture.set(cv2.CAP_PROP_BRIGHTNESS, 100)                  # 프레임 밝기 초기화\n\ntitle = \"Change Camera Properties\"                       # 윈도우 이름 지정\ncv2.namedWindow(title)                                   # 윈도우 생성\ncv2.createTrackbar('zoom', title, 0, 10, zoom_bar)          # 줌 트랙바\ncv2.createTrackbar('focus', title, 0, 40, focus_bar)        # 포커스 트랙바\n\nwhile True:\n    ret, frame = capture.read()                          # 카메라 영상 받기\n    if not ret: break\n    if cv2.waitKey(30) >= 0: break\n\n    zoom = int(capture.get(cv2.CAP_PROP_ZOOM))             # 카메라 속성 가져오기\n    focus = int(capture.get(cv2.CAP_PROP_FOCUS))\n    put_string(frame, 'zoom : ', (10, 240), zoom)          # 줌 값 표시\n    put_string(frame, 'focus : ', (10, 270), focus)        # 초점 값 표시\n    cv2.imshow(title, frame)\n\ncapture.release()                                       # 비디오 캡처 메모리 해제",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 62,
+        "label": "슬라이드62~63 / 예제18"
+      },
+      "sha256": "98a23c414b0c5a3924f6c7268b3e5a9c16cda85373fb523a04264000ad4eb727"
+    },
+    {
+      "id": "ch4-ex19",
+      "title": "카메라 프레임을 동영상파일로 저장 – 19.write_camera_frame.py",
+      "code": "import cv2\n\ncapture = cv2.VideoCapture(0)                             # 0번 카메라 연결\nif capture.isOpened() == False: raise Exception(\"카메라 연결 안됨\")\n\nfps = 29.97                                              # 초당 프레임 수\ndelay = round(1000/fps)                                   # 프레임 간 지연 시간\nsize = (640, 360)                                        # 동영상파일 해상도\nfourcc = cv2.VideoWriter_fourcc(*'DX50')                  # 압축 코덱 설정\n\n## 카메라 속성 실행창에 출력\nprint(\"width × height: \", size )\nprint(\"VideoWriterfourcc: %s\" % fourcc)\nprint(\"delay: %2d ms\" % delay)\nprint(\"fps: %.2f\" % fps)\n\ncapture.set(cv2.CAP_PROP_ZOOM, 1)                         # 카메라 속성 지정\ncapture.set(cv2.CAP_PROP_FOCUS, 0)\ncapture.set(cv2.CAP_PROP_FRAME_WIDTH, size[0]) # 해상도 설정\ncapture.set(cv2.CAP_PROP_FRAME_HEIGHT, size[1])\n\n## 동영상파일 개방 및 코덱, 해상도 설정\nwriter = cv2.VideoWriter(\"images/video_file.avi\", fourcc, fps, size)\nif writer.isOpened() == False: raise Exception(\"동영상파일 개방 안됨\")\n\nwhile True:\n    ret, frame = capture.read()                          # 카메라 영상 받기\n    if not ret: break\n    if cv2.waitKey(delay) >= 0: break\n\n    writer.write(frame)                                 # 프레임을 동영상으로 저장\n    cv2.imshow(\"View Frame from Camera\", frame)\n\nwriter.release()\ncapture.release()",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 65,
+        "label": "슬라이드65~66 / 예제19"
+      },
+      "sha256": "75d168367a375e88ed0e155160159e8440cd6b0bfed42c9c788b7f46f89a4518"
+    },
+    {
+      "id": "ch4-ex20",
+      "title": "동영상파일 읽기 – 20.read_video_file.py",
+      "code": "import cv2\nfrom Common.utils import put_string                      # 글쓰기 함수 임포트\n\ncapture = cv2.VideoCapture(\"images/video_file.avi\")       # 동영상파일 개방\nif not capture.isOpened(): raise Exception(\"동영상파일 개방 안됨\")   # 예외 처리\n\nframe_rate = capture.get(cv2.CAP_PROP_FPS)                 # 초당 프레임 수\ndelay = int(1000 / frame_rate)                            # 지연 시간\nframe_cnt = 0                                            # 현재 프레임 번호\n\nwhile True:\n    ret, frame = capture.read()\n    if not ret or cv2.waitKey(delay) >= 0: break           # 프레임 간 지연 시간 지정\n    blue, green, red = cv2.split(frame)                   # 컬러 영상 채널 분리\n    frame_cnt += 1\n\n    if 100 <= frame_cnt < 200: cv2.add(blue, 100, blue)    # blue 채널 밝기 증가\n    elif 200 <= frame_cnt < 300: cv2.add(green, 100, green) # green 채널 밝기 증가\n    elif 300 <= frame_cnt < 400: cv2.add(red, 100, red)    # red 채널 밝기 증가\n\n    frame = cv2.merge( [blue, green, red] )                # 단일채널 영상 합성\n    put_string(frame, 'frame_cnt: ', (20, 30), frame_cnt)\n    cv2.imshow(\"Read Video File\", frame)\ncapture.release()",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 73,
+        "label": "슬라이드73~74 / 예제20"
+      },
+      "sha256": "8bd6a744cef93b4761850afb685f18b3659d2cbcd2d54d3826b96f7b5fbc300b"
+    },
+    {
+      "id": "ch4-ex21",
+      "title": "Matplotlib 라이브러리로 영상 표시 – 21.matplotlib.py",
+      "code": "import cv2\nimport matplotlib.pyplot as plt                          # pyplot 모듈 임포트\n\nimage = cv2.imread(\"images/matplot.jpg\", cv2.IMREAD_COLOR) # 영상 읽기\nif image is None: raise Exception(\"영상파일 읽기 에러\")    # 예외처리\n\nrows, cols = image.shape[:2]                             # 영상 크기 정보\nrgb_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)           # 컬러 공간변환\ngray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)         # 명암도 영상 변환\n\nfig = plt.figure(num=1, figsize=(3,4))                    # 그림 생성\nplt.imshow(image), plt.title('figure1- original(bgr)')    # 그림표시 및 제목\nplt.axis('off'), plt.tight_layout()                      # 축 없음, 여백 없음\n\nfig = plt.figure(figsize=(6,4))                          # 그림 생성\nplt.suptitle('figure2- pyplot image display')             # 전체 제목 지정\nplt.subplot(1,2,1), plt.imshow(rgb_img)                   # 서브 플롯 그림\nplt.axis([0,cols, rows,0]), plt.title('rgb color')         # 축 범위, 서브 플롯 제목\nplt.subplot(1,2,2), plt.imshow(gray_img, cmap='gray')      # 서브 플롯 그림, 명암도 표시\nplt.title('gray_img2')\nplt.show()                                              # 전체 그림 띄우기",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 81,
+        "label": "슬라이드81 / 예제21"
+      },
+      "sha256": "1d694a3ebccca7da609b5dd5076f2f9d5ad267d14767aa116758ddf8bd806fdb"
+    },
+    {
+      "id": "ch4-ex22",
+      "title": "서브플롯 그리기 및 보간 적용 – 22.interpolation.py",
+      "code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nmethods = ['none', 'nearest', 'bilinear', 'bicubic', 'spline16', 'spline36' ] # 보간 방법\ngrid = np.random.rand(5, 5)                              # 0~1사이 임의 난수 생성\n\nfig, axs = plt.subplots(nrows=2, ncols=3, figsize=(8, 6))  # 서브 플롯들 생성\n\nfor ax, method in zip(axs.flat, methods):                # 서브 플롯 순회\n    ax.imshow(grid, interpolation=method, cmap='gray')   # 명암도 영상 표시\n    ax.set_title(method)                                # 서브 플롯 제목\nplt.tight_layout(), plt.show()                          # 여백 없음, 윈도우 띄움",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 83,
+        "label": "슬라이드83 / 예제22"
+      },
+      "sha256": "ba628398d093346493e6280b51f4e752ce86cfb4582699e5ef40432eedca4914"
+    },
+    {
+      "id": "ch4-ex23",
+      "title": "그래프 그리기 – 23.plot.py",
+      "code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.arange(10)                                       # x축 데이터\ny1 = np.arange(10)                                      # y축 데이터\ny2 = np.arange(10)**2\ny3 = np.random.choice(50, size=10)\n\nplt.figure(figsize=(5,3))                               # 그림 객체 생성 – 그래프 크기(단위inch)\nplt.plot(x, y1, 'b--', linewidth=2)                      # 선 스타일 지정 – 파란색, 파선\nplt.plot(x, y2, 'go-', linewidth=3)                      # 녹색, 원 마크, 실선\nplt.plot(x, y3, 'c+:', linewidth=5)                      # 청록색, +마크, 점선\n\nplt.title('Line examples')                              # 그래프 제목\nplt.axis([0,10, 0,80])                                  # 축 범위\nplt.tight_layout()\nplt.savefig(fname='sample.png', dpi=300)                 # 그림 저장\nplt.show()                                              # 윈도우 표시",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 85,
+        "label": "슬라이드85 / 예제23"
+      },
+      "sha256": "195d6d525ace2307aabc231bcf7e8fe0b7f67bc9119a124324f87d77b00cd207"
+    },
+    {
+      "id": "ch4-fragment-puttext-form",
+      "title": "putText 형식 설명의 호출 단편",
+      "code": "putText(image, \"DUPLEX\", pt1, FONT_HERSHEY_DUPLEX, 2, Scalar,(128, 128, 0));\nputText(image, \"TRIPLEX\", pt2, FONT_HERSHEY_TRIPLEX, 3, Scalar,(221, 160, 221));",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 25,
+        "label": "슬라이드 25 / 형식 설명 단편"
+      },
+      "sha256": "b47c325fce2c60d1752fa2b11a116c4109999fe3255ad2c94d8c340e783f4fe6"
+    },
+    {
+      "id": "ch4-fragment42",
+      "title": "Common/utils.py에 배치한 print_matInfo 함수 코드 단편",
+      "code": "import numpy as np\nimport cv2, time\n\ndef print_matInfo(name, image):                          # 행렬 정보 출력 함수\n\n    if image.dtype == 'uint8':    mat_type = \"CV_8U\"\n    elif image.dtype == 'int8':   mat_type = \"CV_8S\"\n    elif image.dtype == 'uint16': mat_type = \"CV_16U\"\n    elif image.dtype == 'int16':  mat_type = \"CV_16S\"\n    elif image.dtype == 'float32': mat_type = \"CV_32F\"\n    elif image.dtype == 'float64': mat_type = \"CV_64F\"\n    nchannel = 3 if image.ndim == 3 else 1\n\n    # depth, channel 출력\n    print(\"%12s: depth(%s), channels(%s) -> mat_type(%sC%d)\"\n        % (name, image.dtype, nchannel, mat_type, nchannel))",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 42,
+        "label": "슬라이드42 / Common/utils.py 코드 단편"
+      },
+      "sha256": "0a61319cebc7d879ba98414e93fc95eb91e0a7b9e690cfed82b2696fecfdf31d"
+    },
+    {
+      "id": "ch4-fragment60",
+      "title": "동영상 파일 열기·속성 획득·FPS에 맞춘 재생 코드 단편",
+      "code": "# 동영상 파일 열기\ncapture = cv2.VideoCapture(\"images/video_file.avi\")\n\nif capture.isOpened() == False:\n    raise Exception(\"동영상 파일 개방 안됨\")\n\n\n# 동영상 파일 속성 획득\nwidth = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))\nheight = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))\nfps = capture.get(cv2.CAP_PROP_FPS)\nframe_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))\n\n# 프레임 간 재생 시간\ndelay = round(1000 / fps)\n\n\n# 동영상 속성 출력\nprint(\"너비: %d\" % width)\nprint(\"높이: %d\" % height)\nprint(\"FPS: %.2f\" % fps)\nprint(\"전체 프레임 수: %d\" % frame_count)\nprint(\"프레임 간격: %d ms\" % delay)\n\nwhile True:\n    ret, frame = capture.read()\n\n    if not ret:\n        break\n\n    # 현재 프레임 번호\n    frame_no = int(capture.get(cv2.CAP_PROP_POS_FRAMES))\n\n    # 영상에 정보 표시\n    put_string(frame, \"Frame: \", (10, 40), frame_no)\n    put_string(frame, \"FPS: \", (10, 70), round(fps, 2))\n\n    # 화면 출력\n    cv2.imshow(\"View Frame from Video\", frame)\n\n    # 원래 동영상의 FPS에 맞춰 재생\n    if cv2.waitKey(delay) >= 0:\n        break\n\n\ncapture.release()\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 60,
+        "label": "슬라이드60~61 / 동영상 파일 읽기 코드 단편"
+      },
+      "sha256": "3744748e203b82d1fd6d8aaf1a303ecf911035accd8d118fd672650a328ae5d6"
+    },
+    {
+      "id": "ch4-fragment69",
+      "title": "입력 동영상 재생 및 새 동영상 파일로 재저장 코드 단편",
+      "code": "import cv2\n\n# 입력 동영상 파일 열기\ncapture = cv2.VideoCapture(\"images/input_video.avi\")\nif capture.isOpened() == False:\n    raise Exception(\"동영상 파일 개방 안됨\")\n\n# 입력 동영상의 속성 읽기\nfps = capture.get(cv2.CAP_PROP_FPS)\nwidth = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))\nheight = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))\n\nsize = (width, height)\ndelay = round(1000 / fps)\n\n# 출력 동영상의 압축 코덱 설정\nfourcc = cv2.VideoWriter_fourcc(*'DX50')\n\n# 동영상 속성 출력\nprint(\"프레임 해상도:\", size)\nprint(\"압축코덱 숫자:\", fourcc)\nprint(\"delay: %2d ms\" % delay)\nprint(\"fps: %.2f\" % fps)\n\n# 출력 동영상 파일 생성\nwriter = cv2.VideoWriter(\n    \"images/output_video.avi\",\n    fourcc,\n    fps,\n    size\n)\n\nif writer.isOpened() == False:\n    raise Exception(\"출력 동영상 파일 개방 안됨\")\n\n\nwhile True:\n    # 입력 동영상에서 한 프레임 읽기\n    ret, frame = capture.read()\n\n    if not ret:\n        break\n\n    # 읽은 프레임을 새로운 동영상 파일에 저장\n    writer.write(frame)\n\n    # 화면에 출력\n    cv2.imshow(\"View Frame from Video\", frame)\n\n    # 원본 FPS에 맞춰 재생\n    if cv2.waitKey(delay) >= 0:\n        break\n\n# 자원 해제\nwriter.release()\ncapture.release()\ncv2.destroyAllWindows()\n\nprint(\"동영상 저장 완료\")",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 69,
+        "label": "슬라이드69~71 / 입력 동영상 재저장 코드 단편"
+      },
+      "sha256": "bf1b2ef6b2151a8bda3206ebb5d3a17c1a068637ccd89e4bc3ad39a41489e021"
+    },
+    {
+      "id": "ch4-fragment72",
+      "title": "출력 FPS를 두 배로 지정하는 코드 단편",
+      "code": "input_fps = capture.get(cv2.CAP_PROP_FPS)\n\n# 2배 빠른 동영상\noutput_fps = input_fps * 2\n\nwriter = cv2.VideoWriter(\n    \"images/output_video.avi\",\n    fourcc,\n    output_fps,\n    size\n)",
+      "source": {
+        "file": "CH_04_OpenCV 인터페이스 (수정본).pptx",
+        "page": 72,
+        "label": "슬라이드72 / FPS 2배 코드 단편"
+      },
+      "sha256": "2de4ee8aeb876d982b37c66c3b4e9217f525ba175bc5fde3ddca89737fe67d37"
+    },
+    {
+      "id": "pdf-ex05",
+      "title": "4장 연습문제 5번 답안 코드",
+      "code": "import numpy as np, cv2\nimage = np.zeros((300, 400), np.uint8)\nimage[:] = 100\ntitle = 'Window'\ncv2.namedWindow(title, cv2.WINDOW_NORMAL)\ncv2.moveWindow(title, 100, 200)\ncv2.imshow(title, image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n\nimport numpy as np, cv2\nimage= np.zeros((400, 600, 3), np.uint8)\nimage[:] = (255, 255, 2555)\npt1, pt2 = (50, 100), (200, 300)\ncv2.line(iamge,pt1,pt2,(0,255,0), 5)\ncv2.rectangle(iㅡㅁge,pt2, (300,400), (0,0,255), -1, cv2.LINE_4, 1)\ncv2.imshow(\"Line & Rectangle\", iamge)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 1,
+        "label": "PDF 1~3쪽"
+      },
+      "sha256": "8eb9b58001095e30e04a6ed7678b2cc72b3e35971cb06fa4b499199fe05997dc"
+    },
+    {
+      "id": "pdf-ex06",
+      "title": "4장 연습문제 6번 답안 코드",
+      "code": "import numpy as np\nimport cv2\nimage = np.zeros((300, 400), np.uint8)\nimage[:] = 100\ncv2.namedWindow(\"Window\", cv2.WINDOW_NORMAL)\ncv2.resizeWindow(\"Window\", 600, 500)\ncv2.imshow(\"Window\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 4,
+        "label": "PDF 4쪽"
+      },
+      "sha256": "18318a490ca608c1de896782d5c6408988ce3cde0de0ea668a87ce283cab2527"
+    },
+    {
+      "id": "pdf-ex09",
+      "title": "4장 연습문제 9번 답안 코드",
+      "code": "import numpy as np\nimport cv2\nimage = np.zeros((600, 400, 3), np.uint8)\npt1 = (100, 100)\npt2 = (300, 400)\ncv2.rectangle(image, pt1, pt2, (0, 0, 255), -1)\ncv2.imshow(\"Rectangle\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 5,
+        "label": "PDF 5~6쪽"
+      },
+      "sha256": "1563171fd389d43b952070d8eac28eb8f4e80d9a89c7496288f646c9c3e90dd9"
+    },
+    {
+      "id": "pdf-ex10",
+      "title": "4장 연습문제 10번 답안 코드",
+      "code": "import numpy as np\nimport cv2\nimage = np.zeros((500, 500, 3), np.uint8)\ndef onMouse(event, x, y, flags, param):\n    if event == cv2.EVENT_RBUTTONDOWN:\n        cv2.circle(image, (x, y), 20, (0, 255, 0), 2)\n    elif event == cv2.EVENT_LBUTTONDOWN:\n        cv2.rectangle(image, (x, y), (x + 30, y + 30), (0, 0, 255), 2)\n    cv2.imshow(\"Mouse Event\", image)\ncv2.namedWindow(\"Mouse Event\")\ncv2.setMouseCallback(\"Mouse Event\", onMouse)\ncv2.imshow(\"Mouse Event\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 6,
+        "label": "PDF 6~7쪽"
+      },
+      "sha256": "3f67f986ea9420b84fd90daa4e55a90b64422f34e8e45e62700da5c9edf3d31d"
+    },
+    {
+      "id": "pdf-ex13",
+      "title": "4장 연습문제 13번 답안 코드",
+      "code": "import cv2\nimage = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif image is None:\n    raise Exception(\"영상파일 읽기 에러\")\ncv2.imwrite(\"test.jpg\", image, [cv2.IMWRITE_JPEG_QUALITY, 100])\ncv2.imwrite(\"test.png\", image, [cv2.IMWRITE_PNG_COMPRESSION, 0])\nprint(\"저장 완료: test.jpg, test.png\")\ncv2.imshow(\"original\", image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 8,
+        "label": "PDF 8~9쪽"
+      },
+      "sha256": "7b464d77aa91655e7c23b3a787c10e3010019112ee281e830efc6c8e9c95a8c9"
+    },
+    {
+      "id": "pdf-ex16",
+      "title": "4장 연습문제 16번 답안 코드",
+      "code": "import cv2\ncap = cv2.VideoCapture(\"images/video_file.avi\")\nif cap.isOpened() == False:\n    raise Exception(\"동영상 파일 읽기 에러\")\nfps = cap.get(cv2.CAP_PROP_FPS)\ndelay = int(1000 / fps) if fps > 0 else 33\nwhile True:\n    ret, frame = cap.read()\n    if not ret:\n        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)\n        continue\n    x, y, w, h = 200, 100, 100, 200\n    roi = frame[y:y + h, x:x + w]\n    roi[:, :, 1] = cv2.add(roi[:, :, 1], 50)\n    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)\n    cv2.imshow(\"Camera\", frame)\n    if cv2.waitKey(delay) == 27:\n        break\ncap.release()\ncv2.destroyAllWindows()",
+      "source": {
+        "file": "학습진단문제/4장 연습문제.pdf",
+        "page": 9,
+        "label": "PDF 9~10쪽"
+      },
+      "sha256": "0500c42927a8270c4a29c5434b8b5ccdf23332b7ea882e3a67ea8be8a7afd9bf"
+    }
+  ]
+}

@@ -246,7 +246,7 @@
             "NumPy: 사진처럼 생긴 숫자 표인 배열을 만든다.",
             "Matplotlib: 배열이나 계산 결과를 그림으로 보여 준다."
           ],
-          "example": "아래 배열은 2행 3열이라 칸이 6개다. 모든 칸에 밝기 200을 넣는다.\n\nimport numpy as np\nimage=np.zeros((2,3),dtype=np.uint8)\nimage[:]=200\n# shape=(2,3), 픽셀 6개, 모든 밝기 200",
+          "example": "다음은 NumPy 배열을 확인하는 짧은 변형 예제예요.\n아래 배열은 2행 3열이라 칸이 6개다. 모든 칸에 밝기 200을 넣는다.\n\nimport numpy as np\nimage=np.zeros((2,3),dtype=np.uint8)\nimage[:]=200\n# shape=(2,3), 픽셀 6개, 모든 밝기 200",
           "pitfalls": [
             "배열 모양을 쓸 때는 높이인 행 수를 먼저, 폭인 열 수를 나중에 적는다.",
             "설치 버전만 외우지 말고 실제 배열의 모양과 값을 확인한다."
@@ -374,7 +374,7 @@
             "shape은 배열의 모양이고 dtype은 그 안의 한 숫자가 어떤 자료형인지 나타낸다.",
             "파일을 제대로 읽었는지 먼저 확인한 뒤 모양과 픽셀 값을 살펴본다."
           ],
-          "example": "높이 240, 폭 320인 사진으로 모양을 읽어 보자.\n회색조 shape=(240,320): 240행 320열, 한 칸에 밝기 값 하나.\n기본 컬러 shape=(240,320,3): 같은 크기의 사진, 한 칸에 B·G·R 값 세 개.\n실제 read_gray.jpg의 특정 밝기 값은 파일을 읽어서 확인해야 한다.",
+          "example": "픽셀 값은 그 위치의 밝기예요. 원본 예제12의 결과 그림에서는 [100,100]이 다음처럼 나와요.\n회색조: 106\n기본 컬러: [106 106 106]\n원래 회색조이므로 B·G·R이 같은 숫자예요. 자료형 출력은 CV_8UC1과 CV_8UC3예요.\n다른 사진을 읽으면 그 위치의 밝기 숫자는 달라질 수 있어요.",
           "pitfalls": [
             "파일을 보지 않고 원본 사진의 [100,100] 값을 임의로 외우지 않는다.",
             "CV_8UC3의 C3은 3채널이라는 뜻이지 3비트가 아니다.",
@@ -405,6 +405,14 @@
             {
               "title": "원문 코드를 실행하기 전",
               "body": "읽기 실패는 None이다. 이를 먼저 검사한다. [100,100]에 접근하려면 높이와 폭이 각각 101 이상이어야 한다. 파일 경로와 해당 좌표 범위가 맞는지도 확인한다."
+            },
+            {
+              "title": "배열 모양을 읽는 별도 예",
+              "body": "다음은 원본 사진의 크기를 단정한 값이 아니라 shape을 읽는 방법을 설명하는 예예요.\n높이 240, 폭 320인 사진으로 모양을 읽어 보자.\n회색조 shape=(240,320): 240행 320열, 한 칸에 밝기 값 하나.\n기본 컬러 shape=(240,320,3): 같은 크기의 사진, 한 칸에 B·G·R 값 세 개.\n실제 read_gray.jpg의 특정 밝기 값은 파일을 읽어서 확인해야 한다."
+            },
+            {
+              "title": "원본 코드의 실행 순서",
+              "body": "① print_matInfo를 정의해 dtype과 채널 정보를 출력할 준비를 해요.\n② 같은 read_gray.jpg를 GRAYSCALE과 COLOR로 읽어요.\n③ None이면 예외를 내고 성공하면 [100,100]의 값을 출력해요.\n④ 두 배열의 자료형을 출력하고 두 창에 표시해요.\n⑤ waitKey(0)에서 키 입력을 기다려요.\n연결된 문제의 코드와 줄별 해설에서 전체 예제12를 볼 수 있어요."
             }
           ]
         },
@@ -484,7 +492,7 @@
             "PNG의 compression 9는 높은 압축 수준이다. 저장한 픽셀 정보는 무손실로 유지된다.",
             "저장 성공은 imwrite의 반환값이나 실제 만들어진 파일로 확인한다."
           ],
-          "example": "JPEG 옵션 하나부터 읽어 보자.\nIMWRITE_JPEG_QUALITY, 10은 JPEG 화질을 10으로 정한다.\n\nparams_jpg=(cv2.IMWRITE_JPEG_QUALITY,10)\nparams_png=[cv2.IMWRITE_PNG_COMPRESSION,9]\ncv2.imwrite(\"a.jpg\",image)        # 강의기본quality95\ncv2.imwrite(\"b.jpg\",image,params_jpg)\ncv2.imwrite(\"c.png\",image,params_png)\ncv2.imwrite(\"d.bmp\",image)",
+          "example": "읽기와 저장이 성공하면 다음 네 파일을 만들어요.\nwrite_test1.jpg: JPEG 기본 quality95\nwrite_test2.jpg: JPEG quality10\nwrite_test3.png: PNG compression9\nwrite_test4.bmp: BMP\n콘솔에는 저장 완료가 나와요.\n\n수업 원본 예제15의 전체 코드\nimport cv2\n\nimage = cv2.imread(\"images/read_color.jpg\", cv2.IMREAD_COLOR)\nif image is None: raise Exception(\"영상파일 읽기 에러\")   # 예외처리\n\nparams_jpg = (cv2.IMWRITE_JPEG_QUALITY, 10)               # JPEG 화질 설정\nparams_png = [cv2.IMWRITE_PNG_COMPRESSION, 9]             # PNG 압축 레벨 설정\n\n## 행렬을 영상파일로 저장\ncv2.imwrite(\"images/write_test1.jpg\", image)              # 디폴트는 95\ncv2.imwrite(\"images/write_test2.jpg\", image, params_jpg)  # 지정한 화질로 저장\ncv2.imwrite(\"images/write_test3.png\", image, params_png)\ncv2.imwrite(\"images/write_test4.bmp\", image)              # BMP 파일로 저장\nprint(\"저장 완료\")",
           "pitfalls": [
             "PNG 압축 9를 JPEG의 낮은 화질과 같은 뜻으로 읽지 않는다.",
             "화면에 저장 완료라는 문장이 나왔다고 실제 파일 저장이 반드시 성공한 것은 아니다."
@@ -722,7 +730,7 @@
             "100은 두 값의 가운데라 수식 결과는 127.5다. 강의 코드는 정수로 저장해 127이 된다.",
             "모든 값이 80처럼 같으면 강의 코드는 나누지 않고 원래 80을 유지한다."
           ],
-          "example": "입력 100 하나를 따라 계산해 보자. min은 50, max는 150이다.\n① 가장 작은 값에서 얼마나 떨어졌나? 100-50=50.\n② 전체 입력 폭은? 150-50=100.\n③ 절반인 50/100이므로 새 범위 255의 절반은 127.5.\n④ 강의의 uint8 저장은 소수부를 버려 127.\n따라서 [[50,100,150]]의 저장 결과는 [[0,127,255]]다.",
+          "example": "아래 [[50,100,150]]은 강의 함수를 연습하기 위해 넣은 별도 변형 입력이에요.\n\n입력 100 하나를 따라 계산해 보자. min은 50, max는 150이다.\n① 가장 작은 값에서 얼마나 떨어졌나? 100-50=50.\n② 전체 입력 폭은? 150-50=100.\n③ 절반인 50/100이므로 새 범위 255의 절반은 127.5.\n④ 강의의 uint8 저장은 소수부를 버려 127.\n따라서 [[50,100,150]]의 저장 결과는 [[0,127,255]]다.",
           "pitfalls": [
             "수식 값 127.5와 반올림한 128, 강의 코드가 저장한 127을 구별한다.",
             "모든 값이 같은 사진에서 분모 0을 무시하지 않는다.",
